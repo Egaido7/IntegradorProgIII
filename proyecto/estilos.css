@@ -1,0 +1,37 @@
+header {
+    background-color: #f8f9fa; /* color de fondo de la navbar */
+    padding: 10px 20px; /* un poco de espacio interno */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* sombra para darle profundidad */
+}
+
+nav {
+    display: flex;
+    justify-content: space-between; /* distribuye equitativamente los elementos */
+    align-items: center; /* alinea verticalmente los elementos */
+    height: 60px; /* altura estándar para una navbar */
+}
+
+nav div {
+    flex: 1; /* distribuye el espacio entre los divs */
+}
+
+nav ul {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+nav ul li {
+    margin: 0 10px;
+}
+
+nav div:first-child {
+    flex: 0.5; /* ocupa menos espacio para el logo */
+}
+
+nav div:last-child {
+    display: flex;
+    justify-content: flex-end; /* alinea los botones a la derecha */
+    flex: 1;
+}
