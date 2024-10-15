@@ -56,7 +56,7 @@
 }
 
 .header__option:hover .material-icons {
-    color: #2e81f4;
+    color: #52b04c;
 }
 
 .header__option {
@@ -67,11 +67,11 @@
 }
 
 .header__option.active .material-icons {
-    color: #2e81f4;
+    color: #52b04c;
 }
 
 .header__option.active {
-    border-bottom: 4px solid #2e81f4;
+    border-bottom: 4px solid #52b04c;
 }
 
 .header__option:hover {
@@ -126,7 +126,7 @@
 
 .sidebarRow .material-icons {
     font-size: xx-large;
-    color: #2e81f4;
+    color: #52b04c;
 }
 
 /* story */
