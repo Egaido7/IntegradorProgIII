@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <title>Facebook Clone</title>
+    <link rel="stylesheet" href="estilos.css" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  </head>
+<body>
+    <button id="botoninicial" type="button" data-bs-toggle="modal" data-bs-target="#loginModal">
+        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-person" viewBox="0 0 15 15">
+          <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z"/>
+        </svg>
+        Ingresar
+      </button>
+      <!-- MODAL -->
+  <!-- Modal Login -->
+  <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="modalLabel">Iniciar Sesión</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="formLogin" novalidate>
+            <div class="form-group">
+                <label for="loginEmail">Correo Electrónico:</label>
+                <input type="email" class="form-control" id="loginEmail" required>
+                <div class="invalid-feedback" id="loginEmailFeedback"></div>
+            </div>
+            <div class="form-group">
+                <label for="loginPwd">Contraseña:</label>
+                <input type="password" class="form-control" id="loginPwd" required pattern=".*[0-9].*" minlength="8">
+                <div class="invalid-feedback" id="loginPwdFeedback"></div>
+            </div>
+            <div class="invalid-feedback" id="msgErrorLogin">
+              El email y/o contraseña ingresados no son válidos.
+            </div>
+            <div class="centrado">
+              <button type="submit" id="btnEnviarLogin" class="btn btn-primary">Iniciar Sesión</button>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-success" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#registroModal" id="btnNuevaCuenta">Crear nueva cuenta</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Registro -->
+  <div class="modal fade" id="registroModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="modalLabel">Crear nueva cuenta</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="formRegistro" novalidate>
+            <div class="form-group">
+              <label for="registroNombre">Nombre: </label>
+              <input type="text" class="form-control" id="registroNombre" pattern="[a-zA-Z]+" required>
+              <div class="invalid-feedback" id="regNombreFeedback"></div>
+            </div>
+            <div class="form-group">
+              <label for="registroApellido">Apellido: </label>
+              <input type="text" class="form-control" id="registroApellido" pattern="[a-zA-Z]+" required>
+              <div class="invalid-feedback" id="regApellidoFeedback"></div>
+            </div>
+            <div class="form-group">
+                <label for="registroEmail">Correo Electrónico:</label>
+                <input type="email" class="form-control" id="registroEmail" required>
+                <div class="invalid-feedback" id="regEmailFeedback"></div>
+            </div>
+            <div class="form-group">
+                <label for="registroPwd">Contraseña:</label>
+                <input type="password" class="form-control" id="registroPwd" pattern=".*[0-9].*" minlength="8" required>
+                <div class="invalid-feedback" id="regPwdFeedback"></div>
+            </div>
+            <div class="form-group">
+                <label for="registroPwdConfirm">Confirmar Contraseña:</label>
+                <input type="password" class="form-control" id="registroPwdConfirm" required>
+                <div class="invalid-feedback" id="regPwdConfirmFeedback"></div>
+            </div>
+            <div class="centrado">
+              <button type="submit" id="btnEnviarRegistro" data-bs-dismiss="modal" class="btn btn-primary">Registrarme</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+</body>
+</html>
