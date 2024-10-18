@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 19-10-2024 a las 00:33:16
+-- Tiempo de generación: 19-10-2024 a las 01:19:11
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `very deli`
+-- Base de datos: `very_deli`
 --
 
 -- --------------------------------------------------------
@@ -116,20 +116,23 @@ CREATE TABLE `vehiculo` (
 --
 ALTER TABLE `calificacion`
   ADD PRIMARY KEY (`idCalificacion`),
-  ADD KEY `idCalifica` (`idCalifica`,`idCalificado`);
+  ADD KEY `idCalifica` (`idCalifica`,`idCalificado`),
+  ADD KEY `idCalificado` (`idCalificado`);
 
 --
 -- Indices de la tabla `mensaje`
 --
 ALTER TABLE `mensaje`
-  ADD KEY `idUsuario` (`idUsuario`,`idPublicacion`);
+  ADD KEY `idUsuario` (`idUsuario`,`idPublicacion`),
+  ADD KEY `idPublicacion` (`idPublicacion`);
 
 --
 -- Indices de la tabla `postulacion`
 --
 ALTER TABLE `postulacion`
   ADD PRIMARY KEY (`idPostulacion`),
-  ADD KEY `idUsuario` (`idUsuario`,`idPublicacion`);
+  ADD KEY `idUsuario` (`idUsuario`,`idPublicacion`),
+  ADD KEY `idPublicacion` (`idPublicacion`);
 
 --
 -- Indices de la tabla `publicacion`
@@ -184,6 +187,43 @@ ALTER TABLE `publicacion`
 --
 ALTER TABLE `usuario`
   MODIFY `idUsuario` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- Restricciones para tablas volcadas
+--
+
+--
+-- Filtros para la tabla `calificacion`
+--
+ALTER TABLE `calificacion`
+  ADD CONSTRAINT `calificacion_ibfk_1` FOREIGN KEY (`idCalifica`) REFERENCES `usuario` (`idUsuario`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `calificacion_ibfk_2` FOREIGN KEY (`idCalificado`) REFERENCES `usuario` (`idUsuario`);
+
+--
+-- Filtros para la tabla `mensaje`
+--
+ALTER TABLE `mensaje`
+  ADD CONSTRAINT `mensaje_ibfk_1` FOREIGN KEY (`idUsuario`) REFERENCES `usuario` (`idUsuario`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `mensaje_ibfk_2` FOREIGN KEY (`idPublicacion`) REFERENCES `publicacion` (`idPublicacion`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Filtros para la tabla `postulacion`
+--
+ALTER TABLE `postulacion`
+  ADD CONSTRAINT `postulacion_ibfk_1` FOREIGN KEY (`idUsuario`) REFERENCES `usuario` (`idUsuario`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `postulacion_ibfk_2` FOREIGN KEY (`idPublicacion`) REFERENCES `publicacion` (`idPublicacion`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Filtros para la tabla `publicacion`
+--
+ALTER TABLE `publicacion`
+  ADD CONSTRAINT `publicacion_ibfk_1` FOREIGN KEY (`idUsuario`) REFERENCES `usuario` (`idUsuario`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Filtros para la tabla `vehiculo`
+--
+ALTER TABLE `vehiculo`
+  ADD CONSTRAINT `vehiculo_ibfk_1` FOREIGN KEY (`idUsuario`) REFERENCES `usuario` (`idUsuario`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
