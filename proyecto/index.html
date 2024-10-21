@@ -103,7 +103,7 @@
           <div class="messageSender__bottom">
             <div class="messageSender__option">
               <span style="color: red" class="material-icons"> publish </span>
-              <h3>Publicar</h3>
+              <button data-bs-toggle="modal" data-bs-target="#publicarModal" style="background: none; border: none; padding: 0; color: inherit; font: inherit; cursor: pointer;" >publicar</button>
             </div>
 
             
@@ -229,7 +229,54 @@
     </div>
     <!-- main body ends -->
 
-    <div id="fb-root"></div>
+    <!-- Modal Registro -->
+  <div class="modal fade" id="publicarModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="modalLabel">Publicar Necesidad</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="formRegistro" novalidate>
+            <div class="form-group">
+              <label for="registroNombre">Volumen: </label>
+              <select class="form-select" aria-label="registroNombre">
+                <option selected>Elegi el volumen de tu paquete</option>
+                <option value="10">Chico (hasta 10kg)</option>
+                <option value="100">Mediano (hasta 100kg)</option>
+                <option value="1000">Grande (hasta 1000kg)</option>
+              </select>
+
+              <div class="invalid-feedback" id="pubVolumenFeedback"></div>
+            </div>
+            <div class="form-group">
+              <label for="PubliPeso">Peso: </label>
+              <input type="number" class="form-control" id="PubliPeso" pattern="[0-9]+" required>
+              <div class="invalid-feedback" id="pubPesoFeedback"></div>
+            </div>
+            <div class="form-group">
+                <label for="PubliOrigen">Origen:</label>
+                <input type="text" class="form-control" id="PubliOrigen" required>
+                <div class="invalid-feedback" id="pubOrigenFeedback"></div>
+            </div>
+            <div class="form-group">
+                <label for="PubliDestino">Destino:</label>
+                <input type="text" class="form-control" id="PubliDestino" required>
+                <div class="invalid-feedback" id="pubDestinoFeedback"></div>
+            </div>
+            
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" id="btnEnviarRegistro" data-bs-dismiss="modal" class="btn btn-primary" style="background-color: #52b04c; border-color:#52b04c ">Publicar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
     <script
       async
       defer
