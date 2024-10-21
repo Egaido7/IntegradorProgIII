@@ -399,6 +399,21 @@ body {
 .card-body {
     padding: 20px; /* Espaciado alrededor del texto */
 }
+scroll-container {
+    margin:150px;
+    display: block;
+    width: 1000px;
+    height: 200px;
+    overflow-y: scroll;
+    scroll-behavior: smooth;
+  }
+  scroll-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    font-size: 5em;
+  }
 
 .hidden {
     display: none;
