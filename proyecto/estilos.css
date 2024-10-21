@@ -367,3 +367,22 @@ body {
         padding: 10px 50px;
     }
 }
+
+.publicacionimg{
+    width: auto;   /* La imagen se ajusta al ancho del div */
+    height: auto;  /* La imagen ocupa toda la altura del div */
+    object-fit: cover;
+}
+.card {
+    display: flex;
+    flex-direction: row;
+}
+
+.card-img-top {
+    width: 400px; /* Ajusta el tamaño según sea necesario */
+    height: auto; /* Mantiene la relación de aspecto */
+}
+
+.card-body {
+    padding: 20px; /* Espaciado alrededor del texto */
+}
