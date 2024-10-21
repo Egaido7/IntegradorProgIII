@@ -13,17 +13,14 @@
     <!-- header starts -->
     <div class="header">
       <div class="header__left">
-        <img
-          src="https://upload.wikimedia.org/wikipedia/commons
-    /thumb/5/51/Facebook_f_logo_%282019%29.svg/1200px Facebook_f_logo_%282019%29.svg.png"alt="" />
-    <p>logo</p>
-        <div class="header__input">
+        <img src="LogoVeryDeli.svg" alt="Logo" class="logo">
+        <div class="header__input" id="header_busqueda">
           <span class="material-icons"> search </span>
-          <input type="text" placeholder="Search Facebook" />
+          <input type="text" placeholder="Buscar publicaciones" id="barraBusqueda" />
         </div>
       </div>
 
-      <div class="header__middle">
+      <div class="header__middle" id="header_medio">
         <div class="header__option active">
           <span class="material-icons"> home </span>
         </div>
@@ -221,5 +218,20 @@
       nonce="zUxEq08J"
     ></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script>
+      const barraBusquedaContainer = document.getElementById("header_busqueda");
+      const barraBusqueda = document.getElementById("barraBusqueda");
+      const headerMedio = document.getElementById("header_medio");
+
+      barraBusqueda.addEventListener('focus', function() {
+        headerMedio.classList.add("hidden");
+        barraBusquedaContainer.classList.add("headerExpandido");
+      })
+      
+      barraBusqueda.addEventListener('blur', function() {
+        headerMedio.classList.remove('hidden');
+        barraBusquedaContainer.classList.remove("headerExpandido");
+      });
+    </script>
   </body>
 </html>

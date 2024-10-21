@@ -7,6 +7,7 @@
     height: 40px;
 }
 
+
 .user__avatar {
     border-radius: 50%;
     width: 45px;
@@ -29,19 +30,28 @@
     justify-content: space-evenly;
 }
 
+.header__left input {
+    width: 100%;
+}
+
+
 .header__input {
     display: flex;
     align-items: center;
     background-color: #eff2f5;
     padding: 10px;
-    margin-left: 10px;
-    border-radius: 999px;
+    border-radius: 999px;    
 }
 
 .header__input input {
     border: none;
     background-color: transparent;
     outline-width: 0;
+}
+
+.headerExpandido {
+    width: 50vw;
+    margin-left: 100px;
 }
 
 .header__middle {
@@ -388,4 +398,23 @@ body {
 
 .card-body {
     padding: 20px; /* Espaciado alrededor del texto */
+}
+scroll-container {
+    margin:150px;
+    display: block;
+    width: 1000px;
+    height: 200px;
+    overflow-y: scroll;
+    scroll-behavior: smooth;
+  }
+  scroll-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    font-size: 5em;
+  }
+
+.hidden {
+    display: none;
 }
