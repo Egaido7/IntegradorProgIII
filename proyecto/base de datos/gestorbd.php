@@ -138,6 +138,11 @@ class GestorVeryDeli {
                 FROM publicacion p
                 JOIN usuario u ON p.idUsuario = u.idUsuario
             ");
+
+            // Comprobación de errores en la preparación de la consulta
+        if (!$this->stmt) {
+            throw new Exception("Error en la consulta SQL: " . $this->conn->error);
+        }
             $this->stmt->execute();
             return $this->stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         } catch (mysqli_sql_exception $e) {
