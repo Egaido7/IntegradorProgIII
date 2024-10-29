@@ -140,9 +140,9 @@ class GestorVeryDeli {
             ");
 
             // Comprobación de errores en la preparación de la consulta
-        if (!$this->stmt) {
-            throw new Exception("Error en la consulta SQL: " . $this->conn->error);
-        }
+            if (!$this->stmt) {
+                throw new Exception("Error en la consulta SQL: " . $this->conn->error);
+            }
             $this->stmt->execute();
             return $this->stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         } catch (mysqli_sql_exception $e) {
@@ -154,31 +154,31 @@ class GestorVeryDeli {
     public function mostrar_publicaciones() {
         $publicaciones = $this->fetch_publicaciones();
 
-        // Iterar sobre cada publicación y generar el HTML
-        foreach ($publicaciones as $publicacion) {
-            echo '<div class="post">';
-            echo '  <div class="post__top">';
-            echo '      <img class="user__avatar post__avatar" src="data:image/png;base64,' . $publicacion['usuarioImagen'] . '" alt="Foto de usuario">';
-            echo '      <div class="post__topInfo">';
-            echo '          <h3>' . htmlspecialchars($publicacion['usuarioNombre']) . ' ' . htmlspecialchars($publicacion['usuarioApellido']) . '</h3>';
-            echo '          <p>' . date("d M Y H:i") . '</p>'; // Ejemplo de fecha actual, ajustar si se requiere un campo de fecha específico
-            echo '      </div>';
-            echo '  </div>';
 
-            // Detalles de la publicación
-            echo '  <div class="post__details">';
-            echo '      <p>Volumen: ' . htmlspecialchars($publicacion['volumen']) . ' m³</p>';
-            echo '      <p>Peso: ' . htmlspecialchars($publicacion['peso']) . ' kg</p>';
-            echo '      <p>Origen: ' . htmlspecialchars($publicacion['origen']) . '</p>';
-            echo '      <p>Destino: ' . htmlspecialchars($publicacion['destino']) . '</p>';
-            echo '  </div>';
+        foreach ($publicaciones as $publicacion) { ?>
+            <div class="post">
+                <div class="post__top">
+                    <img class="user__avatar post__avatar" src="data:image/png;base64,<?= $publicacion['usuarioImagen'] ?>" alt="Foto de usuario">;
+                    <div class="post__topInfo">;
+                        <h3><?= htmlspecialchars($publicacion['usuarioNombre'])?> <?php htmlspecialchars($publicacion['usuarioApellido']) ?></h3>;
+                        <p> <?= date("d M Y H:i") ?></p>
+                    </div>
+                </div>
 
-            // Imagen del producto
-            echo '  <div class="post__image">';
-            echo '      <img src="data:image/png;base64,' . $publicacion['imagenProducto'] . '" alt="Imagen del producto">';
-            echo '  </div>';
-            echo '</div>';
-        }
+            
+                <div class="post__details">;
+                    <p>Volumen: <?= htmlspecialchars($publicacion['volumen']) ?> m³</p>;
+                    <p>Peso: <?= htmlspecialchars($publicacion['peso']) ?> kg</p>;
+                    <p>Origen: <?= htmlspecialchars($publicacion['origen']) ?></p>;
+                    <p>Destino: <?= htmlspecialchars($publicacion['destino']) ?></p>;
+                </div>;
+
+            
+                <div class="post__image">;
+                    <img src="data:image/png;base64,<?=$publicacion['imagenProducto']?>" alt="Imagen del producto">;
+                </div>;
+            </div>;
+        <?php }
     }
 
     public function fetch_postulaciones_por_publicacion($idPublicacion) {
@@ -235,5 +235,18 @@ class GestorVeryDeli {
             throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
         }
     }
-    
+
+    public function fetch_promedio_calificaciones_por_usuario($idUsuario) {
+        $cant_calif = 0;
+        $suma_puntajes = 0;
+        $calificaciones = $this->fetch_calificaciones_por_usuario($idUsuario);
+        foreach($calificaciones as $calif) {
+            if($calif["puntaje"] != -1) {
+                $cant_calif++;
+                $suma_puntajes += $calif["puntaje"];
+            }
+        }
+        $promedio = $suma_puntajes / $cant_calif;
+        return round($promedio * 2) / 2; // Esta expresión trunca el promedio a intervalos de 0.5
+    }
 }

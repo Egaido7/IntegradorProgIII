@@ -94,10 +94,9 @@
         <!-- post starts -->
         <div class="post">
         <?php
-require 'base de datos\gestorbd.php';  // Asegúrate de ajustar la ruta a la clase
+require 'base de datos\gestorbd.php';
 
-$conn = new mysqli('localhost', 'user_personas', '45382003', 'very_deli');
-$publicacionController = new GestorVeryDeli($conn);
+$publicacionController = new GestorVeryDeli();
 $publicacionController->mostrar_publicaciones();
 ?>
           <div class="post__top">
