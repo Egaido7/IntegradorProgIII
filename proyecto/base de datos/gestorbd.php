@@ -222,26 +222,33 @@ class GestorVeryDeli {
         foreach ($publicaciones as $publicacion) { ?>
             <div class="post">
                 <div class="post__top">
-                    <img class="user__avatar post__avatar" src="data:image/png;base64,<?= $publicacion['usuarioImagen'] ?>" alt="Foto de usuario">;
-                    <div class="post__topInfo">;
-                        <h3><?= htmlspecialchars($publicacion['usuarioNombre'])?> <?php htmlspecialchars($publicacion['usuarioApellido']) ?></h3>;
+                    <img class="user__avatar post__avatar" src="data:image/png;base64,<?= $publicacion['usuarioImagen'] ?>" alt="xd">
+                    <div class="post__topInfo">
+                        <h3><?= htmlspecialchars($publicacion['usuarioNombre'])?> <?php htmlspecialchars($publicacion['usuarioApellido']) ?></h3>
                         <p> <?= date("d M Y H:i") ?></p>
                     </div>
                 </div>
 
             
-                <div class="post__details">;
-                    <p>Volumen: <?= htmlspecialchars($publicacion['volumen']) ?> m³</p>;
-                    <p>Peso: <?= htmlspecialchars($publicacion['peso']) ?> kg</p>;
-                    <p>Origen: <?= htmlspecialchars($publicacion['origen']) ?></p>;
-                    <p>Destino: <?= htmlspecialchars($publicacion['destino']) ?></p>;
-                </div>;
+                <div class="post__details">
+                    <p>Volumen: <?= htmlspecialchars($publicacion['volumen']) ?> m³</p>
+                    <p>Peso: <?= htmlspecialchars($publicacion['peso']) ?> kg</p>
+                    <p>Origen: <?= htmlspecialchars($publicacion['origen']) ?></p>
+                    <p>Destino: <?= htmlspecialchars($publicacion['destino']) ?></p>
+                </div>
 
             
-                <div class="post__image">;
-                    <img src="data:image/png;base64,<?=$publicacion['imagenProducto']?>" alt="Imagen del producto">;
-                </div>;
-            </div>;
+                <div class="post__image">
+                    <img src="data:image/png;base64,<?=$publicacion['imagenProducto']?>" alt="Imagen del producto">
+                </div>
+                <div class="post__options">
+
+                <div class="post__option">
+                <span class="material-icons"> check_circle </span>
+                <p>Postularse</p>
+                </div>
+            </div>
+            </div>
         <?php }
     }
 
