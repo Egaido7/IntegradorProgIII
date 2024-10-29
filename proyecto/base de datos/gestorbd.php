@@ -244,7 +244,7 @@ class GestorVeryDeli {
                 <div class="post__options">
 
                 <div class="post__option">
-                <span class="material-icons"> check_circle </span>
+                <span class="material-icons"> near_me </span>
                 <p>Postularse</p>
                 </div>
             </div>
