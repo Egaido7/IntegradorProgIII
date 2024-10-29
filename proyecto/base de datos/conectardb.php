@@ -1,8 +1,8 @@
 <?php
 $host = "localhost";
 $bd = "very_deli";
-$usuario = "user_personas"; //faltan datos de usuario
-$pwd = "45382003"; //faltan datos de usuario
+$usuario = "user_personas";
+$pwd = "45382003";
 
 mysqli_report(MYSQLI_REPORT_OFF);
 $conexion = new mysqli($host, $usuario, $pwd, $bd);

@@ -92,12 +92,76 @@ class GestorVeryDeli {
 
     public function fetch_usuario_por_id($idUsuario) {
         try {
-            $this->stmt = $this->conn->prepare("SELECT * from usuario WHERE idUsuario = ?");
+            $this->stmt = $this->conn->prepare("SELECT * FROM usuario WHERE idUsuario = ?");
             $this->stmt->bind_param("i", $idUsuario);
             $this->stmt->execute();
             return $this->stmt->get_result()->fetch_assoc();
         } catch (mysqli_sql_exception $e) {
             throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
+        }
+    }
+
+    //retorna un booleano
+    public function fetch_usuario_es_responsable($idUsuario) {
+        try {
+            $this->stmt = $this->conn->prepare("SELECT responsable FROM usuario WHERE idUsuario = ?");
+            $this->stmt->bind_param("i", $idUsuario);
+            $this->stmt->execute();
+            return $this->stmt->get_result()->fetch_assoc() == 1;
+        } catch (mysqli_sql_exception $e) {
+            throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
+        }
+    }
+    
+    //retorna un booleano
+    public function usuario_puede_publicar($idUsuario) {
+        if($this->fetch_usuario_es_responsable($idUsuario)) {
+            return true;
+        } else {
+            try {
+                //reemplazar 3 por el estado que implica que la publicacion está terminada
+                $this->stmt = $this->conn->prepare("SELECT COUNT(*) FROM publicacion WHERE idUsuario = ? AND estado != 3");
+                $this->stmt->bind_param("i", $idUsuario);
+                $this->stmt->execute();
+                $this->stmt->bind_result($cant_publicaciones);
+                $this->stmt->fetch();
+
+                // si el usuario no tiene mas de 3 publicaciones activas
+                if($cant_publicaciones >= 3) {
+                    return false;
+                } else {
+                    return true;
+                }
+            } catch (mysqli_sql_exception $e) {
+                throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
+                return false;
+            }
+        }
+    }
+
+    //retorna un booleano
+    public function usuario_puede_postularse($idUsuario) {
+        if($this->fetch_usuario_es_responsable($idUsuario)) {
+            return true;
+        } else {
+            try {
+                //reemplazar 3 por el estado que implica que la publicacion está terminada
+                $this->stmt = $this->conn->prepare("SELECT COUNT(*) FROM postulacion p JOIN publicacion pub
+                 ON p.idPublicacion = pub.idPublicacion WHERE p.idUsuario = ? AND pub.estado != 3");
+                $this->stmt->bind_param("i", $idUsuario);
+                $this->stmt->execute();
+                $this->stmt->bind_result($cant_publicaciones);
+                $this->stmt->fetch();
+    
+                if($cant_publicaciones >= 1) {
+                    return false;
+                } else {
+                    return true;
+                }
+            } catch (mysqli_sql_exception $e) {
+                throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
+                return false;
+            }
         }
     }
 
