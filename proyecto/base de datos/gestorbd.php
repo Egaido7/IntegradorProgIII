@@ -82,7 +82,7 @@ class GestorVeryDeli {
 
     public function fetch_usuarios() {
         try {
-            $this->stmt = $this->conn->prepare("SELECT * from usuario");
+            $this->stmt = $this->conn->prepare("SELECT * FROM usuario");
             $this->stmt->execute();
             return $this->stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         } catch (mysqli_sql_exception $e) {
@@ -167,7 +167,7 @@ class GestorVeryDeli {
 
     public function fetch_publicaciones_por_origen($origen) {
         try {
-            $this->stmt = $this->conn->prepare("SELECT * from publicacion WHERE origen = ?");
+            $this->stmt = $this->conn->prepare("SELECT * FROM publicacion WHERE origen = ?");
             $this->stmt->bind_param("s", $origen);
             $this->stmt->execute();
             return $this->stmt->get_result()->fetch_all(MYSQLI_ASSOC);
@@ -178,7 +178,7 @@ class GestorVeryDeli {
 
     public function fetch_publicaciones_por_usuario($idUsuario) {
         try {
-            $this->stmt = $this->conn->prepare("SELECT * from publicacion WHERE idUsuario = ?");
+            $this->stmt = $this->conn->prepare("SELECT * FROM publicacion WHERE idUsuario = ?");
             $this->stmt->bind_param("i", $idUsuario);
             $this->stmt->execute();
             return $this->stmt->get_result()->fetch_all(MYSQLI_ASSOC);
@@ -247,7 +247,7 @@ class GestorVeryDeli {
 
     public function fetch_postulaciones_por_publicacion($idPublicacion) {
         try {
-            $this->stmt = $this->conn->prepare("SELECT * from postulacion WHERE idPublicacion = ?");
+            $this->stmt = $this->conn->prepare("SELECT * FROM postulacion WHERE idPublicacion = ?");
             $this->stmt->bind_param("i", $idPublicacion);
             $this->stmt->execute();
             return $this->stmt->get_result()->fetch_all(MYSQLI_ASSOC);
@@ -258,7 +258,7 @@ class GestorVeryDeli {
 
     public function fetch_postulaciones_por_usuario($idUsuario) {
         try {
-            $this->stmt = $this->conn->prepare("SELECT * from postulacion WHERE idUsuario = ?");
+            $this->stmt = $this->conn->prepare("SELECT * FROM postulacion WHERE idUsuario = ?");
             $this->stmt->bind_param("i", $idUsuario);
             $this->stmt->execute();
             return $this->stmt->get_result()->fetch_all(MYSQLI_ASSOC);
@@ -269,7 +269,7 @@ class GestorVeryDeli {
 
     public function fetch_calificaciones_por_usuario($idUsuario) {
         try {
-            $this->stmt = $this->conn->prepare("SELECT * from calificacion WHERE idUsuario = ?");
+            $this->stmt = $this->conn->prepare("SELECT * FROM calificacion WHERE idUsuario = ?");
             $this->stmt->bind_param("i", $idUsuario);
             $this->stmt->execute();
             return $this->stmt->get_result()->fetch_all(MYSQLI_ASSOC);
@@ -280,7 +280,7 @@ class GestorVeryDeli {
 
     public function fetch_calificaciones_por_usuario_ultimas3($idUsuario) {
         try {
-            $this->stmt = $this->conn->prepare("SELECT * from calificacion WHERE idUsuario = ? ORDER BY idCalificacion DESC LIMIT 3");
+            $this->stmt = $this->conn->prepare("SELECT * FROM calificacion WHERE idUsuario = ? ORDER BY idCalificacion DESC LIMIT 3");
             $this->stmt->bind_param("i", $idUsuario);
             $this->stmt->execute();
             return $this->stmt->get_result()->fetch_all(MYSQLI_ASSOC);
@@ -291,7 +291,7 @@ class GestorVeryDeli {
 
     public function fetch_vehiculos_por_usuario($idUsuario) {
         try {
-            $this->stmt = $this->conn->prepare("SELECT * from vehiculos WHERE idUsuario = ?");
+            $this->stmt = $this->conn->prepare("SELECT * FROM vehiculos WHERE idUsuario = ?");
             $this->stmt->bind_param("i", $idUsuario);
             $this->stmt->execute();
             return $this->stmt->get_result()->fetch_all(MYSQLI_ASSOC);
@@ -312,5 +312,16 @@ class GestorVeryDeli {
         }
         $promedio = $suma_puntajes / $cant_calif;
         return round($promedio * 2) / 2; // Esta expresión trunca el promedio a intervalos de 0.5
+    }
+
+    public function fetch_mensajes_por_publicacion($idPublicacion) {
+        try {
+            $this->stmt = $this->conn->prepare("SELECT * FROM mensaje WHERE idPublicacion = ?");
+            $this->stmt->bind_param("i", $idPublicacion);
+            $this->stmt->execute();
+            return $this->stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        } catch (mysqli_sql_exception $e) {
+            throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
+        }
     }
 }
