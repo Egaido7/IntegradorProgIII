@@ -239,7 +239,12 @@ class GestorVeryDeli {
 
             
                 <div class="post__image">
-                    <img src="data:image/png;base64,<?=$publicacion['imagenProducto']?>" alt="Imagen del producto">
+                    <?php //Si la publicación no tiene imagen definida se muestra la imagen por defecto
+                    if(empty($publicacion['imagenProducto'])) { ?>
+                        <img src="imagenes/publicacionDefault.jpg" alt="Imagen del producto">
+                    <?php } else {?>
+                        <img src="data:image/png;base64,<?=$publicacion['imagenProducto']?>" alt="Imagen del producto">
+                    <?php } ?>
                 </div>
                 <div class="post__options">
 
