@@ -392,7 +392,7 @@ body {
 }
 
 .card-img-top {
-    width: 400px; /* Ajusta el tamaño según sea necesario */
+    width: 20%; /* Ajusta el tamaño según sea necesario */
     height: auto; /* Mantiene la relación de aspecto */
 }
 

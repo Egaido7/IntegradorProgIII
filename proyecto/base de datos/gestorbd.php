@@ -336,4 +336,46 @@ class GestorVeryDeli {
             throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
         }
     }
+    public function fetch_publicacion($idPublicacion) {
+        try {
+            $this->stmt = $this->conn->prepare("SELECT 
+                    u.imagen AS usuarioImagen, 
+                    u.nombre AS usuarioNombre, 
+                    u.apellido AS usuarioApellido, 
+                    p.volumen, 
+                    p.peso, 
+                    p.origen, 
+                    p.destino, 
+                    p.idPublicacion,
+                    p.idUsuario,
+                    p.descripcion,
+                    p.titulo,
+                    p.imagenPublicacion,
+                    p.contacto,
+                    p.postulanteElegido
+                FROM publicacion p
+                JOIN usuario u ON p.idUsuario = u.idUsuario
+                WHERE p.idPublicacion = ?");
+    
+            // Comprobación de errores en la preparación de la consulta
+            if (!$this->stmt) {
+                throw new Exception("Error en la consulta SQL: " . $this->conn->error);
+            }
+    
+            // Vincular el parámetro
+            $this->stmt->bind_param("i", $idPublicacion);
+            $this->stmt->execute();
+    
+            // Obtener solo un resultado
+            $result = $this->stmt->get_result();
+            return $result->fetch_assoc(); // Devolver solo la primera fila como un arreglo asociativo
+        } catch (mysqli_sql_exception $e) {
+            throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
+        } finally {
+            // Cerrar la declaración si se ha creado
+            if ($this->stmt) {
+                $this->stmt->close();
+            }
+        }
+    }
 }

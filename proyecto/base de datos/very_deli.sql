@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 19-10-2024 a las 01:19:11
+-- Tiempo de generación: 04-11-2024 a las 01:59:02
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -44,7 +44,8 @@ CREATE TABLE `calificacion` (
 CREATE TABLE `mensaje` (
   `idUsuario` int(11) NOT NULL,
   `idPublicacion` int(11) NOT NULL,
-  `comentario` text NOT NULL
+  `comentario` text NOT NULL,
+  `fechaComentario` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -57,7 +58,8 @@ CREATE TABLE `postulacion` (
   `idPostulacion` int(11) NOT NULL,
   `idUsuario` int(11) NOT NULL,
   `monto` float NOT NULL,
-  `idPublicacion` int(11) NOT NULL
+  `idPublicacion` int(11) NOT NULL,
+  `alerta` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -72,7 +74,13 @@ CREATE TABLE `publicacion` (
   `volumen` float NOT NULL,
   `peso` float NOT NULL,
   `origen` varchar(40) NOT NULL,
-  `destino` varchar(40) NOT NULL
+  `destino` varchar(40) NOT NULL,
+  `fechaPublicacion` date NOT NULL,
+  `imagenPublicacion` varchar(40) NOT NULL,
+  `descripcion` text NOT NULL,
+  `contacto` varchar(30) NOT NULL,
+  `postulanteElegido` int(11) NOT NULL,
+  `titulo` varchar(40) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -93,6 +101,13 @@ CREATE TABLE `usuario` (
   `contraseña` varchar(100) NOT NULL,
   `imagen` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `usuario`
+--
+
+INSERT INTO `usuario` (`idUsuario`, `nombre`, `apellido`, `dni`, `responsable`, `email`, `domicilio`, `codPostal`, `contraseña`, `imagen`) VALUES
+(1, 'joaquin', 'muñoz', 45802248, 1, 'joaquinemunoz04@gmail.com', 'casa', 1234, '131231231231312312312313231231231231231231231231', '');
 
 -- --------------------------------------------------------
 
@@ -180,13 +195,13 @@ ALTER TABLE `postulacion`
 -- AUTO_INCREMENT de la tabla `publicacion`
 --
 ALTER TABLE `publicacion`
-  MODIFY `idPublicacion` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `idPublicacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `idUsuario` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `idUsuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Restricciones para tablas volcadas
