@@ -1,3 +1,4 @@
+
 function mostrarMensajeError(input, mensaje) {
     input.nextElementSibling.textContent = mensaje;
     input.classList.add('is-invalid');
@@ -44,12 +45,14 @@ function validarLogin() {
 document.addEventListener("DOMContentLoaded", function() {
     document.getElementById("formRegistro").addEventListener("submit", function(event) {
         event.preventDefault();
+      
         if (validarRegistro()) {
             alert("Registro exitoso");
         }
     });
     document.getElementById("formLogin").addEventListener("submit", function(event) {
         event.preventDefault();
+       
         if (validarLogin()) {
             alert("Inicio de sesión exitoso");
         }
