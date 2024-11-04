@@ -238,7 +238,20 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
+
           <form id="formRegistro" novalidate>
+            <div class="form-group">
+              <label for="PubliNombre">Nombre Del Producto: </label>
+              <input type="text" class="form-control" id="PubliNombre" min="1" pattern="^[1-9][0-9]*$" required>
+              <div class="invalid-feedback" id="pubNombreProductoFeedback"></div>
+            </div>
+
+            <div class="form-group">
+              <label for="PubliDescripcion">Descripcion Del Producto: </label>
+              <input type="text" class="form-control" id="PubliDescripcion" min="5" max="40" pattern="^[1-9][0-9]*$" required>
+              <div class="invalid-feedback" id="pubDescripcionFeedback"></div>
+            </div>
+
             <div class="form-group">
               <label for="registroNombre">Volumen: </label>
               <select class="form-select" aria-label="registroNombre">
@@ -256,17 +269,66 @@
               <div class="invalid-feedback" id="pubPesoFeedback"></div>
             </div>
             <div class="form-group">
-                <label for="PubliOrigen">Origen:</label>
-                <input type="text" class="form-control" id="PubliOrigen" required>
-                <div class="invalid-feedback" id="pubOrigenFeedback"></div>
+              <label for="ProvinciaOrigen">Provincia de Origen: </label>
+              <select class="form-select" aria-label="ProvinciaOrigen">
+                <option selected>Selecciona la provincia</option>
+                <option value="provincia1">provincia1</option>
+                <option value="provincia2">provincia2</option>
+                <option value="provincia3">provincia3</option>
+              </select>
+
+              <div class="invalid-feedback" id="pubProvinciaOrigen"></div>
             </div>
+
             <div class="form-group">
-                <label for="PubliDestino">Destino:</label>
-                <input type="text" class="form-control" id="PubliDestino" required>
-                <div class="invalid-feedback" id="pubDestinoFeedback"></div>
+              <label for="LocalidadOrigen">Localidad de Origen: </label>
+              <select class="form-select" aria-label="LocalidadOrigen">
+                <option selected>Selecciona la localidad</option>
+                <option value="localidad1">localidad1</option>
+                <option value="localidad2">localidad3</option>
+                <option value="localidad3">localidad3</option>
+              </select>
+
+              <div class="invalid-feedback" id="pubLocalidadOrigen"></div>
             </div>
+
             <div class="form-group">
-              <label for="PubliArchivo">Inserte la foto:</label>
+                <label for="PubliDomicilio_Origen">Domicilio Origen:</label>
+                <input type="text" class="form-control" id="PubliDomicilio_Origen" required>
+                <div class="invalid-feedback" id="pubDomicilio_OrigenFeedback"></div>
+            </div>
+
+            <div class="form-group">
+              <label for="ProvinciaDestino">Provincia de Destino: </label>
+              <select class="form-select" aria-label="ProvinciaDestino">
+                <option selected>Selecciona la provincia</option>
+                <option value="provincia1">provincia1</option>
+                <option value="provincia2">provincia2</option>
+                <option value="provincia3">provincia3</option>
+              </select>
+
+              <div class="invalid-feedback" id="pubProvinciaDestino"></div>
+            </div>
+
+            <div class="form-group">
+              <label for="Localidad_Destino">Localidad de Destino: </label>
+              <select class="form-select" aria-label="Localidad_Destino">
+                <option selected>Selecciona la localidad</option>
+                <option value="localidad1">localidad1</option>
+                <option value="localidad2">localidad3</option>
+                <option value="localidad3">localidad3</option>
+              </select>
+
+              <div class="invalid-feedback" id="pubLocalidad_Destino"></div>
+            </div>
+
+            <div class="form-group">
+              <label for="PubliDomicilio_Destino">Domicilio Destino:</label>
+              <input type="text" class="form-control" id="PubliDomicilio_Destino" required>
+              <div class="invalid-feedback" id="pubDomicilio_DestinoFeedback"></div>
+          </div>
+            <div class="form-group">
+              <label for="PubliArchivo">Inserte la foto(opcional):</label>
               <input type="file" class="form-control" id="PubliArchivo" required>
               <div class="invalid-feedback" id="pubArchivoFeedback"></div>
           </div>
