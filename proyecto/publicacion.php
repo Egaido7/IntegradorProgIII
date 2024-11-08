@@ -103,7 +103,7 @@ foreach ($postulantes as $postulacion){
           
             <img
               class="user__avatar"
-              src="<?php $usuario['imagen'] ?>"
+              src="imagenes/<?php $usuario['imagen'] ?>"
               alt=""
             />
 
