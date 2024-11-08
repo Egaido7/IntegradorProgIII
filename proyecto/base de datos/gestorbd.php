@@ -120,7 +120,7 @@ class GestorVeryDeli {
         } else {
             try {
                 //reemplazar 3 por el estado que implica que la publicacion está terminada
-                $this->stmt = $this->conn->prepare("SELECT COUNT(*) FROM publicacion WHERE idUsuario = ? AND estado != 3");
+                $this->stmt = $this->conn->prepare("SELECT COUNT(*) FROM publicacion WHERE idUsuario = ? AND estado != 2");
                 $this->stmt->bind_param("i", $idUsuario);
                 $this->stmt->execute();
                 $this->stmt->bind_result($cant_publicaciones);
@@ -147,7 +147,7 @@ class GestorVeryDeli {
             try {
                 //reemplazar 3 por el estado que implica que la publicacion está terminada
                 $this->stmt = $this->conn->prepare("SELECT COUNT(*) FROM postulacion p JOIN publicacion pub
-                 ON p.idPublicacion = pub.idPublicacion WHERE p.idUsuario = ? AND pub.estado != 3");
+                 ON p.idPublicacion = pub.idPublicacion WHERE p.idUsuario = ? AND pub.estado != 2");
                 $this->stmt->bind_param("i", $idUsuario);
                 $this->stmt->execute();
                 $this->stmt->bind_result($cant_publicaciones);
@@ -303,7 +303,7 @@ class GestorVeryDeli {
 
     public function fetch_vehiculos_por_usuario($idUsuario) {
         try {
-            $this->stmt = $this->conn->prepare("SELECT * FROM vehiculos WHERE idUsuario = ?");
+            $this->stmt = $this->conn->prepare("SELECT * FROM vehiculo WHERE idUsuario = ?");
             $this->stmt->bind_param("i", $idUsuario);
             $this->stmt->execute();
             return $this->stmt->get_result()->fetch_all(MYSQLI_ASSOC);
@@ -375,6 +375,103 @@ class GestorVeryDeli {
             // Cerrar la declaración si se ha creado
             if ($this->stmt) {
                 $this->stmt->close();
+            }
+        }
+    }
+    public function insertar_postulante($id, $monto,$idPublicacion) {
+        try {
+            $this->stmt = $this->conn->prepare("INSERT INTO postulacion(idUsuario, monto, idPublicacion)
+            VALUES (?,?,?,?)");
+            $this->stmt->bind_param($id, $monto, $idPublicacion);
+            $this->stmt->execute();
+            return $this->stmt->affected_rows;
+        } catch (mysqli_sql_exception $e) {
+            throw new Exception("Error al insertar un nuevo usuario: " . $e->getMessage());
+        }
+    }
+    public function tiene_vehiculo_por_usuario($idUsuario) {
+        try {
+            // Verificar si la conexión está bien establecida
+            if (!$this->conn) {
+                throw new Exception("Error de conexión a la base de datos: " . mysqli_connect_error());
+            }
+    
+            // Preparamos la consulta SQL con COUNT(*) para optimización
+            $sql = "SELECT COUNT(*) FROM vehiculo WHERE idUsuario = ?";
+            $this->stmt = $this->conn->prepare($sql);
+            
+            // Verificamos si la consulta se preparó correctamente
+            if (!$this->stmt) {
+                throw new Exception("Error al preparar la consulta: " . $this->conn->error);
+            }
+    
+            // Vinculamos el parámetro
+            $this->stmt->bind_param("i", $idUsuario);
+            
+            // Ejecutamos la consulta
+            $this->stmt->execute();
+            
+            // Obtenemos el resultado
+            $result = $this->stmt->get_result();
+            
+            // Verificamos si el usuario tiene vehículos asociados
+            $row = $result->fetch_row();
+            if ($row[0] > 0) {
+                // Si tiene vehículos, devolvemos true
+                return true;
+            } else {
+                // Si no tiene vehículos, devolvemos false
+                return false;
+            }
+        } catch (mysqli_sql_exception $e) {
+            // Manejo de excepciones con un mensaje más descriptivo
+            throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
+        }
+    }
+    public function es_postulante($idUsuario, $idPublicacion) {
+        try {
+            // Verificar si la conexión está bien establecida
+            if (!$this->conn) {
+                throw new Exception("Error de conexión a la base de datos: " . mysqli_connect_error());
+            }
+    
+            // Preparamos la consulta SQL con COUNT(*) para optimización
+            $sql = "SELECT COUNT(*) FROM postulacion WHERE idUsuario = ? AND idPublicacion = ?";
+            $stmt = $this->conn->prepare($sql);
+            
+            // Verificamos si la consulta se preparó correctamente
+            if (!$stmt) {
+                throw new Exception("Error al preparar la consulta: " . $this->conn->error);
+            }
+    
+            // Vinculamos los parámetros
+            $stmt->bind_param("ii", $idUsuario, $idPublicacion); // Cambié $idPostulacion por $idPublicacion
+            
+            // Ejecutamos la consulta
+            $stmt->execute();
+            
+            // Obtenemos el resultado
+            $result = $stmt->get_result();
+            
+            // Verificamos si el usuario tiene postulacion en la publicacion
+            $row = $result->fetch_row();
+            
+            // Si COUNT(*) es mayor que 0, el usuario ha postulado a la publicación
+            if ($row[0] > 0) {
+                // Si tiene postulacion, devolvemos true
+                return true;
+            } else {
+                // Si no tiene postulacion, devolvemos false
+                return false;
+            }
+            
+        } catch (Exception $e) {
+            // Manejo de excepciones con un mensaje más descriptivo
+            throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
+        } finally {
+            // Cerramos la consulta preparada
+            if (isset($stmt)) {
+                $stmt->close();
             }
         }
     }

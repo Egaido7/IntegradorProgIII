@@ -8,24 +8,67 @@
     <link rel="stylesheet" href="estilos.css" />
     <link rel="stylesheet" href="estiloComentario.css" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    
 </head>
 <body>
 <?php
+session_start();
     extract($_POST);
     require 'base de datos\gestorbd.php';
     $publicacionControl = new GestorVeryDeli();
-   $publicacion = $publicacionControl->fetch_publicacion(3);
+   $publicacion = $publicacionControl->fetch_publicacion(4);
    $postulantes = $publicacionControl->fetch_postulaciones_por_publicacion($publicacion['idPublicacion']);
     if(isset($_SESSION["idUsuario"])){
     $tipo = 0;
+     //cambiar el 1 por session de la id de usuario
     }elseif(1 == $publicacion['idUsuario']){
       $tipo = 1;
-    }else{
-      $tipo=3;
-    }
-$tipo= 1
+    
+    }elseif($publicacion['postulanteElegido'] == $_SESSION["idUsuario"]){
+      $tipo = 2;
+    }elseif($publicacionControl->es_postulante(1,$publicacion['idPublicacion'])){
+      $tipo = 3;
+    }else
+    $tipo= 4;
+    
   
+
+  $error = 0;
+
+// control al postularse
+if(isset($_POST['btnpostularse']))
+{
+  $vehiculo = $publicacionControl->tiene_vehiculo_por_usuario(1);
+  $publicacionE = $publicacionControl->fetch_publicacion(4);
+$error = 0;
+if(empty($monto)){
+$errorm = "ingrese monto";
+$error = 1;
+}elseif(!$vehiculo){
+  $errorm = "debes tener almenos un vehiculo registrado para poder postularse";
+  $error = 1;
+}elseif($publicacionE['estado'] != 0 ){
+    $errorm ="la publicacion ya tiene un postulante elegido";
+    $error = 1;
+    //cambiar el 1 por session de la id de usuario
+  }elseif(!$publicacionControl->usuario_puede_postularse(1)){
+    $errorm ="debe tener el estado responsable para poder postularse a mas de 1 publicacion";
+    $error = 1;
+  }
+  else if($error==0){
+  //cambiar el 1 por la session de usuario
+    $publicacionControl->insertar_postulante(1,$monto,$publicacion['idPublicacion']);
+    $tipo = 3
     ?>
+        <script>
+        alert('success');
+  document.location.href='publicacion.php';
+        </script>
+        <?php
+ }
+}
+?>
+
       	
     <div class=" row header">
         <div class="col-3 header__left">
@@ -67,18 +110,21 @@ $tipo= 1
    <!--contenido del producto -->
     
    <div class="card d-flex flex-row flex-wrap container" style="width: 70%;">
-    <img  src="<?php $publicacion['imagenPublicacion'] ?>" class="card-img-top" alt="..." style="max-width: auto; height: 50%; flex: 1 1 auto;">
+    <img  src="<?php echo "imagenes/".$publicacion['imagenPublicacion'] ?>" class="card-img-top" alt="..." style="max-width: auto; height: 50%; flex: 1 1 auto;">
     <div class="card-body" style="flex: 1 1 300px; padding: 20px;">
-        <h5 class="card-title"><?php $publicacion['titulo'] ?></h5>
-        <p class="card-text"><?php $publicacion['otigen'] ?></p>
-        <p class="card-text"><?php $publicacion['destino'] ?>-destino</p>
-        <p class="card-text"><?php $publicacion['volumen'] ?>-volumen</p>
-        <p class="card-text"><?php $publicacion['titulo'] ?>-peso</p>
-        <p class="card-text"><?php $publicacion['descripcion'] ?>descripcion</p>
-        <p class="card-text"><?php $publicacion['contacto'] ?>-contacto</p>
-        <p class="card-text"><?php $publicacion['postulanteElegido'] ?></p>
+        <h5 class="card-title"><?php echo $publicacion['titulo'] ?></h5>
+        <p class="card-text"><?php echo $publicacion['origen'] ?></p>
+        <p class="card-text"><?php echo $publicacion['destino'] ?></p>
+        <p class="card-text"><?php echo $publicacion['volumen'] ?></p>
+        <p class="card-text"><?php echo $publicacion['titulo'] ?></p>
+        <p class="card-text"><?php echo $publicacion['descripcion'] ?></p>
+        <?php if($tipo == 2){ ?>
+        <p class="card-text"><?php echo $publicacion['contacto'] ?></p>
+        <?php }  
+        ?>
+        <p class="card-text"><?php echo $publicacion['postulanteElegido'] ?></p>
         <?php if($tipo == 3){?>
-        <a href="#" class="btn btn-primary">postularse</a>
+        <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#postulacionModal">postularse</a>
        <?php
         }elseif($tipo == 0){
 echo "inicie sesion para poder postularte";
@@ -86,7 +132,39 @@ echo "inicie sesion para poder postularte";
        ?>
     </div>
 </div>
-   
+    <!-- MODAL -->
+  <!-- MODAL Login -->
+  <div class="modal fade" id="postulacionModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="modalLabel">ingrese monto</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="formpostulacion" method="post" novalidate>
+            <div class="form-group">
+              <label for="monto">Monto:</label>
+              <input type="number" class="form-control" id="monto" name="monto"required minlength="8">
+              <div class="invalid-feedback" id="loginPwdFeedback"></div>
+            </div>
+        <?php
+        if($error == 1){
+          echo $errorm;
+        }
+              
+           ?>
+           <div class="modal-footer">
+          <button type="submit" id="btnpostularse" name="btnpostularse" class="btn btn-primary">postularse</button>
+        
+        </div>
+          </form>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+
 <?php 
 if($tipo == 1){
   ?>
@@ -103,12 +181,12 @@ foreach ($postulantes as $postulacion){
           
             <img
               class="user__avatar"
-              src="imagenes/<?php $usuario['imagen'] ?>"
+              src="imagenes/<?php echo $usuario['imagen'] ?>"
               alt=""
             />
 
-          <div><h4><?php $usuario['nombre'] ?> <?php $usuario['apellido'] ?></h4></div>
-            <div style="margin-left: 20%;"><?php $postulacion['monto'] ?></div>
+          <div><h4><?php echo $usuario['nombre'] ?> <?php $usuario['apellido'] ?></h4></div>
+            <div style="margin-left: 20%;"><?php echo$postulacion['monto'] ?>$</div>
             <div style="margin-left: 30%;"><a href="#" class="btn btn-primary">elegir</a></div>
           
 
@@ -126,8 +204,8 @@ foreach ($postulantes as $postulacion){
  ?> 
 <!-- Contenedor Principal -->
  <?php
-if($tipo == 1 || $tipo == 4){
- ?>
+if($tipo == 1 || $tipo == 2 || $tipo == 3){
+ ?>||
  <div class="card container" style=" background-color: rgb(247, 250, 250); height: auto; width: 70%;">
   
 <div class="comments-container">
@@ -160,6 +238,7 @@ if($tipo == 1 || $tipo == 4){
 <?php 
 }
 ?>
+
       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>
