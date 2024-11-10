@@ -19,29 +19,36 @@ session_start();
    $publicacion = $publicacionControl->fetch_publicacion(4);
    $postulantes = $publicacionControl->fetch_postulaciones_por_publicacion($publicacion['idPublicacion']);
    $comentarios = $publicacionControl->fetch_mensajes_por_publicacion($publicacion['idPublicacion']);
+   $id = $publicacion['idPublicacion'];
+  
+   date_default_timezone_set('America/Argentina/San_Luis');
+
     if(isset($_SESSION["idUsuario"])){
     $tipo = 0;
      //cambiar el 1 por session de la id de usuario
-    }elseif(1 == $publicacion['idUsuario']){
-      $tipo = 1;
+    }elseif(2 == $publicacion['idUsuario']){
+      $tipo = 1;//$_SESSION["idUsuario"]
     
-    }elseif($publicacion['postulanteElegido'] == $_SESSION["idUsuario"]){
+    }elseif($publicacion['postulanteElegido'] == 2){
       $tipo = 2;
     }elseif($publicacionControl->es_postulante(1,$publicacion['idPublicacion'])){
       $tipo = 3;
     }else{
     $tipo= 4;
     }
-    date_default_timezone_set('America/Argentina/San_Luis');
-
+    $tipo = 4;
+  
+ 
     // Obtener la fecha y hora actual
-    $fechaHora = date('Y-m-d H:i:s');
-    echo $fechaHora;
+    $hora = date('H:i:s');
+    $fecha = date('Y-m-d');
+    echo $fecha;
+    echo $hora;
+    
   $error = 0;
 
 // control al postularse
-if(isset($_POST['btnpostularse']))
-{
+if(isset($btnpostularse)){
   $vehiculo = $publicacionControl->tiene_vehiculo_por_usuario(1);
   $publicacionE = $publicacionControl->fetch_publicacion(4);
 $error = 0;
@@ -55,35 +62,31 @@ $error = 1;
     $errorm ="la publicacion ya tiene un postulante elegido";
     $error = 1;
     //cambiar el 1 por session de la id de usuario
-  }elseif(!$publicacionControl->usuario_puede_postularse(1)){
+  }elseif(!$publicacionControl->usuario_puede_postularse(2)){
     $errorm ="debe tener el estado responsable para poder postularse a mas de 1 publicacion";
     $error = 1;
   }
-  else if($error==0){
+  else{
   //cambiar el 1 por la session de usuario
-    $publicacionControl->insertar_postulante(1,$monto,$publicacion['idPublicacion'],0);
-    $tipo = 3
-    ?>
-        <script>
-        alert('success');
-  document.location.href='publicacion.php';
-        </script>
-        <?php
+  $monto = floatval($monto);
+    $publicacionControl->insertar_postulante(2,$monto,4,0);
+    $tipo = 4;       
  }
 }
 
 if(isset($comentarioBtn)){
- if(!isset($mensaje)){
-  date_default_timezone_set('America/Argentina/San_Luis');
-
+ 
   // Obtener la fecha y hora actual
-  $fechaHora = date('Y-m-d H:i:s');
-  $publicacionControl;
- }
+  $fecha= date('Y-m-d');
+  $hora = date('H:i:s');
+  $publicacionControl->insertar_mensaje(1,$publicacion['idPublicacion'],$mensajeA,$fecha,$hora);
+}
+
+if(isset($btnElegir)){
+$publicacionControl->actualizar_postulanteElegido($publicacion['idPublicacion'],$idElegido);
 
 }
-?>
-
+    ?>
       	
     <div class=" row header">
         <div class="col-3 header__left">
@@ -133,17 +136,26 @@ if(isset($comentarioBtn)){
         <p class="card-text"><?php echo $publicacion['volumen'] ?></p>
         <p class="card-text"><?php echo $publicacion['titulo'] ?></p>
         <p class="card-text"><?php echo $publicacion['descripcion'] ?></p>
-        <?php if($publicacion['estado']){ ?>
+        <?php if($publicacion['estado'] == 1){ 
+          $usuario = $publicacionControl->fetch_usuario_por_id($publicacion['postulanteElegido']);?>
         <p class="card-text"><?php echo $publicacion['contacto'] ?></p>
-        <p class="card-text"><?php echo $publicacion['postulanteElegido'] ?></p>
+        <p class="card-text"><?php echo $usuario['nombre']." ".$usuario['apellido'] ?></p>
         <?php }  
         ?>
         
-        <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#postulacionModal">postularse</a>
-        <?php if($tipo == 3){?>
-        <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#postulacionModal">postularse</a>
+        
+        <?php if($tipo == 4 && $publicacion['estado'] == 0){?>
+        <a href="#" class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#postulacionModal">postularse</a>
        <?php
-        }elseif($tipo == 0){
+        }
+        elseif($tipo==2){?>
+          <form action="publicacion.php" method="post">
+          <div class="modal-footer ">
+          <button class="btn btn-primary" type="submit" name="finalizado">envio finalizado</button>
+          </div> 
+          </form>
+       <?php }
+        elseif($tipo == 0){
 echo "inicie sesion para poder postularte";
         }
        ?>
@@ -162,7 +174,7 @@ echo "inicie sesion para poder postularte";
           <form id="formpostulacion" method="post" action="publicacion.php" novalidate>
             <div class="form-group">
               <label for="monto">Monto:</label>
-              <input type="number" class="form-control" id="monto" name="monto"required minlength="8">
+              <input type="number" class="form-control" id="monto" name="monto"required>
               <div class="invalid-feedback" id="loginPwdFeedback"></div>
             </div>
         <?php
@@ -183,7 +195,7 @@ echo "inicie sesion para poder postularte";
   </div>
 
 <?php 
-if($tipo == 1){
+if($tipo == 1 && $publicacion['estado'] == 0){
   ?>
 <div class="container" style="padding-top: 20px; width: 70%; margin-bottom: 20px; height: 30%; display: flex; flex-direction:column; justify-content: center;">
 <div class="scrollable-div" style="overflow-y: auto; border: 1px solid #757575; padding: 10px; border-radius: 8px; background-color: rgb(255, 255, 255);">
@@ -204,8 +216,10 @@ foreach ($postulantes as $postulacion){
 
           <div><h4><?php echo $usuario['nombre'] ?> <?php $usuario['apellido'] ?></h4></div>
             <div style="margin-left: 20%;"><?php echo$postulacion['monto'] ?>$</div>
-            <div style="margin-left: 30%;"><a href="#" class="btn btn-primary">elegir</a></div>
-          
+            <form action="publicacion.php" method="post">
+              <input type="hidden" name="idElegido" value="<?php echo $usuario['idUsuario']?>"> 
+            <div style="margin-left: 30%;"> <button type="submit" id="btnElegir" name="btnElegir" class="btn btn-primary">elegir</button></div>
+            </form>
 
       </div>
         </div>
@@ -240,7 +254,8 @@ if($tipo == 1 || $tipo == 2 || $tipo == 3){
         <!-- Contenedor del Comentario -->
         <div class="comment-box">
           <div class="comment-head">
-            <h6 class="comment-name <?php if($usuario['idUsuario'] == $publicacion['idUsuario']){echo "by-author";}?>"><a href="http://creaticode.com/blog"><?php echo $usuario['nombre'] ?></a></h6>         
+            <h6 class="comment-name <?php if($usuario['idUsuario'] == $publicacion['idUsuario']){echo "by-author";}?>"><a href="http://creaticode.com/blog"><?php echo $usuario['nombre'] ?></a></h6>
+              <span><?php echo $mensaje['fechaComentario']." ".$mensaje['hora']?></span>         
           </div>
           <div class="comment-content">
           <?php echo $mensaje['comentario']?>
@@ -254,8 +269,8 @@ if($tipo == 1 || $tipo == 2 || $tipo == 3){
   </ul>
   <form method="post" action="publicacion.php">
     <label></label><br>
-  <input type="text" id="mensaje" name="mensaje" style="width: 50%; height: 30px;">
-  <input type="button"  name="comentarioBtn"value="enviar">
+  <input type="text" id="mensajeA"  name="mensajeA" required ="width: 50%; height: 30px;">
+  <input type="submit"  name="comentarioBtn"value="enviar" >
   </form>
 </div>
 </div>

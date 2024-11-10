@@ -32,11 +32,11 @@ class GestorVeryDeli {
         }
     }
 
-    public function insertar_mensaje($idUsuario, $idPublicacion, $comentario,$fecha) {
+    public function insertar_mensaje($idUsuario, $idPublicacion, $comentario,$fecha,$hora) {
         try {
-            $this->stmt = $this->conn->prepare("INSERT INTO mensaje(idUsuario, idPublicacion, comentario,fechaComentario)
-            VALUES (?,?,?,?)");
-            $this->stmt->bind_param("iiii",$idUsuario, $idPublicacion, $comentario,$fecha);
+            $this->stmt = $this->conn->prepare("INSERT INTO mensaje(idUsuario, idPublicacion, comentario,fechaComentario,hora)
+            VALUES (?,?,?,?,?)");
+            $this->stmt->bind_param("iisss",$idUsuario, $idPublicacion, $comentario,$fecha,$hora);
             $this->stmt->execute();
             return $this->stmt->affected_rows;
         } catch (mysqli_sql_exception $e) {
@@ -198,7 +198,7 @@ class GestorVeryDeli {
                     p.peso, 
                     p.origen, 
                     p.destino, 
-                    p.imagenProducto 
+                    p.imagenPublicacion
                 FROM publicacion p
                 JOIN usuario u ON p.idUsuario = u.idUsuario
             ");
@@ -222,7 +222,7 @@ class GestorVeryDeli {
         foreach ($publicaciones as $publicacion) { ?>
             <div class="post">
                 <div class="post__top">
-                    <img class="user__avatar post__avatar" src="data:image/png;base64,<?= $publicacion['usuarioImagen'] ?>" alt="xd">
+                    <img class="user__avatar post__avatar" src="imagenes/<?php echo $publicacion['usuarioImagen'] ?>" alt="xd">
                     <div class="post__topInfo">
                         <h3><?= htmlspecialchars($publicacion['usuarioNombre'])?> <?php htmlspecialchars($publicacion['usuarioApellido']) ?></h3>
                         <p> <?= date("d M Y H:i") ?></p>
@@ -240,10 +240,10 @@ class GestorVeryDeli {
             
                 <div class="post__image">
                     <?php //Si la publicación no tiene imagen definida se muestra la imagen por defecto
-                    if(empty($publicacion['imagenProducto'])) { ?>
+                  if(isset($publicacion['imagenPublicacion'])) { ?>
                         <img src="imagenes/publicacionDefault.jpg" alt="Imagen del producto">
                     <?php } else {?>
-                        <img src="data:image/png;base64,<?=$publicacion['imagenProducto']?>" alt="Imagen del producto">
+                        <img src="imagenes/<?=$publicacion['imagenPublicacion']?>" alt="Imagen del producto">
                     <?php } ?>
                 </div>
                 <div class="post__options">
@@ -379,15 +379,29 @@ class GestorVeryDeli {
             }
         }
     }
-    public function insertar_postulante($id, $monto,$idPublicacion,$alerta) {
+    public function insertar_postulante($idUsuario, $monto,$idPublicacion, $alerta) {
         try {
-            $this->stmt = $this->conn->prepare("INSERT INTO postulacion(idUsuario, monto, idPublicacion,alerta)
-            VALUES (?,?,?,0)");
-            $this->stmt->bind_param("idii",$id, $monto, $idPublicacion,$alerta);
+            // Preparar la consulta SQL sin la columna auto-incremental
+            $sql = "INSERT INTO postulacion(idUsuario,monto,idPublicacion, alerta)
+                    VALUES (?, ?, ?,?)";
+            
+            $this->stmt = $this->conn->prepare($sql);
+            
+            // Verificar si la preparación de la consulta fue exitosa
+          
+    
+            // Enlazar los parámetros: 'i' para enteros, 'd' para float
+            $this->stmt->bind_param("idii", $idUsuario, $monto,$idPublicacion, $alerta);
+    
+            // Ejecutar la consulta
             $this->stmt->execute();
+    
+            // Retornar el número de filas afectadas
             return $this->stmt->affected_rows;
+    
         } catch (mysqli_sql_exception $e) {
-            throw new Exception("Error al insertar un nuevo usuario: " . $e->getMessage());
+            // Lanzar una excepción con el mensaje de error
+            throw new Exception("Error al insertar un nuevo postulante: " . $e->getMessage());
         }
     }
     public function tiene_vehiculo_por_usuario($idUsuario) {
@@ -474,6 +488,28 @@ class GestorVeryDeli {
             if (isset($stmt)) {
                 $stmt->close();
             }
+        }
+    }
+    public function actualizar_postulanteElegido($idPublicacion, $postulante) {
+        try {
+            // Preparar la consulta SQL para actualizar el postulante elegido
+            $this->stmt = $this->conn->prepare("UPDATE publicacion SET postulanteElegido = ?, estado = 1 WHERE idPublicacion = ?;");
+            
+            // Enlazar los parámetros: 'i' para enteros
+            $this->stmt->bind_param("ii", $postulante, $idPublicacion);
+            
+            // Ejecutar la consulta
+            $this->stmt->execute();
+            
+            // Verificar cuántas filas fueron afectadas
+            $filasAfectadas = $this->stmt->affected_rows;
+            
+            // Retornar el número de filas afectadas
+            return $filasAfectadas;
+    
+        } catch (mysqli_sql_exception $e) {
+            // Lanzar una excepción en caso de error
+            throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
         }
     }
 }
