@@ -11,6 +11,115 @@
 
   </head>
   <body>
+
+  <?php
+session_start();
+require_once 'base de datos/gestorbd.php';
+
+// Configurar la conexión a la base de datos
+$conexion = mysqli_connect('localhost', 'user_personas', '45382003', 'very_deli');
+if (!$conexion) {
+    die("Conexión fallida: " . mysqli_connect_error());
+}
+mysqli_set_charset($conexion, 'utf8mb4');
+
+// Crear una instancia de GestorVeryDely
+$gestor = new GestorVeryDeli($conexion);
+
+if (isset($_POST['btnEnviarPublicacion'])) { 
+  // Usar una ruta absoluta para la carpeta de destino
+  $carpetaDestinoAbsoluta = $_SERVER['DOCUMENT_ROOT'] . "/Integrador/IntegradorProgIII/proyecto/imagenes/";
+
+  // Verificar que la carpeta de destino exista, si no, crearla
+  if (!is_dir($carpetaDestinoAbsoluta)) {
+      mkdir($carpetaDestinoAbsoluta, 0777, true); // Crear la carpeta con permisos adecuados
+  }
+
+  // Ruta por defecto para la imagen
+  $rutaImagen = 'imagenes/publicacionDefault.jpg';
+
+  // Verificar si se subió una imagen
+  if (isset($_FILES['PubliArchivo']) && $_FILES['PubliArchivo']['error'] === UPLOAD_ERR_OK) {
+      // Crear un nombre único para la imagen
+      $nombreImagenGuardada = uniqid() . "_" . basename($_FILES['PubliArchivo']['name']);
+      $rutaFinalAbsoluta = $carpetaDestinoAbsoluta . $nombreImagenGuardada;
+
+      // Intentar mover la imagen a la carpeta de destino
+      if (move_uploaded_file($_FILES['PubliArchivo']['tmp_name'], $rutaFinalAbsoluta)) {
+          // Guardar la ruta relativa en la variable para la base de datos
+          $rutaImagen = 'imagenes/' . $nombreImagenGuardada;
+      } else {
+          echo "<script>alert('Error al mover el archivo de imagen');</script>";
+      }
+    }
+  
+
+  // Datos del formulario, escapados
+  $nombreProducto = mysqli_real_escape_string($conexion, trim($_POST['PubliNombre']));
+  $descripcionProducto = mysqli_real_escape_string($conexion, trim($_POST['PubliDescripcion']));
+  $volumenProducto = mysqli_real_escape_string($conexion, trim($_POST['PubliVolumen']));
+  $pesoProducto = mysqli_real_escape_string($conexion, trim($_POST['PubliPeso']));
+  $provinciaOrigenID = mysqli_real_escape_string($conexion, trim($_POST['ProvinciaOrigen']));
+  $provinciaDestinoID = mysqli_real_escape_string($conexion, trim($_POST['ProvinciaDestino']));
+  $localidadOrigenID = mysqli_real_escape_string($conexion, trim($_POST['LocalidadOrigen']));
+  $localidadDestinoID = mysqli_real_escape_string($conexion, trim($_POST['Localidad_Destino']));
+  $domicilioOrigen = mysqli_real_escape_string($conexion, trim($_POST['PubliDomicilio_Origen']));
+  $domicilioDestino = mysqli_real_escape_string($conexion, trim($_POST['PubliDomicilio_Destino']));
+  $nombreRecibir = mysqli_real_escape_string($conexion, trim($_POST['PubliRecibir']));
+  $nombreContacto = mysqli_real_escape_string($conexion, trim($_POST['PubliContacto']));
+
+  // Consultas para obtener el nombre de la provincia y localidad
+  $consultaProvinciaOrigen = "SELECT nombreProvincia FROM provincia WHERE idProvincia = '$provinciaOrigenID'";
+  $provinciaOrigen = mysqli_fetch_assoc(mysqli_query($conexion, $consultaProvinciaOrigen))['nombreProvincia'];
+
+  $consultaProvinciaDestino = "SELECT nombreProvincia FROM provincia WHERE idProvincia = '$provinciaDestinoID'";
+  $provinciaDestino = mysqli_fetch_assoc(mysqli_query($conexion, $consultaProvinciaDestino))['nombreProvincia'];
+
+  $consultaLocalidadOrigen = "SELECT Nombrelocalidad FROM localidad WHERE idLocalidad = '$localidadOrigenID'";
+  $localidadOrigen = mysqli_fetch_assoc(mysqli_query($conexion, $consultaLocalidadOrigen))['Nombrelocalidad'];
+
+  $consultaLocalidadDestino = "SELECT Nombrelocalidad FROM localidad WHERE idLocalidad = '$localidadDestinoID'";
+  $localidadDestino = mysqli_fetch_assoc(mysqli_query($conexion, $consultaLocalidadDestino))['Nombrelocalidad'];
+
+  // Guardar la publicación
+  try {
+      $idUsuario = $_SESSION['id'];
+      $fechaPublicacion = date('Y-m-d');
+      $resultado = $gestor->insertar_publicacion(
+          $idUsuario,
+          $volumenProducto,
+          $pesoProducto,
+          $provinciaOrigen, // Guarda el nombre de la provincia
+          $provinciaDestino, // Guarda el nombre de la provincia
+          $fechaPublicacion,
+          $rutaImagen,
+          $descripcionProducto,
+          $nombreRecibir,
+          $nombreContacto,
+          $nombreProducto,
+          $localidadOrigen, // Guarda el nombre de la localidad
+          $localidadDestino, // Guarda el nombre de la localidad
+          $domicilioOrigen,
+          $domicilioDestino
+      );
+
+      if ($resultado > 0) {
+          echo "<script>console.log('Publicación insertada exitosamente');</script>";
+      } else {
+          echo "<script>console.log('Error al insertar la publicación');</script>";
+          echo mysqli_error($conexion);
+      }
+  } catch (Exception $e) {
+      echo "<script>alert('Error: " . $e->getMessage() . "');</script>";
+  }
+}
+
+mysqli_close($conexion);
+?>
+
+
+
+
     <!-- header starts -->
     <div class="header">
       <div class="header__left">
@@ -216,23 +325,23 @@
         </div>
         <div class="modal-body">
 
-          <form id="FormPublicacion" method = "POST" ACTION = "" novalidate>
+          <form id="FormPublicacion" method = "POST" ACTION = "index.php" enctype="multipart/form-data">
             <div class="form-group">
               <label for="PubliNombre">Nombre Del Producto: </label>
-              <input type="text" class="form-control" id="PubliNombre" min="1" pattern="^[1-9][0-9]*$" required>
+              <input type="text" class="form-control" name = "PubliNombre" id="PubliNombre" min="1" pattern="^[a-zA-Z0-9\s]{4,}$" required title= "Nombre debe ser mayor a 5 caracteres sin caracteres especiales" >
               <div class="invalid-feedback" id="pubNombreProductoFeedback"></div>
             </div>
 
             <div class="form-group">
               <label for="PubliDescripcion">Descripcion Del Producto: </label>
-              <input type="text" class="form-control" id="PubliDescripcion" min="5" max="40" pattern="^[1-9][0-9]*$" required>
+              <input type="text" class="form-control" name = "PubliDescripcion" id="PubliDescripcion" min="5" max="40" pattern="^[a-zA-Z0-9\s]{5,}$" required title = "Descripción debe ser mayor a 5 caracteres">
               <div class="invalid-feedback" id="pubDescripcionFeedback"></div>
             </div>
 
             <div class="form-group">
               <label for="PubliVolumen">Volumen: </label>
-              <select class="form-select" aria-label="PubliVolumen">
-                <option selected>Elegi el volumen de tu paquete</option>
+              <select class="form-select" aria-label="PubliVolumen" name = "PubliVolumen" id ="PubliVolumen" required title = "se debe seleccionar una opcion">
+                <option value = "">Elegi el volumen de tu paquete</option>
                 <option value="10">Chico (hasta 10kg)</option>
                 <option value="100">Mediano (hasta 100kg)</option>
                 <option value="1000">Grande (hasta 1000kg)</option>
@@ -242,13 +351,13 @@
             </div>
             <div class="form-group">
               <label for="PubliPeso">Peso: </label>
-              <input type="number" class="form-control" id="PubliPeso" min="1" pattern="^[1-9][0-9]*$" required>
+              <input type="number" class="form-control" name = "PubliPeso" id="PubliPeso" min="1" pattern="^[1-9][0-9]*$" title = "el peso debe ser un numero postivo"required>
               <div class="invalid-feedback" id="pubPesoFeedback"></div>
             </div>
             <div class="form-group">
               <label for="ProvinciaOrigen">Provincia de Origen: </label>
-              <select class="form-select" aria-label="ProvinciaOrigen" id="ProvinciaOrigen" required>
-                <option selected>Selecciona la provincia</option>
+              <select class="form-select" aria-label="ProvinciaOrigen" name = "ProvinciaOrigen" id="ProvinciaOrigen" required>
+                <option value= "" >Selecciona la provincia</option>
                 <?php
             $conexion = mysqli_connect('localhost', 'user_personas', '45382003','very_deli');
            if (!$conexion) {
@@ -271,11 +380,8 @@
 
             <div class="form-group">
               <label for="LocalidadOrigen">Localidad de Origen: </label>
-              <select class="form-select" aria-label="LocalidadOrigen" id="LocalidadOrigen">
-                <option selected>Selecciona la localidad</option>
-                <option value="localidad1">localidad1</option>
-                <option value="localidad2">localidad3</option>
-                <option value="localidad3">localidad3</option>
+              <select class="form-select" aria-label="LocalidadOrigen" name = "LocalidadOrigen" id="LocalidadOrigen" required title ="debe seleccionar una opcion valida">
+                <option value= "" >Selecciona la localidad</option>
               </select>
 
               <div class="invalid-feedback" id="pubLocalidadOrigen"></div>
@@ -283,14 +389,14 @@
 
             <div class="form-group">
                 <label for="PubliDomicilio_Origen">Domicilio Origen:</label>
-                <input type="text" class="form-control" id="PubliDomicilio_Origen" required>
+                <input type="text" class="form-control" name = "PubliDomicilio_Origen" id="PubliDomicilio_Origen" pattern = "^[a-zA-Z0-9\s]{5,}$" title ="Domicilio de origen debe tener letras y números, mínimo 5 caracteres" required>
                 <div class="invalid-feedback" id="pubDomicilio_OrigenFeedback"></div>
             </div>
 
             <div class="form-group">
               <label for="ProvinciaDestino">Provincia de Destino: </label>
-              <select class="form-select" aria-label="ProvinciaDestino" id = "ProvinciaDestino">
-                <option selected>Selecciona la provincia</option>
+              <select class="form-select" aria-label="ProvinciaDestino" name = "ProvinciaDestino" id = "ProvinciaDestino" required title = "debe seleccionar una opcion valida">
+                <option value = "">Selecciona la provincia</option>
                 <?php
                 
             // Configurar la conexión para usar UTF-8
@@ -309,11 +415,8 @@
 
             <div class="form-group">
               <label for="Localidad_Destino">Localidad de Destino: </label>
-              <select class="form-select" aria-label="Localidad_Destino" id="Localidad_Destino">
-                <option selected>Selecciona la localidad</option>
-                <option value="localidad1">localidad1</option>
-                <option value="localidad2">localidad3</option>
-                <option value="localidad3">localidad3</option>
+              <select class="form-select" aria-label="Localidad_Destino" name = "Localidad_Destino" id="Localidad_Destino" required title = "debe seleccionar una opcion valida">
+                <option value= "">Selecciona la localidad</option>
               </select>
 
               <div class="invalid-feedback" id="pubLocalidad_Destino"></div>
@@ -321,17 +424,31 @@
 
             <div class="form-group">
               <label for="PubliDomicilio_Destino">Domicilio Destino:</label>
-              <input type="text" class="form-control" id="PubliDomicilio_Destino" required>
+              <input type="text" class="form-control" name = "PubliDomicilio_Destino" id="PubliDomicilio_Destino" required pattern = "^[a-zA-Z0-9\s]{5,}$" title = "Domicilio de destino debe tener letras y números, mínimo 5 caracteres">
               <div class="invalid-feedback" id="pubDomicilio_DestinoFeedback"></div>
           </div>
-            <div class="form-group">
+           
+
+          <div class="form-group">
+              <label for="PubliRecibir">Nombre de persona a recibir el paquete:</label>
+              <input type="text" class="form-control" name = "PubliRecibir" id="PubliRecibir" required pattern = "^[a-zA-Z\s]{5,}$" title = "El nombre de la persona debe tener letras solamente, mínimo 5 caracteres">
+              <div class="invalid-feedback" id="pubRecibir_Feedback"></div>
+          </div>
+          <div class="form-group">
+              <label for="PubliContacto">telefono de persona a recibir el paquete:</label>
+              <input type="text" class="form-control" name = "PubliContacto" id="PubliContacto" required pattern = "^[0-9]{9,13}$" title = "El telefono de la persona debe tener numeros solamente, entre 10 y 12 numeros">
+              <div class="invalid-feedback" id="pubRecibir_Feedback"></div>
+          </div>
+
+
+          <div class="form-group">
               <label for="PubliArchivo">Inserte la foto(opcional):</label>
-              <input type="file" class="form-control" id="PubliArchivo" required>
-              <div class="invalid-feedback" id="pubArchivoFeedback"></div>
+              <input type="file" class="form-control"  name = "PubliArchivo" id="PubliArchivo">
+              <div class="invalid-feedback" name = "pubArchivoFeedback" id="pubArchivoFeedback"></div>
           </div>
             
           <div class="modal-footer">
-            <button type="submit" id="btnEnviarPublicacion" class="btn btn-primary" >Publicar</button>
+            <input type="submit" name ="btnEnviarPublicacion" id="btnEnviarPublicacion" class="btn btn-primary"  value = "Publicar">
           </div>
         </form>
         </div>
@@ -349,18 +466,21 @@
       nonce="zUxEq08J"
     ></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <script src="validarPublicacion.js" defer></script>
+    
     <script>
 document.addEventListener("DOMContentLoaded", function () {
-    const selectProvincia = document.getElementById("ProvinciaOrigen");
-    const selectLocalidad = document.getElementById("LocalidadOrigen");
-    
+    const selectProvinciaOrigen = document.getElementById("ProvinciaOrigen");
+    const selectLocalidadOrigen = document.getElementById("LocalidadOrigen");
 
-    selectProvincia.addEventListener("change", function () {
-        const idProvincia = selectProvincia.value;
+    const selectProvinciaDestino = document.getElementById("ProvinciaDestino");
+    const selectLocalidadDestino = document.getElementById("Localidad_Destino");
 
-        // Limpia las opciones actuales de localidad
-        selectLocalidad.innerHTML = "<option selected>Selecciona la localidad</option>";
+    // Configuración de localidades de origen
+    selectProvinciaOrigen.addEventListener("change", function () {
+        const idProvincia = selectProvinciaOrigen.value;
+
+        // Limpia y establece la opción predeterminada
+        selectLocalidadOrigen.innerHTML = '<option value="" selected disabled>Selecciona la localidad</option>';
 
         if (idProvincia) {
             fetch(`getLocalidades.php?idProvincia=${idProvincia}`)
@@ -370,13 +490,37 @@ document.addEventListener("DOMContentLoaded", function () {
                         const option = document.createElement("option");
                         option.value = localidad.idLocalidad;
                         option.textContent = localidad.Nombrelocalidad;
-                        selectLocalidad.appendChild(option);
+                        selectLocalidadOrigen.appendChild(option);
+                    });
+                })
+                .catch(error => console.error("Error al cargar localidades:", error));
+        }
+    });
+
+    // Configuración de localidades de destino
+    selectProvinciaDestino.addEventListener("change", function () {
+        const idProvincia = selectProvinciaDestino.value;
+
+        // Limpia y establece la opción predeterminada
+        selectLocalidadDestino.innerHTML = '<option value="" selected disabled>Selecciona la localidad</option>';
+
+        if (idProvincia) {
+            fetch(`getLocalidades.php?idProvincia=${idProvincia}`)
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(localidad => {
+                        const option = document.createElement("option");
+                        option.value = localidad.idLocalidad;
+                        option.textContent = localidad.Nombrelocalidad;
+                        selectLocalidadDestino.appendChild(option);
                     });
                 })
                 .catch(error => console.error("Error al cargar localidades:", error));
         }
     });
 });
+
 </script>
+
   </body>
 </html>

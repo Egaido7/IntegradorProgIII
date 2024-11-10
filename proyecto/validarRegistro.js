@@ -64,42 +64,6 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 
-//VALIDACION PARA FORMULARIO DE REGISTRO
-// Función para cerrar el modal usando Bootstrap si la validación es exitosa
-function cerrarModalPublicacion() {
-    const modalElement = document.getElementById('publicarModal');
-    const modal = bootstrap.Modal.getInstance(modalElement);
-    modal.hide();
-}
 
-// Función para mostrar mensaje de error
-function mostrarMensajeError(input, mensaje) {
-    if (input) {
-        input.nextElementSibling.textContent = mensaje;
-        input.classList.add('is-invalid');
-    }
-}
-
-// Función para limpiar mensaje de error
-function limpiarMensajeError(input) {
-    if (input) {
-        input.classList.remove('is-invalid');
-    }
-}
-
-// Función de validación de campo con comprobación de existencia de input
-function validarCampo(input, mensaje, pattern = null) {
-    if (input && !input.value.trim()) {
-        mostrarMensajeError(input, mensaje);
-        return false;
-    } else if (input && pattern && !pattern.test(input.value)) {
-        mostrarMensajeError(input, mensaje);
-        return false;
-    } else if (input) {
-        limpiarMensajeError(input);
-        return true;
-    }
-    return false;
-}
 
 

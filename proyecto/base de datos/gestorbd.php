@@ -20,18 +20,25 @@ class GestorVeryDeli {
         }
     }
 
-    public function insertar_publicacion($idPublicacion, $idUsuario, $volumen, $peso, $origen, $destino) {
+    public function insertar_publicacion($idUsuario, $volumenProducto, $pesoProducto, $provinciaOrigen, $provinciaDestino, $fechaPublicacion, $imagen, $descripcionProducto, $nombreRecibir, $nombreContacto, $nombreProducto, $localidadOrigen, $localidadDestino, $domicilioOrigen, $domicilioDestino) {
         try {
-            $this->stmt = $this->conn->prepare("INSERT INTO publicacion(idPublicacion, idUsuario, volumen, peso, origen, destino)
-            VALUES (?,?,?,?,?,?)");
-            $this->stmt->bind_param($idPublicacion, $idUsuario, $volumen, $peso, $origen, $destino);
+            // Preparar la sentencia SQL sin el campo de autoincremento `idPublicacion`
+            $this->stmt = $this->conn->prepare("INSERT INTO publicacion(idUsuario, volumen, peso, provinciaOrigen, provinciaDestino, fechaPublicacion, imagenPublicacion, descripcion, nombreRecibir, contacto, titulo, localidadOrigen, localidadDestino, domicilioOrigen, domicilioDestino) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+    
+            // Definir tipos de parámetros: 'i' para integer, 'd' para double, 's' para string
+            $this->stmt->bind_param("iddssssssssssss", $idUsuario, $volumenProducto, $pesoProducto, $provinciaOrigen, $provinciaDestino, $fechaPublicacion, $imagen, $descripcionProducto, $nombreRecibir, $nombreContacto, $nombreProducto, $localidadOrigen, $localidadDestino, $domicilioOrigen, $domicilioDestino);
+    
+            // Ejecutar la consulta
             $this->stmt->execute();
+    
+            // Retornar el número de filas afectadas
             return $this->stmt->affected_rows;
         } catch (mysqli_sql_exception $e) {
-            throw new Exception("Error al insertar un nuevo usuario: " . $e->getMessage());
+            // Manejo de errores
+            throw new Exception("Error al insertar una nueva publicación: " . $e->getMessage());
         }
     }
-
+    
     public function insertar_mensaje($idUsuario, $idPublicacion, $comentario,$fecha,$hora) {
         try {
             $this->stmt = $this->conn->prepare("INSERT INTO mensaje(idUsuario, idPublicacion, comentario,fechaComentario,hora)
@@ -196,9 +203,11 @@ class GestorVeryDeli {
                     u.apellido AS usuarioApellido, 
                     p.volumen, 
                     p.peso, 
-                    p.origen, 
-                    p.destino, 
-                    p.imagenPublicacion
+                    p.Provinciaorigen, 
+                    p.Provinciadestino, 
+                    p.imagenPublicacion,
+                    p.titulo,
+                    p.descripcion
                 FROM publicacion p
                 JOIN usuario u ON p.idUsuario = u.idUsuario
             ");
@@ -231,19 +240,21 @@ class GestorVeryDeli {
 
             
                 <div class="post__details">
+                <p>nombre de producto: <?= htmlspecialchars($publicacion['titulo']) ?></p>
+                <p>Descripcion: <?= htmlspecialchars($publicacion['descripcion']) ?></p>
                     <p>Volumen: <?= htmlspecialchars($publicacion['volumen']) ?> m³</p>
                     <p>Peso: <?= htmlspecialchars($publicacion['peso']) ?> kg</p>
-                    <p>Origen: <?= htmlspecialchars($publicacion['origen']) ?></p>
-                    <p>Destino: <?= htmlspecialchars($publicacion['destino']) ?></p>
+                    <p>Origen: <?= htmlspecialchars($publicacion['Provinciaorigen']) ?></p>
+                    <p>Destino: <?= htmlspecialchars($publicacion['Provinciadestino']) ?></p>
                 </div>
 
             
                 <div class="post__image">
                     <?php //Si la publicación no tiene imagen definida se muestra la imagen por defecto
-                  if(isset($publicacion['imagenPublicacion'])) { ?>
+                  if(!isset($publicacion['imagenPublicacion'])) { ?>
                         <img src="imagenes/publicacionDefault.jpg" alt="Imagen del producto">
                     <?php } else {?>
-                        <img src="imagenes/<?=$publicacion['imagenPublicacion']?>" alt="Imagen del producto">
+                        <img src="<?=$publicacion['imagenPublicacion']?>" alt="Imagen del producto">
                     <?php } ?>
                 </div>
                 <div class="post__options">

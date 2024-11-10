@@ -123,109 +123,11 @@ session_start(); // Inicia la sesión al comienzo del script
         $publicacionController = new GestorVeryDeli();
         $publicacionController->mostrar_publicaciones();
         ?>
-        <div class="post__top">
-          <img
-            class="user__avatar post__avatar"
-            src = "";
-            alt="" />
-          <div class="post__topInfo">
-            <h3>Somanath Goudar</h3>
-            <p>25 April at 20:30</p>
-          </div>
-        </div>
-
-        <div class="post__bottom">
-          <p>Message</p>
-        </div>
-
-        <div class="post__image">
-          <img
-          src = "";
-            alt="" />
-        </div>
-
-        <div class="post__options">
-
-          <div class="post__option">
-            <span class="material-icons"> chat_bubble_outline </span>
-            <p>Postularse</p>
-          </div>
-
-          <div class="post__option">
-            <span class="material-icons"> near_me </span>
-            <p>Compartir</p>
-          </div>
-        </div>
+        
+       
       </div>
       <!-- post ends -->
 
-      <!-- post starts -->
-      <div class="post">
-        <div class="post__top">
-          <img
-            class="user__avatar post__avatar"
-            src = "";
-            alt="" />
-          <div class="post__topInfo">
-            <h3>Somanath Goudar</h3>
-            <p>25 April at 20:30</p>
-          </div>
-        </div>
-
-        <div class="post__bottom">
-          <p>Post Without Image</p>
-        </div>
-
-        <div class="post__options">
-
-          <div class="post__option">
-            <span class="material-icons"> chat_bubble_outline </span>
-            <p>Postularse</p>
-          </div>
-
-          <div class="post__option">
-            <span class="material-icons"> near_me </span>
-            <p>Compartir</p>
-          </div>
-        </div>
-      </div>
-      <!-- post ends -->
-
-      <!-- post starts -->
-      <div class="post">
-        <div class="post__top">
-          <img
-            class="user__avatar post__avatar"
-            src = "";
-            alt="" />
-          <div class="post__topInfo">
-            <h3>Somanath Goudar</h3>
-            <p>25 April at 20:30</p>
-          </div>
-        </div>
-
-        <div class="post__bottom">
-          <p>Message</p>
-        </div>
-
-        <div class="post__image">
-          <img src="https://wallpapercave.com/wp/wp7357832.jpg" alt="" />
-        </div>
-
-        <div class="post__options">
-
-          <div class="post__option">
-            <span class="material-icons"> chat_bubble_outline </span>
-            <p>Postularse</p>
-          </div>
-
-          <div class="post__option">
-            <span class="material-icons"> near_me </span>
-            <p>Compartir</p>
-          </div>
-        </div>
-      </div>
-      <!-- post ends -->
     </div>
     <!-- feed ends -->
 
