@@ -160,11 +160,11 @@ exit(); // Asegura que se detenga el procesamiento adicional
    <!--contenido del producto -->
     
    <div class="card d-flex flex-row flex-wrap container" style="width: 70%;">
-    <img  src="<?php echo "imagenes/".$publicacion['imagenPublicacion'] ?>" class="card-img-top" alt="..." style="max-width: auto; height: 50%; flex: 1 1 auto;">
+    <img  src="imagenes/<?php echo $publicacion['usuarioImagen'] ?>" class="card-img-top" alt="..." style="max-width: auto; height: 50%; flex: 1 1 auto;">
     <div class="card-body" style="flex: 1 1 300px; padding: 20px;">
        <class="card-title"><h1><?php echo $publicacion['titulo'] ?></h1>
-        <p class="card-text">Origen: <?php echo $publicacion['origen'] ?></p>
-        <p class="card-text">destino <?php echo $publicacion['destino'] ?>kg</p>
+        <p class="card-text">Origen: <?php echo $publicacion['Provinciaorigen'] ?></p>
+        <p class="card-text">destino <?php echo $publicacion['Provinciadestino'] ?></p>
         <p class="card-text">Peso: <?php echo $publicacion['peso'] ?>kg</p>
         <p class="card-text">Volumen: <?php echo $publicacion['volumen'] ?></p>
         <p class="card-text"><?php echo $publicacion['descripcion'] ?></p>

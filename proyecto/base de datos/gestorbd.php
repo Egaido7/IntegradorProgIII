@@ -172,10 +172,10 @@ class GestorVeryDeli {
         }
     }
 
-    public function fetch_publicaciones_por_origen($origen) {
+    public function fetch_publicaciones_por_origen($Provinciaorigen) {
         try {
             $this->stmt = $this->conn->prepare("SELECT * FROM publicacion WHERE origen = ?");
-            $this->stmt->bind_param("s", $origen);
+            $this->stmt->bind_param("s", $Provinciaorigen);
             $this->stmt->execute();
             return $this->stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         } catch (mysqli_sql_exception $e) {
@@ -355,8 +355,8 @@ class GestorVeryDeli {
                     u.apellido AS usuarioApellido, 
                     p.volumen, 
                     p.peso, 
-                    p.origen, 
-                    p.destino, 
+                    p.Provinciaorigen, 
+                    p.Provinciadestino, 
                     p.idPublicacion,
                     p.idUsuario,
                     p.descripcion,
