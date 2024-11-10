@@ -8,11 +8,11 @@ class GestorVeryDeli {
         $this->conn = $conexion;
     }
 
-    public function insertar_usuario($id, $nombre, $apellido, $dni, $resp, $email, $domicilio, $codPostal, $pwd, $img) {
+    public function insertar_usuario($nombre, $apellido, $dni, $email, $pwd) {
         try {
-            $this->stmt = $this->conn->prepare("INSERT INTO usuario(idUsuario, nombre, apellido, dni, responsable,
-            email, domicilio, codPostal, contraseña, imagen) VALUES (?,?,?,?,?,?,?,?,?,?)");
-            $this->stmt->bind_param($id, $nombre, $apellido, $dni, $resp, $email, $domicilio, $codPostal, $pwd, $img);
+            $this->stmt = $this->conn->prepare("INSERT INTO usuario(nombre, apellido, dni, 
+            email, contraseña) VALUES (?,?,?,?,?)");
+            $this->stmt->bind_param("ssiss", $nombre, $apellido, $dni, $email, $pwd);
             $this->stmt->execute();
             return $this->stmt->affected_rows;
         } catch (mysqli_sql_exception $e) {
@@ -509,6 +509,33 @@ class GestorVeryDeli {
     
         } catch (mysqli_sql_exception $e) {
             // Lanzar una excepción en caso de error
+            throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
+        }
+    }
+
+    public function usuario_yaExiste($email) {
+        try {
+            $this->stmt = $this->conn->prepare("SELECT email FROM usuario WHERE email = ?");
+            $this->stmt->bind_param("s", $email);
+            $this->stmt->execute();
+            return $this->stmt->num_rows() > 0;
+        } catch (mysqli_sql_exception $e) {
+            throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
+        }
+    }
+
+    //Retorna el ID autoincremental generado en la última consulta
+    public function fetch_insert_id() {
+        return $this->conn->insert_id;
+    }
+
+    public function verificar_credenciales_usuario($email, $pwd) {
+        try {
+            $this->stmt = $this->conn->prepare("SELECT idUsuario FROM usuario WHERE email = ? AND contraseña = ?");
+            $this->stmt->bind_param("ss", $email, $pwd);
+            $this->stmt->execute();
+            return $this->stmt->get_result();
+        } catch (mysqli_sql_exception $e) {
             throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
         }
     }
