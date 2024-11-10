@@ -1,4 +1,26 @@
 // Validaciones específicas para el formulario de publicación
+function mostrarMensajeError(input, mensaje) {
+    input.nextElementSibling.textContent = mensaje;
+    input.classList.add('is-invalid');
+}
+
+function limpiarMensajeError(input) {
+    input.classList.remove('is-invalid');
+    input.nextElementSibling.textContent = '';
+}
+
+function validarCampo(input, mensaje, pattern = null) {
+    if (!input.value.trim()) {
+        mostrarMensajeError(input, mensaje);
+        return false;
+    } else if (pattern && !pattern.test(input.value)) {
+        mostrarMensajeError(input, mensaje);
+        return false;
+    } else {
+        limpiarMensajeError(input);
+        return true;
+    }
+}
 function validarPublicacion() {
     const nombreProducto = document.getElementById("PubliNombre");
     const descripcionProducto = document.getElementById("PubliDescripcion");

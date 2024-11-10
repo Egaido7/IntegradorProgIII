@@ -247,7 +247,7 @@
             </div>
             <div class="form-group">
               <label for="ProvinciaOrigen">Provincia de Origen: </label>
-              <select class="form-select" aria-label="ProvinciaOrigen" required>
+              <select class="form-select" aria-label="ProvinciaOrigen" id="ProvinciaOrigen" required>
                 <option selected>Selecciona la provincia</option>
                 <?php
             $conexion = mysqli_connect('localhost', 'user_personas', '45382003','very_deli');
@@ -271,7 +271,7 @@
 
             <div class="form-group">
               <label for="LocalidadOrigen">Localidad de Origen: </label>
-              <select class="form-select" aria-label="LocalidadOrigen">
+              <select class="form-select" aria-label="LocalidadOrigen" id="LocalidadOrigen">
                 <option selected>Selecciona la localidad</option>
                 <option value="localidad1">localidad1</option>
                 <option value="localidad2">localidad3</option>
@@ -289,11 +289,19 @@
 
             <div class="form-group">
               <label for="ProvinciaDestino">Provincia de Destino: </label>
-              <select class="form-select" aria-label="ProvinciaDestino">
+              <select class="form-select" aria-label="ProvinciaDestino" id = "ProvinciaDestino">
                 <option selected>Selecciona la provincia</option>
-                <option value="provincia1">provincia1</option>
-                <option value="provincia2">provincia2</option>
-                <option value="provincia3">provincia3</option>
+                <?php
+                
+            // Configurar la conexión para usar UTF-8
+            mysqli_set_charset($conexion, 'utf8mb4');
+            $consul = "SELECT nombreProvincia, idProvincia FROM provincia";
+           $resultado = mysqli_query($conexion,$consul);
+
+           while($row = mysqli_fetch_assoc($resultado)){   
+           echo "<option value= '{$row['idProvincia']}'> {$row['nombreProvincia']} </option>";
+         }
+                ?>
               </select>
 
               <div class="invalid-feedback" id="pubProvinciaDestino"></div>
@@ -301,7 +309,7 @@
 
             <div class="form-group">
               <label for="Localidad_Destino">Localidad de Destino: </label>
-              <select class="form-select" aria-label="Localidad_Destino">
+              <select class="form-select" aria-label="Localidad_Destino" id="Localidad_Destino">
                 <option selected>Selecciona la localidad</option>
                 <option value="localidad1">localidad1</option>
                 <option value="localidad2">localidad3</option>
@@ -341,6 +349,34 @@
       nonce="zUxEq08J"
     ></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <script src="validarRegistro.js" defer></script>
+    <script src="validarPublicacion.js" defer></script>
+    <script>
+document.addEventListener("DOMContentLoaded", function () {
+    const selectProvincia = document.getElementById("ProvinciaOrigen");
+    const selectLocalidad = document.getElementById("LocalidadOrigen");
+    
+
+    selectProvincia.addEventListener("change", function () {
+        const idProvincia = selectProvincia.value;
+
+        // Limpia las opciones actuales de localidad
+        selectLocalidad.innerHTML = "<option selected>Selecciona la localidad</option>";
+
+        if (idProvincia) {
+            fetch(`getLocalidades.php?idProvincia=${idProvincia}`)
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(localidad => {
+                        const option = document.createElement("option");
+                        option.value = localidad.idLocalidad;
+                        option.textContent = localidad.Nombrelocalidad;
+                        selectLocalidad.appendChild(option);
+                    });
+                })
+                .catch(error => console.error("Error al cargar localidades:", error));
+        }
+    });
+});
+</script>
   </body>
 </html>
