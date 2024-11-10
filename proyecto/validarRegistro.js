@@ -101,3 +101,5 @@ function validarCampo(input, mensaje, pattern = null) {
     }
     return false;
 }
+
+
