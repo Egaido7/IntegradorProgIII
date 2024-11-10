@@ -272,7 +272,7 @@ foreach ($postulantes as $postulacion){
 </form>
 <?php }else{
 
-  
+
 }?>
 
 </div>

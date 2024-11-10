@@ -99,6 +99,24 @@
     display: none;
 }
 
+.btn-primary {
+    background-color: #52b04c;
+    color: #eff2f5;
+    border: none;
+    border-radius: 20px; /* Bordes redondeados */
+    padding: 10px 20px; /* Espacio alrededor del texto */
+    transition: background-color 0.3s ease, color 0.3s ease;
+    font-size: 16px; /* Ajusta el tamaño del texto si es necesario */
+}
+
+.btn-primary:hover, 
+.btn-primary:focus, 
+.btn-primary:active {
+    background-color: #eff2f5;
+    color: #52b04c;
+    border: none;
+}
+
 /* sidebar  */
 
 .sidebarRow {
