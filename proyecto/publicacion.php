@@ -4,21 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" href="estilos.css" />
-    <link rel="stylesheet" href="estiloComentario.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="estilos.css"/>
+    <link rel="stylesheet" href="estiloComentario.css"/>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     
 </head>
 <body>
 <?php
 session_start();
     extract($_POST);
+     
     require 'base de datos\gestorbd.php';
     $publicacionControl = new GestorVeryDeli();
    $publicacion = $publicacionControl->fetch_publicacion(4);
    $postulantes = $publicacionControl->fetch_postulaciones_por_publicacion($publicacion['idPublicacion']);
    $comentarios = $publicacionControl->fetch_mensajes_por_publicacion($publicacion['idPublicacion']);
+    
    $id = $publicacion['idPublicacion'];
   
    date_default_timezone_set('America/Argentina/San_Luis');
@@ -36,40 +39,48 @@ session_start();
     }else{
     $tipo= 4;
     }
+    $control = 0;
+
+if($publicacion['estado'] > 1){
+  $control = 1;
+}
     $tipo = 3;
-  $insertar =0 ;
- if($insertar == 1){
-  $publicacionControl->insertar_postulante(2,$monto,4,0);
- }
-    $tipo = 1;
   $error = 0;
 
 // control al postularse
-if(isset($btnpostularse)){
+if (isset($btnpostularse)) {
   $vehiculo = $publicacionControl->tiene_vehiculo_por_usuario(1);
   $publicacionE = $publicacionControl->fetch_publicacion(4);
-$error = 0;
-if(empty($monto)){
-$errorm = "ingrese monto";
-$error = 1;
-}elseif(!$vehiculo){
-  $errorm = "debes tener almenos un vehiculo registrado para poder postularse";
-  $error = 1;
-}elseif($publicacionE['estado'] != 0 ){
-    $errorm ="la publicacion ya tiene un postulante elegido";
-    $error = 1;
-    //cambiar el 1 por session de la id de usuario
-  }elseif(!$publicacionControl->usuario_puede_postularse(2)){
-    $errorm ="debe tener el estado responsable para poder postularse a mas de 1 publicacion";
-    $error = 1;
+  $error = 0;
+
+  if (empty($monto)) {
+      $errorm = "Ingrese monto";
+      $error = 1;
+  } elseif (!$vehiculo) {
+      $errorm = "Debes tener al menos un vehículo registrado para poder postularse";
+      $error = 1;
+  } elseif ($publicacionE['estado'] != 0) {
+      $errorm = "La publicación ya tiene un postulante elegido";
+      $error = 1;
+  } elseif (!$publicacionControl->usuario_puede_postularse(1)) {
+      $errorm = "Debe tener el estado responsable para poder postularse a más de una publicación";
+      $error = 1;
+  } else {
+      // No hay errores; redirigir a insertar_postulante.php
+
+      //  Usar sesión para pasar los datos
+      $_SESSION['id'] = $publicacion['idPublicacion'];
+      $_SESSION['monto'] = floatval($monto);
+      $_SESSION['usuario_id'] = 2;  // Cambiar 2 por el ID de usuario real
+      $_SESSION['publicacion_id'] = 4; // Cambiar 4 por el ID de publicación real
+      $_SESSION['estado'] = 0;
+
+      // Redirige a insertar_postulante.php
+      header("Location: insertar_postulante.php");
+      exit();
   }
-  else{
-  //cambiar el 1 por la session de usuario
-  $monto = floatval($monto);
-  $publicacionControl->insertar_postulante(2,$monto,4,0);
-    $tipo = 4;       
- }
 }
+
 
 if(isset($comentarioBtn)){
  
@@ -77,11 +88,16 @@ if(isset($comentarioBtn)){
   $fecha= date('Y-m-d');
   $hora = date('H:i:s');
   $publicacionControl->insertar_mensaje(1,$publicacion['idPublicacion'],$mensajeA,$fecha,$hora);
+  header("Location: " . $_SERVER['PHP_SELF']); // Redirige a la misma página sin datos en POST
+  exit(); // Asegura que se detenga el procesamiento adicional    
 }
 
 if(isset($btnElegir)){
+  if($control == 0){
 $publicacionControl->actualizar_postulanteElegido($publicacion['idPublicacion'],$idElegido);
-
+header("Location: " . $_SERVER['PHP_SELF']); // Redirige a la misma página sin datos en POST
+exit(); // Asegura que se detenga el procesamiento adicional    
+  }
 }
     ?>
       	
@@ -200,7 +216,7 @@ echo "inicie sesion para poder postularte";
               
            ?>
            <div class="modal-footer">
-          <input type="submit" id="btnpostularse" name="btnpostularse" class="btn btn-primary">e</input>
+          <input type="submit" id="btnpostularse" name="btnpostularse" class="btn btn-primary"></input>
         
         </div>
           </form>
@@ -213,8 +229,9 @@ echo "inicie sesion para poder postularte";
 <?php 
 if($tipo == 1 && $publicacion['estado'] == 1){
   ?>
-<div class="container" style="padding-top: 20px; width: 70%; margin-bottom: 20px; height: 40%; display: flex; flex-direction:column; justify-content: center;">
-<div class="scrollable-div" style="overflow-y: auto; border: 1px solid #757575; padding: 10px; border-radius: 8px; background-color: rgb(255, 255, 255);width:auto">
+ <div class="container" style="padding-bottom: 80px; padding-top: 20px; width: 70%; margin-bottom: 20px; display: flex; flex-direction: column; justify-content: center; height: 400px;">
+<h1>Postulantes</h1>
+ <div class="scrollable-div" style="overflow-y: auto; border: 1px solid #757575; padding: 10px; border-radius: 8px; background-color: rgb(255, 255, 255);height: 100%;">
 <?php 
 
 foreach ($postulantes as $postulacion){  
@@ -234,7 +251,7 @@ foreach ($postulantes as $postulacion){
             <div style="margin-left: 20%;"><?php echo$postulacion['monto'] ?>$</div>
             <form action="publicacion.php" method="post">
               <input type="hidden" name="idElegido" value="<?php echo $usuario['idUsuario']?>"> 
-            <div class="contendor"> <button type="submit" id="btnElegir" name="btnElegir" class="btn btn-primary">elegir</button></div>
+            <div style="padding-left: 500px;"> <button type="submit" id="btnElegir" name="btnElegir" class="btn btn-primary">elegir</button></div>
             </form>
 
       </div>
@@ -254,6 +271,7 @@ foreach ($postulantes as $postulacion){
 
 <!-- Contenedor Principal -->
 <?php if($publicacion['estado']==3 && $tipo== 1 ||$tipo == 2){?>
+  <div class="container" style="padding-left: 60px;"><h1>Comentarios</h1> <a href="http://creaticode.com"></a></div>
 <div class="card d-flex flex-row flex-wrap container" style="width: 70%; border: 1px solid #757575">
   <?php if($publicacionControl->publicacion_calificada($publicacion['idPublicacion'])){?>
 <form method="post" action="publicacion.php">
@@ -270,22 +288,44 @@ foreach ($postulantes as $postulacion){
 <p><label>opinion<input type="text" name="opinion"></p>
 <p><input type="submit" name="enviarCalificaion"></p>
 </form>
-<?php }else{
+<?php }else{?>
 
+ <div class="row" >
+ <div class="col-12" style="margin-bottom: 20px;"> 
+   <div class=" header__right">
+     
+       <img
+         class="user__avatar"
+         src="imagenes/<?php echo $usuario['imagen'] ?>"
+         alt=""
+       />
 
-}?>
+     <div><h4><?php echo $usuario['nombre'] ?> <?php $usuario['apellido'] ?></h4></div>
+       <div style="margin-left: 20%;"><?php echo$postulacion['monto'] ?>$</div>
+       <form action="publicacion.php" method="post">
+         <input type="hidden" name="idElegido" value="<?php echo $usuario['idUsuario']?>"> 
+       <div style="padding-left: 500px;"> <button type="submit" id="btnElegir" name="btnElegir" class="btn btn-primary">elegir</button></div>
+       </form>
+
+ </div>
+   </div>
+ </div>
+
+<?php ?>
 
 </div>
-<?php }?>
+<?php }
+}?>
 
  <?php
 if($tipo == 1 || $tipo == 2 || $tipo == 3){
  ?>
+  <div class="container" style="padding-left: 60px;"><h1>Comentarios</h1> <a href="http://creaticode.com"></a></div>
+  <div class="card d-flex container" style="padding-bottom: 80px; width: 70%; margin-bottom: 20px; display: flex; flex-direction: column; justify-content: center; height: 400px;border: 1px solid #757575; padding: 10px; border-radius: 8px; background-color: rgb(255, 255, 255);">
   
- <div class="container" style=" padding-bottom: 80px;padding-top: 20px; width: 70%; margin-bottom: 20px; height: 20%; display: flex; flex-direction:column; justify-content: center;height:40%">
-<div class="scrollable-div" style="overflow-y: auto; border: 1px solid #757575; padding: 10px; border-radius: 8px; background-color: rgb(255, 255, 255);height:100%">
+  <div class="scrollable-div" style="overflow-y: auto;">
 <div class="comments-container" style="padding-left:0;">
-  <h1>Comentarios <a href="http://creaticode.com"></a></h1>
+  
   
   <ul id="comments-list" class="comments-list">
     <li>
@@ -293,11 +333,11 @@ if($tipo == 1 || $tipo == 2 || $tipo == 3){
  $usuario = $publicacionControl->fetch_usuario_por_id($mensaje['idUsuario']);
 
   ?>
-      <div class="comment-main-level" style="">
+      <div class="comment-main-level" style="margin-top: 20px; margin-bottom: 10px;">
         <!-- Avatar -->
         <div class="comment-avatar"><img src="imagenes/<?php echo $usuario['imagen']?>" alt=""></div>
         <!-- Contenedor del Comentario -->
-        <div class="comment-box">
+        <div class="comment-box" style="">
           <div class="comment-head">
             <h6 class="comment-name <?php if($usuario['idUsuario'] == $publicacion['idUsuario']){echo "by-author";}?>"><a href="http://creaticode.com/blog"><?php echo $usuario['nombre'] ?></a></h6>
               <span><?php echo $mensaje['fechaComentario']." ".$mensaje['hora']?></span>         
@@ -314,14 +354,15 @@ if($tipo == 1 || $tipo == 2 || $tipo == 3){
   </ul>
   </div>
   <div class="chat-form">
+  
+</div>
+  </div>
   <form method="post" action="publicacion.php" class="chat-form">
     <label></label><br>
   <input type="text" id="mensajeA"  name="mensajeA"  style="width: 50%; height: 30px; "required>
   <input type="submit"  name="comentarioBtn"value="enviar" >
   </form>
   </div>
-</div>
-
 <?php 
 }
 ?>

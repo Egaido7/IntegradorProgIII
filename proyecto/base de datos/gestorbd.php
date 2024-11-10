@@ -379,30 +379,24 @@ class GestorVeryDeli {
             }
         }
     }
-    public function insertar_postulante($idUsuario, $monto,$idPublicacion, $alerta) {
-        try {
-            // Preparar la consulta SQL sin la columna auto-incremental
-            $sql = "INSERT INTO postulacion(idUsuario,monto,idPublicacion, alerta)
-                    VALUES (?, ?, ?,?)";
-            
-            $this->stmt = $this->conn->prepare($sql);
-            
-            // Verificar si la preparación de la consulta fue exitosa
-          
+    public function insertar_postulante($usuario_id, $monto, $publicacion_id, $estado) {
+        // Preparar la sentencia
+        $stmt = $this->conn->prepare("INSERT INTO postulacion (idUsuario, monto, idPublicacion, alerta) VALUES (?, ?, ?, ?)");
     
-            // Enlazar los parámetros: 'i' para enteros, 'd' para float
-            $this->stmt->bind_param("idii", $idUsuario, $monto,$idPublicacion, $alerta);
-    
-            // Ejecutar la consulta
-            $this->stmt->execute();
-    
-            // Retornar el número de filas afectadas
-            return $this->stmt->affected_rows;
-    
-        } catch (mysqli_sql_exception $e) {
-            // Lanzar una excepción con el mensaje de error
-            throw new Exception("Error al insertar un nuevo postulante: " . $e->getMessage());
+        // Verificar si la preparación fue exitosa
+        if (!$stmt) {
+            die("Error en la preparación de la consulta: " . $this->conn->error);
         }
+    
+        // Ligar los parámetros y ejecutar la consulta
+        $stmt->bind_param("iiii", $usuario_id, $monto, $publicacion_id, $estado);
+        
+        if (!$stmt->execute()) {
+            die("Error en la ejecución de la consulta: " . $stmt->error);
+        }
+    
+        // Cerrar la declaración
+        $stmt->close();
     }
     public function tiene_vehiculo_por_usuario($idUsuario) {
         try {
