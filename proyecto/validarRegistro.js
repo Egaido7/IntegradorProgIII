@@ -21,43 +21,62 @@ function validarCampo(input, mensaje, pattern = null) {
     }
 }
 
+
+// Validación de formulario de registro
 function validarRegistro() {
-    let nombreValido = validarCampo(document.getElementById('registroNombre'), "Nombre obligatorio, solo letras");
-    let apellidoValido = validarCampo(document.getElementById('registroApellido'), "Apellido obligatorio, solo letras");
+    let nombreValido = validarCampo(document.getElementById('registroNombre'), "Nombre obligatorio, solo letras", /^[a-zA-Z]{2,}$/);
+    let apellidoValido = validarCampo(document.getElementById('registroApellido'), "Apellido obligatorio, solo letras", /^[a-zA-Z]{2,}$/);
+    let dniValido = validarCampo(document.getElementById('registroDni'), "DNI Obligatorio, solo números de 8 a 10 dígitos", /^[1-9]\d{7,9}$/);
     let emailValido = validarCampo(document.getElementById('registroEmail'), "Correo obligatorio y válido", /^[^\s@]+@[^\s@]+\.[^\s@]+$/);
+    let passwordValida = validarCampo(document.getElementById('registroPwd'), "Contraseña mínima de 8 caracteres", /^.{8,}$/);
+    let passwordConfirmValida = validarCampo(document.getElementById('registroPwdConfirm'), "Debe coincidir con la contraseña");
+
+    // Validar que ambas contraseñas coincidan
     let pwd = document.getElementById('registroPwd');
     let pwdConfirm = document.getElementById('registroPwdConfirm');
-    let passwordValida = validarCampo(pwd, "Contraseña mínima de 8 caracteres", /^(?=.*\d).{8,}$/);
-    let passwordConfirmValida = pwd.value === pwdConfirm.value;
-    
-    if (!passwordConfirmValida) mostrarMensajeError(pwdConfirm, "Las contraseñas no coinciden");
-    else limpiarMensajeError(pwdConfirm);
+    if (pwd.value !== pwdConfirm.value) {
+        mostrarMensajeError(pwdConfirm, "Las contraseñas no coinciden");
+        passwordConfirmValida = false;
+    } else {
+        limpiarMensajeError(pwdConfirm);
+    }
 
-    return nombreValido && apellidoValido && emailValido && passwordValida && passwordConfirmValida;
+    return nombreValido && apellidoValido && dniValido && emailValido && passwordValida && passwordConfirmValida;
 }
+
 
 function validarLogin() {
     let emailValido = validarCampo(document.getElementById('loginEmail'), "Correo obligatorio y válido", /^[^\s@]+@[^\s@]+\.[^\s@]+$/);
-    let pwdValida = validarCampo(document.getElementById('loginPwd'), "Contraseña mínima de 8 caracteres", /^(?=.*\d).{8,}$/);
-    return emailValido && pwdValida;
+    let passwordValida = validarCampo(document.getElementById('loginPwd'), "Contraseña mínima de 8 caracteres", /^.{8,}$/);
+    return emailValido && passwordValida;
 }
 
-document.addEventListener("DOMContentLoaded", function() {
-    document.getElementById("formRegistro").addEventListener("submit", function(event) {
-        event.preventDefault();
-      
+document.addEventListener("DOMContentLoaded", function () {
+    // Formulario de registro
+    document.getElementById("formRegistro").addEventListener("submit", function (event) {
+        event.preventDefault(); // Prevenir envío automático
+        console.log("Formulario de login enviado");
         if (validarRegistro()) {
-            alert("Registro exitoso");
+            console.log("Formulario de registro válido");
+            this.submit(); // Enviar el formulario si la validación es exitosa
+        }else {
+            console.log("Formulario de registro no válido");
         }
     });
-    document.getElementById("formLogin").addEventListener("submit", function(event) {
-        event.preventDefault();
-       
+
+    // Formulario de login
+    document.getElementById("formLogin").addEventListener("submit", function (event) {
+        event.preventDefault(); // Prevenir envío automático
+        console.log("Formulario de login enviado");
         if (validarLogin()) {
-            alert("Inicio de sesión exitoso");
+            console.log("Formulario de login válido");
+            this.submit(); // Enviar el formulario si la validación es exitosa
+        }else {
+            console.log("Formulario de logín no válido");
         }
     });
 });
+
 
 
 //VALIDACION PARA FORMULARIO DE REGISTRO
@@ -155,7 +174,7 @@ document.addEventListener("DOMContentLoaded", function() {
         event.preventDefault();
 
         if (validarPublicacion()) {
-            alert("Publicación exitosa");
+            //alert("Publicación exitosa");
         }
     });
 });
