@@ -1,0 +1,11 @@
+@media (max-width: 768px) {
+    .row .col-sm-4, 
+    .row .col-sm-8 {
+        width: 100%;
+        margin-top: 20px;
+    }
+
+    .container {
+        padding-bottom: 15vh;
+    }
+}
