@@ -45,6 +45,25 @@
         <span class="material-icons"> notifications_active </span>
         <span class="material-icons"> expand_more </span>
       </div>
+
+      <div class="header__responsive">
+        <a href="buscador.php" class="header__option">
+        <span class="material-icons"> home </span>
+          <span>Inicio</span>
+        </a>
+        <a href="#buscar" class="header__option">
+          <span class="material-icons"> search </span>
+          <span>Buscar Pedidos</span>
+        </a>
+        <a href="#favoritos" class="header__option">
+          <span class="material-icons"> rocket_launch </span>
+          <span>Mis pedidos</span>
+        </a>
+        <a href="#perfil" class="header__option">
+          <span class="material-icons"> person </span>
+          <span>Perfil</span>
+        </a>
+      </div>
     </div>
     <!-- header ends -->
 
