@@ -149,7 +149,10 @@ mysqli_close($conexion);
         <div class="header__info">
           <img src="LogoVeryDeli.svg" alt="Logo" class="user__avatar"/>
           
-          <h4>Somanath Goudar</h4>
+          <?php if(isset($_SESSION["id"])) { 
+    echo "<p>Bienvenido a su sesion " . htmlspecialchars($_SESSION['id']) . "</p>";
+}
+?>
         </div>
         <span class="material-icons"> forum </span>
         <span class="material-icons"> notifications_active </span>
@@ -187,8 +190,6 @@ mysqli_close($conexion);
 
       <!-- feed starts -->
       <div class="feed">
-        
-
         <!-- message sender starts -->
         <div class="messageSender">
           <div class="messageSender__top">
@@ -203,107 +204,16 @@ mysqli_close($conexion);
               <span style="color: red" class="material-icons"> publish </span>
               <button data-bs-toggle="modal" data-bs-target="#publicarModal" style="background: none; border: none; padding: 0; color: inherit; font: inherit; cursor: pointer;" >publicar</button>
             </div>
-
-            
           </div>
         </div>
         <!-- message sender ends -->
 
         <!-- post starts -->
         <div class="post">
-          <div class="post__top">
-            <img src="LogoVeryDeli.svg" alt="Logo" class="user__avatar post__avatar">
-            <div class="post__topInfo">
-              <h3>Somanath Goudar</h3>
-              <p>25 April at 20:30</p>
-            </div>
-          </div>
-
-          <div class="post__bottom">
-            <p>Message</p>
-          </div>
-
-          <div class="post__image">
-            <img
-              src="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8Y2Fyc3xlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80"
-              alt=""
-            />
-          </div>
-
-          <div class="post__options">
-
-            <div class="post__option">
-              <span class="material-icons"> chat_bubble_outline </span>
-              <p>Postularse</p>
-            </div>
-
-            <div class="post__option">
-              <span class="material-icons"> near_me </span>
-              <p>Compartir</p>
-            </div>
-          </div>
-        </div>
-        <!-- post ends -->
-
-        <!-- post starts -->
-        <div class="post">
-          <div class="post__top">
-            <img src="LogoVeryDeli.svg" alt="Logo" class="user__avatar post__avatar">
-            <div class="post__topInfo">
-              <h3>Somanath Goudar</h3>
-              <p>25 April at 20:30</p>
-            </div>
-          </div>
-
-          <div class="post__bottom">
-            <p>Post Without Image</p>
-          </div>
-
-          <div class="post__options">
-
-            <div class="post__option">
-              <span class="material-icons"> chat_bubble_outline </span>
-              <p>Postularse>
-            </div>
-
-            <div class="post__option">
-              <span class="material-icons"> near_me </span>
-              <p>Compartir</p>
-            </div>
-          </div>
-        </div>
-        <!-- post ends -->
-
-        <!-- post starts -->
-        <div class="post">
-          <div class="post__top">
-            <img src="LogoVeryDeli.svg" alt="Logo" class="user__avatar post__avatar">
-            <div class="post__topInfo">
-              <h3>Somanath Goudar</h3>
-              <p>25 April at 20:30</p>
-            </div>
-          </div>
-
-          <div class="post__bottom">
-            <p>Message</p>
-          </div>
-
-          <div class="post__image">
-            <img src="https://wallpapercave.com/wp/wp7357832.jpg" alt="" />
-          </div>
-
-          <div class="post__options">
-
-            <div class="post__option">
-              <span class="material-icons"> chat_bubble_outline </span>
-              <p>Postularse</p>
-            </div>
-
-            <div class="post__option">
-              <span class="material-icons"> near_me </span>
-              <p>Compartir</p>
-            </div>
-          </div>
+        <?php
+        $publicacionVista = new GestorVeryDeli();
+        $publicacionVista->mostrar_publicaciones();
+        ?>
         </div>
         <!-- post ends -->
       </div>
