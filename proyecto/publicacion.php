@@ -18,6 +18,7 @@ session_start();
     $publicacionControl = new GestorVeryDeli();
    $publicacion = $publicacionControl->fetch_publicacion(4);
    $postulantes = $publicacionControl->fetch_postulaciones_por_publicacion($publicacion['idPublicacion']);
+   $comentarios = $publicacionControl->fetch_mensajes_por_publicacion($publicacion['idPublicacion']);
     if(isset($_SESSION["idUsuario"])){
     $tipo = 0;
      //cambiar el 1 por session de la id de usuario
@@ -28,11 +29,14 @@ session_start();
       $tipo = 2;
     }elseif($publicacionControl->es_postulante(1,$publicacion['idPublicacion'])){
       $tipo = 3;
-    }else
+    }else{
     $tipo= 4;
-    
-  
+    }
+    date_default_timezone_set('America/Argentina/San_Luis');
 
+    // Obtener la fecha y hora actual
+    $fechaHora = date('Y-m-d H:i:s');
+    echo $fechaHora;
   $error = 0;
 
 // control al postularse
@@ -57,7 +61,7 @@ $error = 1;
   }
   else if($error==0){
   //cambiar el 1 por la session de usuario
-    $publicacionControl->insertar_postulante(1,$monto,$publicacion['idPublicacion']);
+    $publicacionControl->insertar_postulante(1,$monto,$publicacion['idPublicacion'],0);
     $tipo = 3
     ?>
         <script>
@@ -66,6 +70,17 @@ $error = 1;
         </script>
         <?php
  }
+}
+
+if(isset($comentarioBtn)){
+ if(!isset($mensaje)){
+  date_default_timezone_set('America/Argentina/San_Luis');
+
+  // Obtener la fecha y hora actual
+  $fechaHora = date('Y-m-d H:i:s');
+  $publicacionControl;
+ }
+
 }
 ?>
 
@@ -118,11 +133,13 @@ $error = 1;
         <p class="card-text"><?php echo $publicacion['volumen'] ?></p>
         <p class="card-text"><?php echo $publicacion['titulo'] ?></p>
         <p class="card-text"><?php echo $publicacion['descripcion'] ?></p>
-        <?php if($tipo == 2){ ?>
+        <?php if($publicacion['estado']){ ?>
         <p class="card-text"><?php echo $publicacion['contacto'] ?></p>
+        <p class="card-text"><?php echo $publicacion['postulanteElegido'] ?></p>
         <?php }  
         ?>
-        <p class="card-text"><?php echo $publicacion['postulanteElegido'] ?></p>
+        
+        <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#postulacionModal">postularse</a>
         <?php if($tipo == 3){?>
         <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#postulacionModal">postularse</a>
        <?php
@@ -142,7 +159,7 @@ echo "inicie sesion para poder postularte";
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <form id="formpostulacion" method="post" novalidate>
+          <form id="formpostulacion" method="post" action="publicacion.php" novalidate>
             <div class="form-group">
               <label for="monto">Monto:</label>
               <input type="number" class="form-control" id="monto" name="monto"required minlength="8">
@@ -208,30 +225,37 @@ if($tipo == 1 || $tipo == 2 || $tipo == 3){
  ?>||
  <div class="card container" style=" background-color: rgb(247, 250, 250); height: auto; width: 70%;">
   
+
 <div class="comments-container">
   <h1>Comentarios <a href="http://creaticode.com">creaticode.com</a></h1>
   <ul id="comments-list" class="comments-list">
     <li>
+      <?php foreach($comentarios as $mensaje){
+ $usuario = $publicacionControl->fetch_usuario_por_id($mensaje['idUsuario']);
+
+  ?>
       <div class="comment-main-level">
         <!-- Avatar -->
-        <div class="comment-avatar"><img src="http://i9.photobucket.com/albums/a88/creaticode/avatar_1_zps8e1c80cd.jpg" alt=""></div>
+        <div class="comment-avatar"><img src="imagenes/<?php echo $usuario['imagen']?>" alt=""></div>
         <!-- Contenedor del Comentario -->
         <div class="comment-box">
           <div class="comment-head">
-            <h6 class="comment-name by-author"><a href="http://creaticode.com/blog">Agustin Ortiz</a></h6>         
+            <h6 class="comment-name <?php if($usuario['idUsuario'] == $publicacion['idUsuario']){echo "by-author";}?>"><a href="http://creaticode.com/blog"><?php echo $usuario['nombre'] ?></a></h6>         
           </div>
           <div class="comment-content">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Velit omnis animi et iure laudantium vitae, praesentium optio, sapiente distinctio illo
+          <?php echo $mensaje['comentario']?>
           </div>
         </div>
       </div>
-       
-
+      <?php
+      }
+      ?>
+    </li>
   </ul>
-  <form>
+  <form method="post" action="publicacion.php">
     <label></label><br>
-  <input type="text" id="comentario" name="comentario" style="width: 50%; height: 30px;">
-  <input type="submit" value="enviar">
+  <input type="text" id="mensaje" name="mensaje" style="width: 50%; height: 30px;">
+  <input type="button"  name="comentarioBtn"value="enviar">
   </form>
 </div>
 </div>

@@ -32,11 +32,11 @@ class GestorVeryDeli {
         }
     }
 
-    public function insertar_mensaje($idUsuario, $idPublicacion, $comentario) {
+    public function insertar_mensaje($idUsuario, $idPublicacion, $comentario,$fecha) {
         try {
-            $this->stmt = $this->conn->prepare("INSERT INTO mensaje(idUsuario, idPublicacion, comentario)
-            VALUES (?,?,?)");
-            $this->stmt->bind_param($idUsuario, $idPublicacion, $comentario);
+            $this->stmt = $this->conn->prepare("INSERT INTO mensaje(idUsuario, idPublicacion, comentario,fechaComentario)
+            VALUES (?,?,?,?)");
+            $this->stmt->bind_param("iiii",$idUsuario, $idPublicacion, $comentario,$fecha);
             $this->stmt->execute();
             return $this->stmt->affected_rows;
         } catch (mysqli_sql_exception $e) {
@@ -352,7 +352,8 @@ class GestorVeryDeli {
                     p.titulo,
                     p.imagenPublicacion,
                     p.contacto,
-                    p.postulanteElegido
+                    p.postulanteElegido,
+                    p.estado
                 FROM publicacion p
                 JOIN usuario u ON p.idUsuario = u.idUsuario
                 WHERE p.idPublicacion = ?");
@@ -378,11 +379,11 @@ class GestorVeryDeli {
             }
         }
     }
-    public function insertar_postulante($id, $monto,$idPublicacion) {
+    public function insertar_postulante($id, $monto,$idPublicacion,$alerta) {
         try {
-            $this->stmt = $this->conn->prepare("INSERT INTO postulacion(idUsuario, monto, idPublicacion)
-            VALUES (?,?,?,?)");
-            $this->stmt->bind_param($id, $monto, $idPublicacion);
+            $this->stmt = $this->conn->prepare("INSERT INTO postulacion(idUsuario, monto, idPublicacion,alerta)
+            VALUES (?,?,?,0)");
+            $this->stmt->bind_param("idii",$id, $monto, $idPublicacion,$alerta);
             $this->stmt->execute();
             return $this->stmt->affected_rows;
         } catch (mysqli_sql_exception $e) {
