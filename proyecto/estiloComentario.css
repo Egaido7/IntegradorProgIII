@@ -21,10 +21,10 @@ body {
 
 /** ====================
 * Lista de Comentarios
-=======================*/
+==================== ===*/
 .comments-container {
    margin: 60px auto 15px;
-   width: 768px;
+   width: 80%;
 }
 
 .comments-container h1 {
@@ -132,8 +132,8 @@ body {
 
 .comment-main-level:after {
    content: '';
-   width: 0;
-   height: 0;
+   width: 0px;
+   height: 0px;
    display: block;
    clear: both;
 }

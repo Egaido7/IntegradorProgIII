@@ -479,3 +479,9 @@ scroll-container {
         color: #52b04c;
     }
 }
+.contenedor {
+    display: flex;
+    justify-content: flex-end; /* Alinea el contenido al lado derecho */
+    padding: 10px;
+    border: 1px solid #ddd;
+  }

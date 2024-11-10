@@ -512,4 +512,49 @@ class GestorVeryDeli {
             throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
         }
     }
+    public function usuario_califico($idUsuario,$idPublicacion) {
+    
+            try {
+            
+                $this->stmt = $this->conn->prepare("SELECT COUNT(*) FROM calificacion WHERE idUsuario = ? AND idPublicacion = ?");
+                $this->stmt->bind_param("ii", $idUsuario,$idPublicacion);
+                $this->stmt->execute();
+                $this->stmt->bind_result($cant_calificacion);
+                $this->stmt->fetch();
+
+                // si el usuario califico la publicacion
+                if($cant_calificacion == 1) {
+                    return false;
+                } else {
+                    return true;
+                }
+            } catch (mysqli_sql_exception $e) {
+                throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
+                return false;
+            
+        }
+    }
+
+    public function publicacion_calificada($idPublicacion) {
+    
+        try {
+        
+            $this->stmt = $this->conn->prepare("SELECT COUNT(*) FROM calificacion WHERE  idPublicacion = ?");
+            $this->stmt->bind_param("i",$idPublicacion);
+            $this->stmt->execute();
+            $this->stmt->bind_result($cant_calificacion);
+            $this->stmt->fetch();
+
+            // si se calificaron ambos usuarios
+            if($cant_calificacion == 2) {
+                return false;
+            } else {
+                return true;
+            }
+        } catch (mysqli_sql_exception $e) {
+            throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
+            return false;
+        
+    }
+}
 }

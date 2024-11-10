@@ -26,7 +26,7 @@ session_start();
     if(isset($_SESSION["idUsuario"])){
     $tipo = 0;
      //cambiar el 1 por session de la id de usuario
-    }elseif(2 == $publicacion['idUsuario']){
+    }elseif(1 == $publicacion['idUsuario']){
       $tipo = 1;//$_SESSION["idUsuario"]
     
     }elseif($publicacion['postulanteElegido'] == 2){
@@ -36,10 +36,12 @@ session_start();
     }else{
     $tipo= 4;
     }
-    $tipo = 2;
-  
- 
-    
+    $tipo = 3;
+  $insertar =0 ;
+ if($insertar == 1){
+  $publicacionControl->insertar_postulante(2,$monto,4,0);
+ }
+    $tipo = 1;
   $error = 0;
 
 // control al postularse
@@ -64,7 +66,7 @@ $error = 1;
   else{
   //cambiar el 1 por la session de usuario
   $monto = floatval($monto);
-    $publicacionControl->insertar_postulante(2,$monto,4,0);
+  $publicacionControl->insertar_postulante(2,$monto,4,0);
     $tipo = 4;       
  }
 }
@@ -144,21 +146,21 @@ $publicacionControl->actualizar_postulanteElegido($publicacion['idPublicacion'],
    <div class="card d-flex flex-row flex-wrap container" style="width: 70%;">
     <img  src="<?php echo "imagenes/".$publicacion['imagenPublicacion'] ?>" class="card-img-top" alt="..." style="max-width: auto; height: 50%; flex: 1 1 auto;">
     <div class="card-body" style="flex: 1 1 300px; padding: 20px;">
-        <h5 class="card-title"><?php echo $publicacion['titulo'] ?></h5>
-        <p class="card-text"><?php echo $publicacion['origen'] ?></p>
-        <p class="card-text"><?php echo $publicacion['destino'] ?></p>
-        <p class="card-text"><?php echo $publicacion['volumen'] ?></p>
-        <p class="card-text"><?php echo $publicacion['titulo'] ?></p>
+       <class="card-title"><h1><?php echo $publicacion['titulo'] ?></h1>
+        <p class="card-text">Origen: <?php echo $publicacion['origen'] ?></p>
+        <p class="card-text">destino <?php echo $publicacion['destino'] ?>kg</p>
+        <p class="card-text">Peso: <?php echo $publicacion['peso'] ?>kg</p>
+        <p class="card-text">Volumen: <?php echo $publicacion['volumen'] ?></p>
         <p class="card-text"><?php echo $publicacion['descripcion'] ?></p>
         <?php if($publicacion['estado'] == 1){ 
           $usuario = $publicacionControl->fetch_usuario_por_id($publicacion['postulanteElegido']);?>
-        <p class="card-text"><?php echo $publicacion['contacto'] ?></p>
-        <p class="card-text"><?php echo $usuario['nombre']." ".$usuario['apellido'] ?></p>
+        <p class="card-text"> Contacto:<?php echo $publicacion['contacto'] ?></p>
+        <p class="card-text">Postulante Elegido:<?php echo $usuario['nombre']." ".$usuario['apellido'] ?></p>
         <?php }  
         ?>
         
-        
-        <?php if($tipo == 4 && $publicacion['estado'] == 0){?>
+        <a href="#" class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#postulacionModal">postularse</a>
+        <?php if($tipo == 3 && $publicacion['estado'] == 0){?>
         <a href="#" class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#postulacionModal">postularse</a>
        <?php
         }
@@ -185,7 +187,7 @@ echo "inicie sesion para poder postularte";
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <form id="formpostulacion" method="post" action="publicacion.php" novalidate>
+          <form id="formpostulacion" method="post" action="publicacion.php">
             <div class="form-group">
               <label for="monto">Monto:</label>
               <input type="number" class="form-control" id="monto" name="monto"required>
@@ -198,7 +200,7 @@ echo "inicie sesion para poder postularte";
               
            ?>
            <div class="modal-footer">
-          <button type="submit" id="btnpostularse" name="btnpostularse" class="btn btn-primary">postularse</button>
+          <input type="submit" id="btnpostularse" name="btnpostularse" class="btn btn-primary">e</input>
         
         </div>
           </form>
@@ -209,10 +211,10 @@ echo "inicie sesion para poder postularte";
   </div>
 
 <?php 
-if($tipo == 1 && $publicacion['estado'] == 0){
+if($tipo == 1 && $publicacion['estado'] == 1){
   ?>
-<div class="container" style="padding-top: 20px; width: 70%; margin-bottom: 20px; height: 30%; display: flex; flex-direction:column; justify-content: center;">
-<div class="scrollable-div" style="overflow-y: auto; border: 1px solid #757575; padding: 10px; border-radius: 8px; background-color: rgb(255, 255, 255);">
+<div class="container" style="padding-top: 20px; width: 70%; margin-bottom: 20px; height: 40%; display: flex; flex-direction:column; justify-content: center;">
+<div class="scrollable-div" style="overflow-y: auto; border: 1px solid #757575; padding: 10px; border-radius: 8px; background-color: rgb(255, 255, 255);width:auto">
 <?php 
 
 foreach ($postulantes as $postulacion){  
@@ -232,7 +234,7 @@ foreach ($postulantes as $postulacion){
             <div style="margin-left: 20%;"><?php echo$postulacion['monto'] ?>$</div>
             <form action="publicacion.php" method="post">
               <input type="hidden" name="idElegido" value="<?php echo $usuario['idUsuario']?>"> 
-            <div style="margin-left: 30%;"> <button type="submit" id="btnElegir" name="btnElegir" class="btn btn-primary">elegir</button></div>
+            <div class="contendor"> <button type="submit" id="btnElegir" name="btnElegir" class="btn btn-primary">elegir</button></div>
             </form>
 
       </div>
@@ -241,28 +243,57 @@ foreach ($postulantes as $postulacion){
       <?php
 }
       ?>
+      
 <!--div del row-->
   </div>
+  
 <!-- div final del scroll-->
 </div><?php
 }
  ?> 
+
 <!-- Contenedor Principal -->
+<?php if($publicacion['estado']==3 && $tipo== 1 ||$tipo == 2){?>
+<div class="card d-flex flex-row flex-wrap container" style="width: 70%; border: 1px solid #757575">
+  <?php if($publicacionControl->publicacion_calificada($publicacion['idPublicacion'])){?>
+<form method="post" action="publicacion.php">
+<label>calificacion <select name="calificacion">
+<option  name="calificacion" value="0">0</option>
+<option  name="calificacion" value="1">1</option>
+<option  name="calificacion" value="2">2</option>
+<option  name="calificacion" value="3">3</option>
+<option  name="calificacion" value="4">4</option>
+<option  name="calificacion" value="5">5</option>
+</select>
+</label>
+
+<p><label>opinion<input type="text" name="opinion"></p>
+<p><input type="submit" name="enviarCalificaion"></p>
+</form>
+<?php }else{
+
+  
+}?>
+
+</div>
+<?php }?>
+
  <?php
 if($tipo == 1 || $tipo == 2 || $tipo == 3){
- ?>||
- <div class="card container" style=" background-color: rgb(247, 250, 250); height: auto; width: 70%;">
+ ?>
   
-
-<div class="comments-container">
-  <h1>Comentarios <a href="http://creaticode.com">creaticode.com</a></h1>
+ <div class="container" style=" padding-bottom: 80px;padding-top: 20px; width: 70%; margin-bottom: 20px; height: 20%; display: flex; flex-direction:column; justify-content: center;height:40%">
+<div class="scrollable-div" style="overflow-y: auto; border: 1px solid #757575; padding: 10px; border-radius: 8px; background-color: rgb(255, 255, 255);height:100%">
+<div class="comments-container" style="padding-left:0;">
+  <h1>Comentarios <a href="http://creaticode.com"></a></h1>
+  
   <ul id="comments-list" class="comments-list">
     <li>
       <?php foreach($comentarios as $mensaje){
  $usuario = $publicacionControl->fetch_usuario_por_id($mensaje['idUsuario']);
 
   ?>
-      <div class="comment-main-level">
+      <div class="comment-main-level" style="">
         <!-- Avatar -->
         <div class="comment-avatar"><img src="imagenes/<?php echo $usuario['imagen']?>" alt=""></div>
         <!-- Contenedor del Comentario -->
@@ -281,13 +312,16 @@ if($tipo == 1 || $tipo == 2 || $tipo == 3){
       ?>
     </li>
   </ul>
-  <form method="post" action="publicacion.php">
+  </div>
+  <div class="chat-form">
+  <form method="post" action="publicacion.php" class="chat-form">
     <label></label><br>
-  <input type="text" id="mensajeA"  name="mensajeA" required ="width: 50%; height: 30px;">
+  <input type="text" id="mensajeA"  name="mensajeA"  style="width: 50%; height: 30px; "required>
   <input type="submit"  name="comentarioBtn"value="enviar" >
   </form>
+  </div>
 </div>
-</div>
+
 <?php 
 }
 ?>
