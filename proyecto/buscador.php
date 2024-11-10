@@ -12,6 +12,10 @@
 </head>
 
 <body>
+
+<?php 
+session_start(); // Inicia la sesión al comienzo del script
+?>
   <!-- header starts -->
   <div class="header">
     <div class="header__left">
@@ -41,10 +45,10 @@
           
           alt="" />
           <?php if(isset($_SESSION["id"])) { 
-    echo "<h1>Bienvenido a su sesion " ($_SESSION['id']) . "</h1>";
+    echo "<p>Bienvenido a su sesion " . htmlspecialchars($_SESSION['id']) . "</p>";
 }
 ?>
-<h4>hola</h4>
+
       </div>
     </div>
 
