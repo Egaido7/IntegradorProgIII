@@ -9,7 +9,7 @@ if (!$conexion) {
 mysqli_set_charset($conexion, 'utf8mb4');
 
 // Manejar el registro de un nuevo usuario
-if (isset($_POST['btnEnviarRegistrophp'])) {
+if (isset($_POST['btnEnviarRegistro'])) {
     $nombre = trim($_POST['registroNombre']);
     $apellido = trim($_POST['registroApellido']);
     $dni = trim($_POST['registroDni']);
@@ -29,7 +29,7 @@ if (isset($_POST['btnEnviarRegistrophp'])) {
     $resultado = mysqli_query($conexion, $consulta);
 
     if (mysqli_num_rows($resultado) > 0) {
-      $mensajeRegistro = "Usuario ya creado. Por favor inicie sesión.";
+        $_SESSION['mensajeRegistro'] = "Usuario ya creado. Por favor inicie sesión.";
     } else {
         // Insertar el nuevo usuario
         $consulta = "INSERT INTO usuario(nombre, apellido, dni, email, contraseña) 
@@ -37,11 +37,13 @@ if (isset($_POST['btnEnviarRegistrophp'])) {
         $resultado = mysqli_query($conexion, $consulta);
 
         if ($resultado) {
-            $_SESSION['email'] = $correo;
-            header("Location: index.html");
+            // Obtener el idUsuario del nuevo usuario insertado
+            $idUsuario = mysqli_insert_id($conexion); // Obtiene el último ID insertado en la conexión actual
+            $_SESSION['id'] = $idUsuario; // Guardar el ID en la sesión
+            header("Location: index.html"); // Redirigir solo si se crea con éxito
             exit();
         } else {
-            echo "Error al registrar el usuario: " . mysqli_error($conexion);
+            $_SESSION['mensajeRegistro'] = "Error al registrar el usuario: " . mysqli_error($conexion);
         }
     }
 }
@@ -55,23 +57,25 @@ if (isset($_POST['btnEnviarLoginphp'])) {
     $correo_escapado = mysqli_real_escape_string($conexion, $correo);
     $contraseña_escapado = mysqli_real_escape_string($conexion, $contraseña);
 
-    // Consulta para verificar las credenciales
-    $consulta = "SELECT email FROM usuario WHERE email = '$correo_escapado' AND contraseña = '$contraseña_escapado'";
+    // Consulta para verificar las credenciales y obtener el idUsuario
+    $consulta = "SELECT idUsuario FROM usuario WHERE email = '$correo_escapado' AND contraseña = '$contraseña_escapado'";
     $resultado = mysqli_query($conexion, $consulta);
 
     if (mysqli_num_rows($resultado) == 1) {
-        $_SESSION['email'] = $correo;
-        header("Location: buscador.php");
+        $fila = mysqli_fetch_assoc($resultado); // Obtener los resultados como un array asociativo
+        $_SESSION['id'] = $fila['idUsuario']; // Almacenar el idUsuario en la sesión
+        header("Location: buscador.php"); // Redirigir solo si el login es exitoso
         exit();
-      } else {
-        // Aquí se muestra el mensaje de "usuario incorrecto"
-        $errorMensaje = "Usuario incorrecto. Por favor, intente nuevamente.";
+    } else {
+        $_SESSION['mensajeLogin'] = "Usuario o contraseña incorrectos.";
     }
 }
 
 // Cerrar la conexión
 mysqli_close($conexion);
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -91,43 +95,43 @@ mysqli_close($conexion);
   />
 </button>
 
-<!-- MODAL Login -->
-<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="modalLabel">Iniciar Sesión</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <form id="formLogin"  method = "POST" action= "" novalidate>
-          <div class="form-group">
-            <label for="loginEmail">Correo Electrónico:</label>
-            <input type="email" class="form-control" id="loginEmail" name = "loginEmail" required>
-            <div class="invalid-feedback" id="loginEmailFeedback"></div>
-          </div>
-          <div class="form-group">
-            <label for="loginPwd">Contraseña:</label>
-            <input type="password" class="form-control" name ="loginPwd" id="loginPwd" required minlength="8">
-            <div class="invalid-feedback" id="loginPwdFeedback"></div>
-          </div>
-          <div class="invalid-feedback" id="msgErrorLogin">
-          <?php 
-        if (!empty($errorMensaje)) {
-            echo $errorMensaje;
-        }
-    ?>
-          </div>
-
-          <div class="modal-footer">
-            <button type="submit" id="btnEnviarLogin" name= "btnEnviarLoginphp" class="btn btn-primary">Iniciar Sesión</button>
-            <button type="button" class="btn btn-success" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#registroModal">Crear nueva cuenta</button>
-          </div>
-        </form>
+ <!-- MODAL Login -->
+ <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="modalLabel">Iniciar Sesión</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="formLogin" method="POST" action="" novalidate>
+            <div class="form-group">
+              <label for="loginEmail">Correo Electrónico:</label>
+              <input type="email" class="form-control" id="loginEmail" name="loginEmail" required>
+              <div class="invalid-feedback" id="loginEmailFeedback"></div>
+            </div>
+            <div class="form-group">
+              <label for="loginPwd">Contraseña:</label>
+              <input type="password" class="form-control" name="loginPwd" id="loginPwd" required minlength="8">
+              <div class="invalid-feedback" id="loginPwdFeedback"></div>
+            </div>
+            <div class="invalid-feedback d-block" id="msgErrorLogin">
+              <?php 
+                if (!empty($_SESSION['mensajeLogin'])) {
+                    echo $_SESSION['mensajeLogin'];
+                    unset($_SESSION['mensajeLogin']);
+                }
+              ?>
+            </div>
+            <div class="modal-footer">
+              <input type="submit" id="btnEnviarLogin" name="btnEnviarLoginphp" class="btn btn-primary">
+              <button type="button" class="btn btn-success" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#registroModal">Crear nueva cuenta</button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
 <!-- MODAL Registro -->
 <div class="modal fade" id="registroModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
@@ -169,15 +173,16 @@ mysqli_close($conexion);
             <input type="password" class="form-control" id="registroPwdConfirm"  name = "registroPwdConfirm"required>
             <div class="invalid-feedback" id="regPwdConfirmFeedback"></div>
           </div>
-          <div class="invalid-feedback" id="msgErrorRegistro">
-          <?php 
-        if (!empty($errorMensaje)) {
-            echo $errorMensaje;
-        }
-    ?>
-        </div>
+          <div class="invalid-feedback d-block" id="msgErrorRegistro">
+              <?php 
+                if (!empty($_SESSION['mensajeRegistro'])) {
+                    echo $_SESSION['mensajeRegistro'];
+                    unset($_SESSION['mensajeRegistro']);
+                }
+              ?>
+            </div>
           <div class="modal-footer">
-            <button type="submit" name = "btnEnviarRegistro" id="btnEnviarRegistrophp" class="btn btn-primary">Registrarme</button>
+            <input type="submit" name = "btnEnviarRegistro" id="btnEnviarRegistrophp" class="btn btn-primary">
           </div>
         </form>
       </div>
@@ -188,10 +193,6 @@ mysqli_close($conexion);
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="validarRegistro.js" defer></script>
-
-
     
-
-  
 </body>
 </html>
