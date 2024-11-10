@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 04-11-2024 a las 01:59:02
+-- Tiempo de generación: 09-11-2024 a las 23:11:13
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -48,6 +48,14 @@ CREATE TABLE `mensaje` (
   `fechaComentario` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `mensaje`
+--
+
+INSERT INTO `mensaje` (`idUsuario`, `idPublicacion`, `comentario`, `fechaComentario`) VALUES
+(1, 4, 'este es un comentario', '2024-11-09 17:56:53'),
+(1, 4, 'otro comentario', '2024-11-09 18:36:27');
+
 -- --------------------------------------------------------
 
 --
@@ -61,6 +69,13 @@ CREATE TABLE `postulacion` (
   `idPublicacion` int(11) NOT NULL,
   `alerta` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `postulacion`
+--
+
+INSERT INTO `postulacion` (`idPostulacion`, `idUsuario`, `monto`, `idPublicacion`, `alerta`) VALUES
+(1, 1, 1000, 4, 0);
 
 -- --------------------------------------------------------
 
@@ -80,8 +95,16 @@ CREATE TABLE `publicacion` (
   `descripcion` text NOT NULL,
   `contacto` varchar(30) NOT NULL,
   `postulanteElegido` int(11) NOT NULL,
-  `titulo` varchar(40) NOT NULL
+  `titulo` varchar(40) NOT NULL,
+  `estado` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `publicacion`
+--
+
+INSERT INTO `publicacion` (`idPublicacion`, `idUsuario`, `volumen`, `peso`, `origen`, `destino`, `fechaPublicacion`, `imagenPublicacion`, `descripcion`, `contacto`, `postulanteElegido`, `titulo`, `estado`) VALUES
+(4, 1, 100, 200, 'san luis', 'la punta', '2024-11-07', 'e054903e6671684eff1264dc3ee6ec46.png', 'es un objeto muy bonito', 'ola01@gmail.com', 0, 'objeto bonito', 0);
 
 -- --------------------------------------------------------
 
@@ -107,7 +130,7 @@ CREATE TABLE `usuario` (
 --
 
 INSERT INTO `usuario` (`idUsuario`, `nombre`, `apellido`, `dni`, `responsable`, `email`, `domicilio`, `codPostal`, `contraseña`, `imagen`) VALUES
-(1, 'joaquin', 'muñoz', 45802248, 1, 'joaquinemunoz04@gmail.com', 'casa', 1234, '131231231231312312312313231231231231231231231231', '');
+(1, 'joaquin', 'muñoz', 45802248, 1, 'joaquinemunoz04@gmail.com', 'casa', 1234, '131231231231312312312313231231231231231231231231', 'e054903e6671684eff1264dc3ee6ec46.png');
 
 -- --------------------------------------------------------
 
@@ -121,6 +144,13 @@ CREATE TABLE `vehiculo` (
   `modelo` varchar(30) NOT NULL,
   `categoria` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `vehiculo`
+--
+
+INSERT INTO `vehiculo` (`patente`, `idUsuario`, `modelo`, `categoria`) VALUES
+(1234, 1, 'aas', 2);
 
 --
 -- Índices para tablas volcadas
@@ -189,13 +219,13 @@ ALTER TABLE `calificacion`
 -- AUTO_INCREMENT de la tabla `postulacion`
 --
 ALTER TABLE `postulacion`
-  MODIFY `idPostulacion` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `idPostulacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `publicacion`
 --
 ALTER TABLE `publicacion`
-  MODIFY `idPublicacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `idPublicacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `usuario`

@@ -20,7 +20,6 @@
     position: sticky;
     background-color: white;
     z-index: 100;
-    top: 0;
     box-shadow: 0 5px 8px -9px rgba(0, 0, 0, 0.75);
 }
 
@@ -60,14 +59,6 @@
     justify-content: center;
 }
 
-.header__option .material-icons {
-    font-size: xx-large;
-    color: gray;
-}
-
-.header__option:hover .material-icons {
-    color: #52b04c;
-}
 
 .header__option {
     display: flex;
@@ -76,20 +67,9 @@
     cursor: pointer;
 }
 
-.header__option.active .material-icons {
-    color: #52b04c;
-}
-
-.header__option.active {
-    border-bottom: 4px solid #52b04c;
-}
-
-.header__option:hover {
-    background-color: #eff2f5;
-    border-radius: 10px;
-    align-items: center;
-    padding: 0 30px;
-    border-bottom: none;
+.header__option .material-icons {
+    font-size: xx-large;
+    color: gray;
 }
 
 .header__info {
@@ -113,6 +93,10 @@
 
 .header__right .material-icons:hover {
     cursor: pointer;
+}
+
+.header__responsive {
+    display: none;
 }
 
 /* sidebar  */
@@ -334,18 +318,6 @@ body {
         display: none;
     }
 
-    .header__input input {
-        display: none;
-    }
-
-    .header__middle {
-        display: none;
-    }
-
-    .header__info {
-        display: none;
-    }
-
     .widgets {
         display: none;
     }
@@ -417,4 +389,93 @@ scroll-container {
 
 .hidden {
     display: none;
+}
+
+@media (min-width: 992px) {
+    .header__option:hover .material-icons {
+        color: #52b04c;
+    }
+    
+    .header__option.active .material-icons {
+        color: #52b04c;
+    }
+    
+    .header__option.active {
+        border-bottom: 4px solid #52b04c;
+    }
+    
+    .header__option:hover {
+        background-color: #eff2f5;
+        border-radius: 10px;
+        align-items: center;
+        padding: 0 30px;
+        border-bottom: none;
+    }
+}
+
+@media (max-width: 991px) {
+    /* Estilos para tablets y pantallas medianas */
+    .header__left, .header__middle, .header__right {
+        display: none;
+    }
+
+    .header {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0; /* Esto asegura que el header no se expanda más de lo necesario */
+        width: 100%;
+        padding: 10px 0;
+        box-shadow: 0 -5px 8px -9px rgba(0, 0, 0, 0.75);
+    }
+
+    .header__responsive {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        background-color: white;
+        padding: 5px 0;
+        width: 100%;
+        position: fixed; /* Esto mantiene el header en la parte superior */
+        bottom: 0;
+    }
+
+    .header__option {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-size: 12px;
+        color: #eff2f5; /* Color del texto */
+        text-decoration: none;
+        padding: 10px 0; /* Aumentado para un mejor área clickeable */
+        background-color: #52b04c; /* Fondo de cada opción */
+        flex-grow: 1; /* Para que ocupe todo el espacio disponible */
+        text-align: center;
+    }
+
+    .header__option i {
+        font-size: 20px;
+        margin-bottom: 2px;
+    }
+
+    .header__option:hover {
+        background-color: #eff2f5;
+        color: #52b04c;
+    }
+
+    .header__option .material-icons {
+        color: #eff2f5; /* Cambia el color del ícono solo en pantallas pequeñas */
+    }
+
+    .header__option:hover .material-icons {
+        color: #52b04c; /* Cambiar el color del ícono a #52b04c */
+    }
+}
+
+@media (max-width: 767px) {
+    
+
+    .header__option:hover * {
+        color: #52b04c;
+    }
 }
