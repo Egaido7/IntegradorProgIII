@@ -8,11 +8,11 @@ class GestorVeryDeli {
         $this->conn = $conexion;
     }
 
-    public function insertar_usuario($id, $nombre, $apellido, $dni, $resp, $email, $domicilio, $codPostal, $pwd, $img) {
+    public function insertar_usuario($nombre, $apellido, $dni, $email, $pwd) {
         try {
-            $this->stmt = $this->conn->prepare("INSERT INTO usuario(idUsuario, nombre, apellido, dni, responsable,
-            email, domicilio, codPostal, contraseña, imagen) VALUES (?,?,?,?,?,?,?,?,?,?)");
-            $this->stmt->bind_param($id, $nombre, $apellido, $dni, $resp, $email, $domicilio, $codPostal, $pwd, $img);
+            $this->stmt = $this->conn->prepare("INSERT INTO usuario(nombre, apellido, dni, 
+            email, contraseña) VALUES (?,?,?,?,?)");
+            $this->stmt->bind_param("ssiss", $nombre, $apellido, $dni, $email, $pwd);
             $this->stmt->execute();
             return $this->stmt->affected_rows;
         } catch (mysqli_sql_exception $e) {
@@ -390,30 +390,24 @@ class GestorVeryDeli {
             }
         }
     }
-    public function insertar_postulante($idUsuario, $monto,$idPublicacion, $alerta) {
-        try {
-            // Preparar la consulta SQL sin la columna auto-incremental
-            $sql = "INSERT INTO postulacion(idUsuario,monto,idPublicacion, alerta)
-                    VALUES (?, ?, ?,?)";
-            
-            $this->stmt = $this->conn->prepare($sql);
-            
-            // Verificar si la preparación de la consulta fue exitosa
-          
+    public function insertar_postulante($usuario_id, $monto, $publicacion_id, $estado) {
+        // Preparar la sentencia
+        $stmt = $this->conn->prepare("INSERT INTO postulacion (idUsuario, monto, idPublicacion, alerta) VALUES (?, ?, ?, ?)");
     
-            // Enlazar los parámetros: 'i' para enteros, 'd' para float
-            $this->stmt->bind_param("idii", $idUsuario, $monto,$idPublicacion, $alerta);
-    
-            // Ejecutar la consulta
-            $this->stmt->execute();
-    
-            // Retornar el número de filas afectadas
-            return $this->stmt->affected_rows;
-    
-        } catch (mysqli_sql_exception $e) {
-            // Lanzar una excepción con el mensaje de error
-            throw new Exception("Error al insertar un nuevo postulante: " . $e->getMessage());
+        // Verificar si la preparación fue exitosa
+        if (!$stmt) {
+            die("Error en la preparación de la consulta: " . $this->conn->error);
         }
+    
+        // Ligar los parámetros y ejecutar la consulta
+        $stmt->bind_param("iiii", $usuario_id, $monto, $publicacion_id, $estado);
+        
+        if (!$stmt->execute()) {
+            die("Error en la ejecución de la consulta: " . $stmt->error);
+        }
+    
+        // Cerrar la declaración
+        $stmt->close();
     }
     public function tiene_vehiculo_por_usuario($idUsuario) {
         try {
@@ -520,6 +514,78 @@ class GestorVeryDeli {
     
         } catch (mysqli_sql_exception $e) {
             // Lanzar una excepción en caso de error
+            throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
+        }
+    }
+    public function usuario_califico($idUsuario,$idPublicacion) {
+    
+            try {
+            
+                $this->stmt = $this->conn->prepare("SELECT COUNT(*) FROM calificacion WHERE idUsuario = ? AND idPublicacion = ?");
+                $this->stmt->bind_param("ii", $idUsuario,$idPublicacion);
+                $this->stmt->execute();
+                $this->stmt->bind_result($cant_calificacion);
+                $this->stmt->fetch();
+
+                // si el usuario califico la publicacion
+                if($cant_calificacion == 1) {
+                    return false;
+                } else {
+                    return true;
+                }
+            } catch (mysqli_sql_exception $e) {
+                throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
+                return false;
+            
+        }
+    }
+
+    public function publicacion_calificada($idPublicacion) {
+    
+        try {
+        
+            $this->stmt = $this->conn->prepare("SELECT COUNT(*) FROM calificacion WHERE  idPublicacion = ?");
+            $this->stmt->bind_param("i",$idPublicacion);
+            $this->stmt->execute();
+            $this->stmt->bind_result($cant_calificacion);
+            $this->stmt->fetch();
+
+            // si se calificaron ambos usuarios
+            if($cant_calificacion == 2) {
+                return false;
+            } else {
+                return true;
+            }
+        } catch (mysqli_sql_exception $e) {
+            throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
+            return false;
+        
+    }
+}
+
+    public function usuario_yaExiste($email) {
+        try {
+            $this->stmt = $this->conn->prepare("SELECT email FROM usuario WHERE email = ?");
+            $this->stmt->bind_param("s", $email);
+            $this->stmt->execute();
+            return $this->stmt->num_rows() > 0;
+        } catch (mysqli_sql_exception $e) {
+            throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
+        }
+    }
+
+    //Retorna el ID autoincremental generado en la última consulta
+    public function fetch_insert_id() {
+        return $this->conn->insert_id;
+    }
+
+    public function verificar_credenciales_usuario($email, $pwd) {
+        try {
+            $this->stmt = $this->conn->prepare("SELECT idUsuario FROM usuario WHERE email = ? AND contraseña = ?");
+            $this->stmt->bind_param("ss", $email, $pwd);
+            $this->stmt->execute();
+            return $this->stmt->get_result();
+        } catch (mysqli_sql_exception $e) {
             throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
         }
     }
