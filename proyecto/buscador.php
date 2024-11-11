@@ -8,8 +8,8 @@ $publicaciones = [];
 // Verificar si se presionó el botón de filtro
 if (isset($_POST['botonFiltrar'])) {
     // Obtener y limpiar filtros de provincia y peso
-    $filtroProvincias = mysqli_real_escape_string($conexion, trim($_POST['select_provincias']));
-    $filtroPeso = mysqli_real_escape_string($conexion, trim($_POST['select_descripcion']));
+    $filtroProvincias = $gestor->fetch_escape_string(trim($_POST['select_provincias']));
+    $filtroPeso = $gestor->fetch_escape_string(trim($_POST['select_descripcion']));
 
     // Consultar publicaciones aplicando los filtros de manera dinámica
     if (!empty($filtroProvincias) && !empty($filtroPeso)) {

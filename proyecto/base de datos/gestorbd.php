@@ -376,7 +376,7 @@ class GestorVeryDeli {
                         
                 <div class="post__option">
                 <span class="material-icons"> near_me </span>
-                <form action="../publicacion.php" method="POST">
+                <form action="  ./publicacion.php" method="POST">
                     <input type="submit"  id="verPublicacion" value="postularse"  class="btn btn-link p-0" style="text-decoration: none; color: inherit;">     
                     <input type="hidden" name="verPublicacion" value="<?= $publicacion['idPublicacion'] ?>">
                 </form>
@@ -848,6 +848,17 @@ class GestorVeryDeli {
     public function fetch_nombre_localidad_por_id($idLocalidad) {
         try {
             $this->stmt = $this->conn->prepare("SELECT Nombrelocalidad FROM localidad WHERE idLocalidad = ?");
+            $this->stmt->bind_param("i", $idLocalidad);
+            $this->stmt->execute();
+            return $this->stmt->get_result()->fetch_assoc()["Nombrelocalidad"];
+        } catch (mysqli_sql_exception $e) {
+            throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
+        }
+    }
+
+    public function fetch_provincias() {
+        try {
+            $this->stmt = $this->conn->prepare("SELECT nombreProvincia, idProvincia FROM provincia");
             $this->stmt->bind_param("i", $idLocalidad);
             $this->stmt->execute();
             return $this->stmt->get_result()->fetch_assoc()["Nombrelocalidad"];

@@ -20,20 +20,20 @@
 
   require 'base de datos\gestorbd.php';
   $publicacionControl = new GestorVeryDeli();
-  $publicacion = $publicacionControl->fetch_publicacion(4);
+  $publicacion = $publicacionControl->fetch_publicacion($verPublicacion);
   $postulantes = $publicacionControl->fetch_postulaciones_por_publicacion($publicacion['idPublicacion']);
   $comentarios = $publicacionControl->fetch_mensajes_por_publicacion($publicacion['idPublicacion']);
   $fechap = date('Y-m-d');
   $id = $publicacion['idPublicacion'];
   date_default_timezone_set('America/Argentina/San_Luis');
 
+  if (isset($_SESSION['usuario'])) {
+    $usuario = $_SESSION['usuario'];
+  }
   if (!isset($_SESSION['usuario'])) {
     $tipo = 0;
     //cambiar el 1 por session de la id de usuario
-  } else
-  
-$usuario = $_SESSION['usuario'];
-  if ($usuario == $publicacion['idUsuario']) {
+  } elseif ($usuario == $publicacion['idUsuario']) {
     $tipo = 1;
   } elseif ($publicacion['postulanteElegido'] == $usuario) {
     $tipo = 2;
