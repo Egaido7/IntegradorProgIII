@@ -2,9 +2,15 @@
 session_start(); // Inicia la sesión al comienzo del script
 
 include_once "base de datos/gestorbd.php";
+
 $gestor = new GestorVeryDeli();
 
-
+// Configurar la conexión a la base de datos
+$conexion = mysqli_connect('localhost', 'user_personas', '45382003', 'very_deli');
+if (!$conexion) {
+    die("Conexión fallida: " . mysqli_connect_error());
+}
+mysqli_set_charset($conexion, 'utf8mb4');
 
 // Manejar el registro de un nuevo usuario
 if (isset($_POST['btnEnviarRegistro'])) {
