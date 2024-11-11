@@ -185,10 +185,12 @@ class GestorVeryDeli {
                 p.provinciaDestino, 
                 p.imagenPublicacion,
                 p.titulo,
-                p.descripcion
+                p.descripcion,
+                p.estado
             FROM publicacion p
             JOIN usuario u ON p.idUsuario = u.idUsuario
             WHERE p.provinciaOrigen = ?
+            AND p.estado = 0
         ";
             $this->stmt = $this->conn->prepare($sql);
             $this->stmt->bind_param("s", $Provinciaorigen);
@@ -212,10 +214,12 @@ class GestorVeryDeli {
                     p.provinciaDestino, 
                     p.imagenPublicacion,
                     p.titulo,
-                    p.descripcion
+                    p.descripcion,
+                    p.estado
                 FROM publicacion p
                 JOIN usuario u ON p.idUsuario = u.idUsuario
                 WHERE p.volumen = ?
+                AND p.estado = 0
             ";
             
             $this->stmt = $this->conn->prepare($sql);
@@ -252,10 +256,12 @@ class GestorVeryDeli {
                     p.provinciaDestino, 
                     p.imagenPublicacion,
                     p.titulo,
-                    p.descripcion
+                    p.descripcion,
+                    p.estado
                 FROM publicacion p
                 JOIN usuario u ON p.idUsuario = u.idUsuario
-                WHERE p.provinciaOrigen = ? AND p.volumen = ?
+                WHERE p.provinciaOrigen = ? AND p.volumen = ? AND
+                p.estado = 0
             ";
             
             $this->stmt = $this->conn->prepare($sql);
@@ -286,9 +292,11 @@ class GestorVeryDeli {
                     p.provinciaDestino, 
                     p.imagenPublicacion,
                     p.titulo,
-                    p.descripcion
+                    p.descripcion,
+                    p.estado 
                 FROM publicacion p
-                JOIN usuario u ON p.idUsuario = u.idUsuario
+                JOIN usuario u ON p.idUsuario = u.idUsuario AND
+                p.estado = 0
             ");
 
             // Comprobación de errores en la preparación de la consulta
@@ -434,8 +442,8 @@ class GestorVeryDeli {
                     u.apellido AS usuarioApellido, 
                     p.volumen, 
                     p.peso, 
-                    p.provinciaOrigen, 
-                    p.provinciaDestino, 
+                    p.Provinciaorigen, 
+                    p.Provinciadestino, 
                     p.idPublicacion,
                     p.idUsuario,
                     p.descripcion,
@@ -443,7 +451,13 @@ class GestorVeryDeli {
                     p.imagenPublicacion,
                     p.contacto,
                     p.postulanteElegido,
-                    p.estado
+                    p.estado,
+                    p.localidadOrigen,
+                    p.localidadDestino,
+                    p.domicilioOrigen,
+                    p.domicilioDestino,
+                    p.nombreRecibir,
+                    p.fechaPublicacion
                 FROM publicacion p
                 JOIN usuario u ON p.idUsuario = u.idUsuario
                 WHERE p.idPublicacion = ?");

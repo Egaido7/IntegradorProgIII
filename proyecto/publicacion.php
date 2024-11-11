@@ -23,7 +23,7 @@
   $publicacion = $publicacionControl->fetch_publicacion(4);
   $postulantes = $publicacionControl->fetch_postulaciones_por_publicacion($publicacion['idPublicacion']);
   $comentarios = $publicacionControl->fetch_mensajes_por_publicacion($publicacion['idPublicacion']);
-
+  $fechap = date('Y-m-d');
   $id = $publicacion['idPublicacion'];
 
   date_default_timezone_set('America/Argentina/San_Luis');
@@ -123,7 +123,24 @@ exit(); // Asegura que se detenga el procesamiento adicional
     header("Location: " . $_SERVER['PHP_SELF']); // Redirige a la misma página sin datos en POST
     exit(); // Asegura que se detenga el procesamiento adicional  
   }
+if($publicacion['estado'] == 2){
+  $fecha7 = date('Y-m-d', strtotime($publicacion['fechaPublicacion'].'+ 7 days'));
+}
+if(isset($fecha7)){
+  if($fechap > $fecha7){
+if($publicacionControl->publicacion_calificada($publicacion['idPublicacion']) == 0){
+  $usuario1 = $publicacionControl->fetch_calificaciones_por_publicacion($publicacion['idUsuario'], $publicacion['idPublicacion']);
+  $usuario2 = $publicacionControl->fetch_calificaciones_por_publicacion($publicacion['postulanteElegido'], $publicacion['idPublicacion']);
+  if (empty($usuario1)) {
+    $publicacionControl->insertar_calificacion($publicacion['idUsuario'], -1, "no califico en mas de una semana", $publicacion['idUsuario'], $publicacion['idPublicacion'], $fechap);
+  }
+if(empty($usuario2)){
+  $publicacionControl->insertar_calificacion($publicacion['postulanteElegido'], -1, "no califico en mas de una semana", $publicacion['postulanteElegido'], $publicacion['idPublicacion'], $fechap);
+}
+}
+}
 
+}
   ?>
 
   <div class=" row header">
@@ -184,12 +201,14 @@ exit(); // Asegura que se detenga el procesamiento adicional
   <!--contenido del producto -->
 
   <div class="card d-flex flex-row flex-wrap container" style="width: 70%;">
-    <img src="imagenes/<?php echo $publicacion['usuarioImagen'] ?>" class="card-img-top" alt="..." style="max-width: auto; height: 50%; flex: 1 1 auto;">
+    <img src="<?php echo $publicacion['imagenPublicacion'] ?>" class="card-img-top" alt="..." style="max-width: auto; height: 50%; flex: 1 1 auto;">
     <div class="card-body" style="flex: 1 1 300px; padding: 20px;">
       <class="card-title">
         <h1><?php echo $publicacion['titulo'] ?></h1>
-        <p class="card-text">Origen: <?php echo $publicacion['Provinciaorigen'] ?></p>
-        <p class="card-text">destino <?php echo $publicacion['Provinciadestino'] ?></p>
+        <p class="card-text">Origen: <?php echo $publicacion['Provinciaorigen']."/".$publicacion['localidadOrigen'];
+        if($publicacion['estado'] != 0){echo "/".$publicacion['domicilioOrigen'];}?></p>
+        <p class="card-text">destino <?php echo $publicacion['Provinciadestino']."/".$publicacion['localidadDestino'];
+         if($publicacion['estado'] != 0){echo "/".$publicacion['domicilioDestino'];} ?></p>
         <p class="card-text">Peso: <?php echo $publicacion['peso'] ?>kg</p>
         <p class="card-text">Volumen: <?php echo $publicacion['volumen'] ?></p>
         <p class="card-text"><?php echo $publicacion['descripcion'] ?></p>
@@ -197,6 +216,7 @@ exit(); // Asegura que se detenga el procesamiento adicional
           $usuario = $publicacionControl->fetch_usuario_por_id($publicacion['postulanteElegido']);?>
         <p class="card-text"> Contacto:<?php echo $publicacion['contacto'] ?></p>
         <p class="card-text">Postulante Elegido:<?php echo $usuario['nombre']." ".$usuario['apellido'] ?></p>
+        <p class="card-text"> nombre a recibir:<?php echo $publicacion['nombreRecibir'] ?></p>
         <?php }  
         ?>
         
@@ -297,56 +317,6 @@ echo "inicie sesion para poder postularte";
   <!-- div final del scroll-->
   </div>
 
-  <!-- Contenedor Principal -->
-  <?php if ($publicacion['estado'] == 3 && $tipo == 1 || $tipo == 2) { ?>
-    <div class="container" style="padding-left: 60px;">
-      <h1>Comentarios</h1> <a href="http://creaticode.com"></a>
-    </div>
-    <div class="card d-flex flex-row flex-wrap container" style="width: 70%; border: 1px solid #757575">
-      <?php if ($publicacionControl->publicacion_calificada($publicacion['idPublicacion'])) { ?>
-        <form method="post" action="publicacion.php">
-          <label for="calificacion">calificacion</label>
-          <select name="calificacion" id="calificacion">
-            <option name="calificacion" value="0">0</option>
-            <option name="calificacion" value="1">1</option>
-            <option name="calificacion" value="2">2</option>
-            <option name="calificacion" value="3">3</option>
-            <option name="calificacion" value="4">4</option>
-            <option name="calificacion" value="5">5</option>
-          </select>
-
-          <p><label for="opinion">opinion</label><input type="text" name="opinion" id="opinion"></p>
-          <p><input type="submit" name="enviarCalificaion"></p>
-        </form>
-      <?php } else { ?>
-
-        <div class="row">
-          <div class="col-12" style="margin-bottom: 20px;">
-            <div class=" header__right">
-
-              <img
-                class="user__avatar"
-                src="imagenes/<?php echo $usuario['imagen'] ?>"
-                alt="" />
-
-              <div>
-                <h4><?php echo $usuario['nombre'] ?> <?php $usuario['apellido'] ?></h4>
-              </div>
-              <div style="margin-left: 20%;"><?php echo $postulacion['monto'] ?>$</div>
-              <form action="publicacion.php" method="post">
-                <input type="hidden" name="idElegido" value="<?php echo $usuario['idUsuario'] ?>">
-                <div style="padding-left: 500px;"> <button type="submit" id="btnElegir" name="btnElegir" class="btn btn-primary">elegir</button></div>
-              </form>
-
-            </div>
-          </div>
-        </div>
-
-        <?php ?>
-
-    </div>
-<?php }
-    } ?>
 
 <?php
 if ($tipo == 1 || $tipo == 2 || $tipo == 3) {
@@ -360,33 +330,34 @@ if ($tipo == 1 || $tipo == 2 || $tipo == 3) {
       <div class="comments-container" style="padding-left:0;">
 
 
-        <ul id="comments-list" class="comments-list">
-          <li>
-            <?php foreach ($comentarios as $mensaje) {
-              $usuario = $publicacionControl->fetch_usuario_por_id($mensaje['idUsuario']);
-
-            ?>
-              <div class="comment-main-level" style="margin-top: 20px; margin-bottom: 10px;">
-                <!-- Avatar -->
-                <div class="comment-avatar"><img src="imagenes/<?php echo $usuario['imagen'] ?>" alt=""></div>
-                <!-- Contenedor del Comentario -->
-                <div class="comment-box">
-                  <div class="comment-head">
-                    <h6 class="comment-name <?php if ($usuario['idUsuario'] == $publicacion['idUsuario']) {
-                                              echo "by-author";
-                                            } ?>"><a href="http://creaticode.com/blog"><?php echo $usuario['nombre'] ?></a></h6>
-                    <span><?php echo $mensaje['fechaComentario'] . " " . $mensaje['hora'] ?></span>
-                  </div>
-                  <div class="comment-content">
-                    <?php echo $mensaje['comentario'] ?>
-                  </div>
-                </div>
-              </div>
-            <?php
-            }
-            ?>
-          </li>
-        </ul>
+      <ul id="comments-list" class="comments-list">
+  <?php foreach ($comentarios as $mensaje) {
+    $usuario = $publicacionControl->fetch_usuario_por_id($mensaje['idUsuario']);
+  ?>
+    <li>
+      <div class="comment-main-level" style="margin-top: 20px; margin-bottom: 10px; display: flex; align-items: flex-start;">
+        <!-- Avatar -->
+        <div class="comment-avatar" style="margin-right: 15px;">
+          <img src="imagenes/<?php echo $usuario['imagen'] ?>" alt="perfil" style="width: 50px; height: 50px; border-radius: 50%;">
+        </div>
+        <!-- Contenedor del Comentario -->
+        <div class="comment-box" style="flex: 1;">
+          <div class="comment-head" style="display: flex; justify-content: space-between; align-items: center;">
+            <h6 class="comment-name <?php if ($usuario['idUsuario'] == $publicacion['idUsuario']) {
+                                      echo "by-author";
+                                    } ?>" style="margin: 0;">
+              <a href="http://creaticode.com/blog"><?php echo $usuario['nombre'] ?></a>
+            </h6>
+            <span style="font-size: 0.9em; color: #999;"><?php echo $mensaje['fechaComentario'] . " " . $mensaje['hora'] ?></span>
+          </div>
+          <div class="comment-content" style="margin-top: 5px;">
+            <?php echo $mensaje['comentario'] ?>
+          </div>
+        </div>
+      </div>
+    </li>
+  <?php } ?>
+</ul>
       </div>
       <div class="chat-form">
 
