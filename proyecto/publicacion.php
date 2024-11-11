@@ -104,6 +104,12 @@
     exit(); // Asegura que se detenga el procesamiento adicional    
   }
 
+if(isset($finalizado)){
+  $fecha= date('Y-m-d');
+$publicacionControl->actualizar_publicacionFinalizada($publicacion['idPublicacion'],$fecha);
+  header("Location: " . $_SERVER['PHP_SELF']); // Redirige a la misma página sin datos en POST
+exit(); // Asegura que se detenga el procesamiento adicional  
+}
   if (isset($btnElegir)) {
 
     $publicacionControl->actualizar_postulanteElegido($publicacion['idPublicacion'], $idElegido);
@@ -187,24 +193,26 @@
         <p class="card-text">Peso: <?php echo $publicacion['peso'] ?>kg</p>
         <p class="card-text">Volumen: <?php echo $publicacion['volumen'] ?></p>
         <p class="card-text"><?php echo $publicacion['descripcion'] ?></p>
-        <?php if ($publicacion['estado'] == 1) {
-          $usuario = $publicacionControl->fetch_usuario_por_id($publicacion['postulanteElegido']); ?>
-          <p class="card-text"> Contacto:<?php echo $publicacion['contacto'] ?></p>
-          <p class="card-text">Postulante Elegido:<?php echo $usuario['nombre'] . " " . $usuario['apellido'] ?></p>
-        <?php }
+        <?php if($publicacion['estado'] != 0){ 
+          $usuario = $publicacionControl->fetch_usuario_por_id($publicacion['postulanteElegido']);?>
+        <p class="card-text"> Contacto:<?php echo $publicacion['contacto'] ?></p>
+        <p class="card-text">Postulante Elegido:<?php echo $usuario['nombre']." ".$usuario['apellido'] ?></p>
+        <?php }  
         ?>
-
-        <?php if ($tipo == 3 && $publicacion['estado'] == 0) { ?>
-          <a href="#" class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#postulacionModal">postularse</a>
-        <?php
-        } elseif ($tipo == 2 && $publicacion['estado'] == 1) { ?>
+        
+        <?php if($tipo == 3 && $publicacion['estado'] == 0){?>
+        <a href="#" class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#postulacionModal">postularse</a>
+       <?php
+        }
+        if($tipo == 2 && $publicacion['estado'] == 1){?>
           <form action="publicacion.php" method="post">
             <div class="modal-footer ">
               <button class="btn btn-primary" type="submit" name="finalizado">envio finalizado</button>
             </div>
           </form>
-        <?php } elseif ($tipo == 0) {
-          echo "inicie sesion para poder postularte";
+       <?php }
+        if($tipo == 0){
+echo "inicie sesion para poder postularte";
         }
         ?>
     </div>
@@ -394,7 +402,7 @@ if ($tipo == 1 || $tipo == 2 || $tipo == 3) {
 }
 ?>
 <!-- Contenedor Principal -->
-<?php if ($publicacion['estado'] == 2  && $tipo == 1 || $tipo == 2) { ?>
+<?php  if($publicacion['estado'] == 2  && $tipo == 1 ||$tipo == 2){?>  
 
   <div class="container " style="padding-left: 50px;">
     <h1>Calificacion</h1>

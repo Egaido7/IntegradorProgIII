@@ -722,7 +722,7 @@ class GestorVeryDeli {
             $this->stmt = $this->conn->prepare("UPDATE publicacion SET fechaPublicacion = ?, estado = 2 WHERE idPublicacion = ?;");
             
             // Enlazar los parámetros: 'i' para enteros
-            $this->stmt->bind_param("ii", $fecha, $idPublicacion);
+            $this->stmt->bind_param("si", $fecha, $idPublicacion);
             
             // Ejecutar la consulta
             $this->stmt->execute();
