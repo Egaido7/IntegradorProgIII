@@ -20,10 +20,10 @@
 
   require 'base de datos\gestorbd.php';
   $publicacionControl = new GestorVeryDeli();
-  $publicacion = $publicacionControl->fetch_publicacion(9);
+  $publicacion = $publicacionControl->fetch_publicacion(4);
   $postulantes = $publicacionControl->fetch_postulaciones_por_publicacion($publicacion['idPublicacion']);
   $comentarios = $publicacionControl->fetch_mensajes_por_publicacion($publicacion['idPublicacion']);
-
+  $fechap = date('Y-m-d');
   $id = $publicacion['idPublicacion'];
 
   date_default_timezone_set('America/Argentina/San_Luis');
@@ -123,7 +123,24 @@ exit(); // Asegura que se detenga el procesamiento adicional
     header("Location: " . $_SERVER['PHP_SELF']); // Redirige a la misma página sin datos en POST
     exit(); // Asegura que se detenga el procesamiento adicional  
   }
+if($publicacion['estado'] == 2){
+  $fecha7 = date('Y-m-d', strtotime($publicacion['fechaPublicacion'].'+ 7 days'));
+}
+if(isset($fecha7)){
+  if($fechap > $fecha7){
+if($publicacionControl->publicacion_calificada($publicacion['idPublicacion']) == 0){
+  $usuario1 = $publicacionControl->fetch_calificaciones_por_publicacion($publicacion['idUsuario'], $publicacion['idPublicacion']);
+  $usuario2 = $publicacionControl->fetch_calificaciones_por_publicacion($publicacion['postulanteElegido'], $publicacion['idPublicacion']);
+  if (empty($usuario1)) {
+    $publicacionControl->insertar_calificacion($publicacion['idUsuario'], -1, "no califico en mas de una semana", $publicacion['idUsuario'], $publicacion['idPublicacion'], $fechap);
+  }
+if(empty($usuario2)){
+  $publicacionControl->insertar_calificacion($publicacion['postulanteElegido'], -1, "no califico en mas de una semana", $publicacion['postulanteElegido'], $publicacion['idPublicacion'], $fechap);
+}
+}
+}
 
+}
   ?>
 
   <div class=" row header">
@@ -313,33 +330,34 @@ if ($tipo == 1 || $tipo == 2 || $tipo == 3) {
       <div class="comments-container" style="padding-left:0;">
 
 
-        <ul id="comments-list" class="comments-list">
-          <li>
-            <?php foreach ($comentarios as $mensaje) {
-              $usuario = $publicacionControl->fetch_usuario_por_id($mensaje['idUsuario']);
-
-            ?>
-              <div class="comment-main-level" style="margin-top: 20px; margin-bottom: 10px;">
-                <!-- Avatar -->
-                <div class="comment-avatar"><img src="imagenes/<?php echo $usuario['imagen'] ?>" alt=""></div>
-                <!-- Contenedor del Comentario -->
-                <div class="comment-box">
-                  <div class="comment-head">
-                    <h6 class="comment-name <?php if ($usuario['idUsuario'] == $publicacion['idUsuario']) {
-                                              echo "by-author";
-                                            } ?>"><a href="http://creaticode.com/blog"><?php echo $usuario['nombre'] ?></a></h6>
-                    <span><?php echo $mensaje['fechaComentario'] . " " . $mensaje['hora'] ?></span>
-                  </div>
-                  <div class="comment-content">
-                    <?php echo $mensaje['comentario'] ?>
-                  </div>
-                </div>
-              </div>
-            <?php
-            }
-            ?>
-          </li>
-        </ul>
+      <ul id="comments-list" class="comments-list">
+  <?php foreach ($comentarios as $mensaje) {
+    $usuario = $publicacionControl->fetch_usuario_por_id($mensaje['idUsuario']);
+  ?>
+    <li>
+      <div class="comment-main-level" style="margin-top: 20px; margin-bottom: 10px; display: flex; align-items: flex-start;">
+        <!-- Avatar -->
+        <div class="comment-avatar" style="margin-right: 15px;">
+          <img src="imagenes/<?php echo $usuario['imagen'] ?>" alt="perfil" style="width: 50px; height: 50px; border-radius: 50%;">
+        </div>
+        <!-- Contenedor del Comentario -->
+        <div class="comment-box" style="flex: 1;">
+          <div class="comment-head" style="display: flex; justify-content: space-between; align-items: center;">
+            <h6 class="comment-name <?php if ($usuario['idUsuario'] == $publicacion['idUsuario']) {
+                                      echo "by-author";
+                                    } ?>" style="margin: 0;">
+              <a href="http://creaticode.com/blog"><?php echo $usuario['nombre'] ?></a>
+            </h6>
+            <span style="font-size: 0.9em; color: #999;"><?php echo $mensaje['fechaComentario'] . " " . $mensaje['hora'] ?></span>
+          </div>
+          <div class="comment-content" style="margin-top: 5px;">
+            <?php echo $mensaje['comentario'] ?>
+          </div>
+        </div>
+      </div>
+    </li>
+  <?php } ?>
+</ul>
       </div>
       <div class="chat-form">
 
