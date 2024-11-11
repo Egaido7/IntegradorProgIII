@@ -1,7 +1,7 @@
 ﻿<?php
 include 'loginRegistro.php';
 
-if(!isset($_SESSION["usuario"])) {
+if (!isset($_SESSION["usuario"])) {
     header("Location: index.php");
 } else {
     extract($_POST);
@@ -69,7 +69,7 @@ $us = $_SESSION["usuario"];
             </div>
             <div href="buscador.php" class="header__option">
                 <a href="buscador.php"><span class="material-icons"> storefront </span></a>
-            </div> 
+            </div>
             <div class="header__option active">
                 <a href="perfil.php"><span class="material-icons"> account_circle </span></a>
             </div>
@@ -89,22 +89,22 @@ $us = $_SESSION["usuario"];
 
         <div class="header__responsive">
             <?php if (isset($_SESSION["usuario"])) { ?>
-            <a href="index.php" class="header__option">
-                <span class="material-icons"> home </span>
-                <span>Inicio</span>
-            </a>
-            <a href="buscador.php" class="header__option">
-                <span class="material-icons"> search </span>
-                <span>Buscar Pedidos</span>
-            </a>
-            <a href="perfil.php?tab=calificaciones" class="header__option">
-                <span class="material-icons"> star </span>
-                <span>Calificaciones</span>
-            </a>
-            <a href="perfil.php?tab=publicaciones" class="header__option">
-                <span class="material-icons"> person </span>
-                <span>Perfil</span>
-            </a>
+                <a href="index.php" class="header__option">
+                    <span class="material-icons"> home </span>
+                    <span>Inicio</span>
+                </a>
+                <a href="buscador.php" class="header__option">
+                    <span class="material-icons"> search </span>
+                    <span>Buscar Pedidos</span>
+                </a>
+                <a href="perfil.php?tab=calificaciones" class="header__option">
+                    <span class="material-icons"> star </span>
+                    <span>Calificaciones</span>
+                </a>
+                <a href="perfil.php?tab=publicaciones" class="header__option">
+                    <span class="material-icons"> person </span>
+                    <span>Perfil</span>
+                </a>
             <?php } else { ?>
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal">Iniciar Sesión</button>
             <?php } ?>
@@ -116,10 +116,9 @@ $us = $_SESSION["usuario"];
         <div class="row">
             <div class="col-sm-4" style="margin-top: 50px;">
                 <div class="text-center">
-                    <!-- Se muestra imagen y -->
-                    <?php if(!isset($usuario['imagen'])) { ?>
+                    <?php if (!isset($usuario['imagen'])) { ?>
                         <img src="http://ssl.gstatic.com/accounts/ui/avatar_2x.png" class="avatar rounded-circle img-fluid border"
-                        alt="avatar">
+                            alt="avatar">
                     <?php } else { ?>
                         <img src="imagenes/<?= $usuario["imagen"] ?>" alt="avatar" class="avatar rounded-circle img-fluid border">
                     <?php } ?>
@@ -128,7 +127,7 @@ $us = $_SESSION["usuario"];
                 </hr><br>
 
 
-                
+
                 <ul class="list-group">
                     <li class="list-group-item text-right">
                         <span class="pull-left">
@@ -137,13 +136,13 @@ $us = $_SESSION["usuario"];
                         <?= $gestor->fetch_promedio_calificaciones_por_usuario($usuario["idUsuario"]) ?>
                         <span class="text-muted"> - Total: <?= $gestor->fetch_num_calificaciones_por_usuario($usuario["idUsuario"]) ?></span>
                     </li>
-                    <?php if($gestor->fetch_usuario_es_responsable($usuario["idUsuario"])) { ?>
-                    <li class="list-group-item text-right">
-                        <span class="pull-left">
-                            <strong class="text-success">Usuario Responsable</strong>
-                        </span>
-                        <span class="material-icons text-success"> check_circle </span>
-                    </li>
+                    <?php if ($gestor->fetch_usuario_es_responsable($usuario["idUsuario"])) { ?>
+                        <li class="list-group-item text-right">
+                            <span class="pull-left">
+                                <strong class="text-success">Usuario Responsable</strong>
+                            </span>
+                            <span class="material-icons text-success"> check_circle </span>
+                        </li>
                     <?php } ?>
                 </ul>
             </div>
@@ -157,7 +156,7 @@ $us = $_SESSION["usuario"];
                         <a class="nav-link" id="publicaciones-tab" data-bs-toggle="tab" href="#publicaciones" role="tab" aria-controls="profile" aria-selected="false">Mis Publicaciones (<?= $gestor->fetch_num_publicaciones_activas_por_usuario($usuario["idUsuario"]) ?>)</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" id="vehiculos-tab" data-bs-toggle="tab" href="#vehiculos" role="tab" aria-controls="vehiculos" aria-selected="false">Vehículos</a>
+                        <a class="nav-link" id="personal-tab" data-bs-toggle="tab" href="#personal" role="tab" aria-controls="personal" aria-selected="false">Datos Personales</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" id="calificaciones-tab" data-bs-toggle="tab" href="#calificaciones" role="tab" aria-controls="calificaciones" aria-selected="false">Calificaciones</a>
@@ -167,7 +166,85 @@ $us = $_SESSION["usuario"];
 
                 <div class="tab-content">
                     <div class="tab-pane fade show active" id="postulaciones" role="tabpanel" aria-labelledby="postulaciones-tab">
-                        <hr>
+                        <?php $postulaciones = $gestor->fetch_postulaciones_por_usuario($usuario["idUsuario"]);
+                        foreach($postulaciones as $p) {
+                            $publicacion = $gestor->fetch_publicacion($p['idPublicacion']);
+                            ?>
+                            <div class="card border-secondary">
+                                <div class="card-body card-publicacion">
+                                    <h5 class="card-title">Postulación a "<?= $publicacion["titulo"] ?>"</h5>
+                                    <?php if($publicacion["postulanteElegido"] == $usuario["idUsuario"]) { ?>
+                                        <h6 class="card-subtitle mb-2 text-secondary">
+                                            <?= ($publicacion["estado"] == 2) ? "Entrega finalizada" : "Entrega pendiente" ?>
+                                        </h6>
+                                    <?php } else if($publicacion["postulanteElegido"] == 0) { ?>
+                                        <h6 class="card-subtitle mb-2 text-muted">Elección pendiente</h6>
+                                        <?php } else { ?>
+                                        <h6 class="card-subtitle mb-2 text-muted">No elegido</h6>
+                                    <?php } ?>
+                                    
+                                    
+                                    <h6 class="card-subtitle mb-2 text-muted">Origen: <?= $publicacion["localidadOrigen"] ?> - <?= $publicacion["Provinciaorigen"] ?></h6>
+                                    <h6 class="card-subtitle mb-2 text-muted">Destino: <?= $publicacion["localidadDestino"] ?> - <?= $publicacion["Provinciadestino"] ?></h6>
+                                    <h5 class="card-subtitle"><strong>Monto: <?= $p["monto"] ?></strong></h5>
+                                </div>
+                            </div>
+                        <?php } ?>
+
+                    </div>
+                    <div class="tab-pane fade" id="publicaciones" role="tabpanel" aria-labelledby="publicaciones-tab">
+                        <?php $publicaciones = $gestor->fetch_publicaciones_por_usuario($usuario["idUsuario"]);
+                        foreach ($publicaciones as $pub) {
+                            if ($pub["estado"] != 2) { ?>
+                                <a href="#">
+                                    <div class="card border-success">
+                                        <div class="card-body card-publicacion">
+                                            <h5 class="card-title"><?= $pub["titulo"] ?></h5>
+                                            <h6 class="card-subtitle mb-2 text-success">
+                                                <?= ($pub["estado"] == 0) ? "Disponible" : "En espera" ?>
+                                            </h6>
+                                            <h6 class="card-subtitle mb-2 text-muted">Origen: <?= $pub["localidadOrigen"] ?> - <?= $pub["Provinciaorigen"] ?></h6>
+                                            <h6 class="card-subtitle mb-2 text-muted">Destino: <?= $pub["localidadDestino"] ?> - <?= $pub["Provinciadestino"] ?></h6>
+                                            <p class="card-text">Descripción: <?= $pub["descripcion"] ?></p>
+                                        </div>
+                                    </div>
+                                </a>
+                            <?php } else { ?>
+                                <a href="#">
+                                    <div class="card border-muted">
+                                        <div class="card-body card-publicacion">
+                                            <h5 class="card-title"><?= $pub["titulo"] ?></h5>
+                                            <h6 class="card-subtitle mb-2 text-muted">Finalizada</h6>
+                                            <h6 class="card-subtitle mb-2 text-muted">Origen: <?= $pub["localidadOrigen"] ?> - <?= $pub["Provinciaorigen"] ?></h6>
+                                            <h6 class="card-subtitle mb-2 text-muted">Destino: <?= $pub["localidadDestino"] ?> - <?= $pub["Provinciadestino"] ?></h6>
+                                            <p class="card-text">Descripción: <?= $pub["descripcion"] ?></p>
+                                        </div>
+                                    </div>
+                                </a>
+                        <?php }
+                        }
+                        ?>
+
+
+                    </div>
+                    <div class="tab-pane fade" id="personal" role="tabpanel" aria-labelledby="personal-tab">
+                        <button type="button" class="btn btn-primary">Nuevo Vehículo</button>
+                        <div class="card border-success">
+                            <img class="card-img-top" src="imagenes/publicacionDefault.jpg" alt="Card image cap">
+                            <div class="card-body">
+                                <h5 class="card-title">Modelo de vehículo</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">Nro Patente: 1234</h6>
+                                <p class="card-text">Categoría: 2</p>
+                            </div>
+                        </div>
+                        <div class="card border-success">
+                            <img class="card-img-top" src="imagenes/publicacionDefault.jpg" alt="Card image cap">
+                            <div class="card-body">
+                                <h5 class="card-title">Modelo de vehículo</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">Nro Patente: NR55</h6>
+                                <p class="card-text">Categoría: 1</p>
+                            </div>
+                        </div>
                         <form class="form" action="##" method="post" id="registrationForm">
                             <div class="form-group">
 
@@ -351,27 +428,35 @@ $us = $_SESSION["usuario"];
                         </div>
                     </div>
                     <div class="tab-pane fade" id="calificaciones" role="tabpanel" aria-labelledby="calificaciones-tab">
-                        <div class="card border-success">
-                            <img class="card-img-top" src="imagenes/publicacionDefault.jpg" alt="Card image cap">
-                            <div class="card-body">
-                                <h5 class="card-title">Somanath Goudar</h5>
-                                <h6 class="card-subtitle mb-2 text-muted">2024-11-07   objeto bonito</h6>
-                                <form method="post" action="#">
-                                    <label for="calificacion">Calificación:</label>
-                                    <select name="calificacion" id="calificacion">
-                                        <option  name="calificacion" value="0">0</option>
-                                        <option  name="calificacion" value="1">1</option>
-                                        <option  name="calificacion" value="2">2</option>
-                                        <option  name="calificacion" value="3">3</option>
-                                        <option  name="calificacion" value="4">4</option>
-                                        <option  name="calificacion" value="5">5</option>
-                                    </select>
+                        <?php $calificaciones = $gestor->fetch_calificaciones_hechas_por_usuario($usuario["idUsuario"]);
+                        foreach($calificaciones as $c) {
+                            $calificado = $gestor->fetch_nombre_usuario_por_id($c["idCalificado"]);
+                            ?>
+                            
+                            <div class="card border-success">
+                                <div class="card-body">
+                                    <h5 class="card-title"><?= $calificado["apellido"] . " " . $calificado["nombre"] ?></h5>
+                                    <h6 class="card-subtitle mb-2 text-muted">Fecha: <?= $c["fecha"] ?></h6>
+                                    <form method="post" action="#">
+                                        <label for="calificacion">Calificación:</label>
+                                        <select name="calificacion" id="calificacion">
+                                            <option name="calificacion" value="0">0</option>
+                                            <option name="calificacion" value="1">1</option>
+                                            <option name="calificacion" value="2">2</option>
+                                            <option name="calificacion" value="3">3</option>
+                                            <option name="calificacion" value="4">4</option>
+                                            <option name="calificacion" value="5">5</option>
+                                        </select>
 
-                                    <p><label for="opinion">opinion</label><input type="text" name="opinion" id="opinion"></p>
-                                    <p><input type="submit" name="enviarCalificaion"></p>
-                                </form>
+                                        <p><label for="opinion">opinion</label><input type="text" name="opinion" id="opinion"></p>
+                                        <p><input type="submit" name="enviarCalificaion" value="Calificar"></p>
+                                    </form>
+                                </div>
                             </div>
-                        </div>
+                        <?php } ?>
+                        
+                        ?>
+                        
                     </div>
                 </div>
 
@@ -398,7 +483,7 @@ $us = $_SESSION["usuario"];
             });
         </script>
     </div>
-    <?php 
+    <?php
     include 'modalLoginRegistro.php';
     include 'validarRegistro.php';
     ?>
@@ -407,22 +492,22 @@ $us = $_SESSION["usuario"];
   </div>
 
 
-<script>
-    window.onload = function() {
-        // Obtiene el valor del parámetro 'tab' en la URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const tab = urlParams.get('tab');
+    <script>
+        window.onload = function() {
+            // Obtiene el valor del parámetro 'tab' en la URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const tab = urlParams.get('tab');
 
-        // Si existe el parámetro 'tab' y corresponde a 'publicaciones', activa la tab
-        if (tab === 'publicaciones') {
-            const publicacionesTab = new bootstrap.Tab(document.getElementById('publicaciones-tab'));
-            publicacionesTab.show(); // Activa la tab 'publicaciones'
-        } else if (tab === 'calificaciones') {
-            const calificacionesTab = new bootstrap.Tab(document.getElementById('calificaciones-tab'));
-            calificacionesTab.show(); // Activa la tab 'publicaciones'
-        }
-    };
-</script>
+            // Si existe el parámetro 'tab' y corresponde a 'publicaciones', activa la tab
+            if (tab === 'publicaciones') {
+                const publicacionesTab = new bootstrap.Tab(document.getElementById('publicaciones-tab'));
+                publicacionesTab.show(); // Activa la tab 'publicaciones'
+            } else if (tab === 'calificaciones') {
+                const calificacionesTab = new bootstrap.Tab(document.getElementById('calificaciones-tab'));
+                calificacionesTab.show(); // Activa la tab 'publicaciones'
+            }
+        };
+    </script>
 </body>
 <?php }?>
 </html>
