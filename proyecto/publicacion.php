@@ -41,10 +41,7 @@ session_start();
     }
     $control = 0;
 
-if($publicacion['estado'] > 1){
-  $control = 1;
-}
-    $tipo = 3;
+    $tipo = 2;
   $error = 0;
 
 // control al postularse
@@ -81,6 +78,19 @@ if (isset($btnpostularse)) {
   }
 }
 
+if(isset($enviarCalificacion)){
+$fechaComentario = date('Y-m-d');
+if(1==$publicacion['idUsuario']){
+  $calificado = $publicacion['idUsuario'];
+}else{
+  $calificado = $publicacion['postulanteElegido'];
+}
+$calificacion = intval($calificacion);
+echo $calificacion;
+$publicacionControl->insertar_calificacion(1,$calificacion,$opinion,$calificado,$publicacion['idPublicacion'],$fechaComentario);
+header("Location: " . $_SERVER['PHP_SELF']); // Redirige a la misma página sin datos en POST
+exit(); // Asegura que se detenga el procesamiento adicional  
+}
 
 if(isset($comentarioBtn)){
  
@@ -93,12 +103,19 @@ if(isset($comentarioBtn)){
 }
 
 if(isset($btnElegir)){
-  if($control == 0){
+  
 $publicacionControl->actualizar_postulanteElegido($publicacion['idPublicacion'],$idElegido);
 header("Location: " . $_SERVER['PHP_SELF']); // Redirige a la misma página sin datos en POST
 exit(); // Asegura que se detenga el procesamiento adicional    
-  }
 }
+
+if(isset($finalizado)){
+  $fecha= date('Y-m-d');
+$publicacionControl->actualizar_publicacionFinalizada($publicacion['id'],$fecha);
+  header("Location: " . $_SERVER['PHP_SELF']); // Redirige a la misma página sin datos en POST
+exit(); // Asegura que se detenga el procesamiento adicional  
+}
+
     ?>
       	
         <div class=" row header">
@@ -175,12 +192,11 @@ exit(); // Asegura que se detenga el procesamiento adicional
         <?php }  
         ?>
         
-        <a href="#" class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#postulacionModal">postularse</a>
         <?php if($tipo == 3 && $publicacion['estado'] == 0){?>
         <a href="#" class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#postulacionModal">postularse</a>
        <?php
         }
-        elseif($tipo==2){?>
+        elseif($tipo==2 && $publicacion['estado'] == 1){?>
           <form action="publicacion.php" method="post">
           <div class="modal-footer ">
           <button class="btn btn-primary" type="submit" name="finalizado">envio finalizado</button>
@@ -227,37 +243,43 @@ echo "inicie sesion para poder postularte";
   </div>
 
 <?php 
-if($tipo == 1 && $publicacion['estado'] == 1){
+if($tipo == 1 && $publicacion['estado'] != 1 ){
   ?>
- <div class="container" style="padding-bottom: 80px; padding-top: 20px; width: 70%; margin-bottom: 20px; display: flex; flex-direction: column; justify-content: center; height: 400px;">
-<h1>Postulantes</h1>
- <div class="scrollable-div" style="overflow-y: auto; border: 1px solid #757575; padding: 10px; border-radius: 8px; background-color: rgb(255, 255, 255);height: 100%;">
-<?php 
-
-foreach ($postulantes as $postulacion){  
-  $usuario = $publicacionControl->fetch_usuario_por_id($postulacion['idUsuario']);
-  ?> 
-    <div class="row" >
-      <div class="col-12" style="margin-bottom: 20px;"> 
-        <div class=" header__right">
-          
-            <img
-              class="user__avatar"
-              src="imagenes/<?php echo $usuario['imagen'] ?>"
-              alt=""
-            />
-
-          <div><h4><?php echo $usuario['nombre'] ?> <?php $usuario['apellido'] ?></h4></div>
-            <div style="margin-left: 20%;"><?php echo$postulacion['monto'] ?>$</div>
-            <form action="publicacion.php" method="post">
-              <input type="hidden" name="idElegido" value="<?php echo $usuario['idUsuario']?>"> 
-            <div style="padding-left: 500px;"> <button type="submit" id="btnElegir" name="btnElegir" class="btn btn-primary">elegir</button></div>
-            </form>
-
-      </div>
+<div class="container" style="padding-bottom: 80px; padding-top: 20px; width: 70%; margin-bottom: 20px; display: flex; flex-direction: column; justify-content: center; max-height: 80vh;">
+  <h1>Postulantes</h1>
+  <div class="scrollable-div" style="overflow-y: auto; border: 1px solid #757575; padding: 10px; border-radius: 8px; background-color: rgb(255, 255, 255); height: 100%;">
+    <?php foreach ($postulantes as $postulacion) {  
+      $usuario = $publicacionControl->fetch_usuario_por_id($postulacion['idUsuario']); ?>
+      <div class="postulante-row" style="display: flex; align-items: center; justify-content: space-between; padding: 10px; border-bottom: 1px solid #ccc;">
+        
+        <!-- Avatar del usuario -->
+        <img class="user__avatar" src="imagenes/<?php echo $usuario['imagen'] ?>" alt="" style="width: 50px; height: 50px; border-radius: 50%; margin-right: 15px;">
+        
+        <!-- Nombre del usuario -->
+        <div style="flex: 1;">
+          <h4 style="margin: 0;"><?php echo $usuario['nombre'] . ' ' . $usuario['apellido'] ?></h4>
         </div>
+
+        <!-- Monto -->
+        <div style="flex-shrink: 0; padding-right: 20px; white-space: nowrap;"><?php echo $postulacion['monto'] ?>$</div>
+
+        <!-- Botón de elegir -->
+        <form action="publicacion.php" method="post" style="flex-shrink: 0;">
+          <input type="hidden" name="idElegido" value="<?php echo $usuario['idUsuario'] ?>">
+          <?php 
+          if($publicacion['estado'] == 0){
+          ?>
+          <button type="submit" id="btnElegir" name="btnElegir" class="btn btn-primary">Elegir</button>
+          <?php 
+          }
+          ?>
+        </form>
+
       </div>
-      <?php
+    <?php } ?>
+  </div>
+</div>
+<?php
 }
       ?>
       
@@ -321,7 +343,7 @@ foreach ($postulantes as $postulacion){
 if($tipo == 1 || $tipo == 2 || $tipo == 3){
  ?>
   <div class="container" style="padding-left: 60px;"><h1>Comentarios</h1> <a href="http://creaticode.com"></a></div>
-  <div class="card d-flex container" style="padding-bottom: 80px; width: 70%; margin-bottom: 20px; display: flex; flex-direction: column; justify-content: center; height: 400px;border: 1px solid #757575; padding: 10px; border-radius: 8px; background-color: rgb(255, 255, 255);">
+  <div class="card d-flex container" style="padding-bottom: 80px; width: 70%; margin-bottom: 100px; display: flex; flex-direction: column; justify-content: center; height: 400px;border: 1px solid #757575; padding: 10px; border-radius: 8px; background-color: rgb(255, 255, 255);">
   
   <div class="scrollable-div" style="overflow-y: auto;">
 <div class="comments-container" style="padding-left:0;">
@@ -359,13 +381,84 @@ if($tipo == 1 || $tipo == 2 || $tipo == 3){
   </div>
   <form method="post" action="publicacion.php" class="chat-form">
     <label></label><br>
-  <input type="text" id="mensajeA"  name="mensajeA"  style="width: 50%; height: 30px; "required>
-  <input type="submit"  name="comentarioBtn"value="enviar" >
+  <input type="text" id="mensajeA"  name="mensajeA"  style="width: 80%; height: 30px; "required>
+  <input type="submit"  name="comentarioBtn"value="enviar" style="width: 18%;" >
   </form>
   </div>
 <?php 
 }
 ?>
+<!-- Contenedor Principal -->
+<?php  if($publicacion['estado'] == 2  && $tipo== 1 ||$tipo == 2){?>  
+
+  <div class="container " style="padding-left: 50px;"><h1>Calificacion</h1></div>
+<div class="card d-flex flex-wrap container" style="padding-bottom: 80px; padding-top: 20px; width: 70%; margin-bottom: 20px; display: flex; flex-direction: column; justify-content: center; max-height: 80vh;">
+<?php if($publicacionControl->publicacion_calificada($publicacion['idPublicacion']) == 0 && $publicacionControl->usuario_califico(1,$publicacion['idPublicacion']) == 1){?>
+<form method="post" action="publicacion.php">
+<label>calificacion: <select name="calificacion">
+<option  name="calificacion" value="1">1</option>
+<option  name="calificacion" value="2">2</option>
+<option  name="calificacion" value="3">3</option>
+<option  name="calificacion" value="4">4</option>
+<option  name="calificacion" value="5">5</option>
+</select>
+</label>
+
+<p><label>comentario<input type="text" name="opinion"></p>
+<p><input type="submit" name="enviarCalificacion"></p>
+</form>
+</div>
+
+
+<?php
+}else{ 
+  $usuario1 = $publicacionControl->fetch_calificaciones_por_publicacion($publicacion['idUsuario'],$publicacion['idPublicacion']);
+  $usuario2 = $publicacionControl->fetch_calificaciones_por_publicacion($publicacion['postulanteElegido'],$publicacion['idPublicacion']);
+  if(empty($usuario1) || empty($usuario2)){
+echo "<h3>espere a que el otro usuario publique si calificacion para poder ver su calificacion</h3>";
+
+  }else{
+  $info1 = $publicacionControl->fetch_usuario_por_id($usuario1['idCalifica']);
+  $info2= $publicacionControl->fetch_usuario_por_id($usuario2['idCalifica']);
+  ?>
+  <div class="container" style="padding-bottom: 80px; padding-top: 20px; width: 100%; margin-bottom: 20px; display: flex; flex-direction: column; justify-content: center; max-height: 80vh;">
+ <div class="scrollable-div" style="overflow-y: auto; max-height: 400px; border: 1px solid #757575; padding: 10px; border-radius: 8px; background-color: rgb(255, 255, 255);">
+  
+  <!-- Usuario 1 -->
+  <div class="postulante-row" style="display: flex; align-items: center; justify-content: space-between; padding: 10px; border-bottom: 1px solid #ccc;">
+    <img class="user__avatar" src="imagenes/<?php echo $info1['imagen'] ?>" alt="" style="width: 50px; height: 50px; border-radius: 50%; margin-right: 15px;">
+    
+    <div style="flex: 1;">
+      <h4 style="margin: 0;"><?php echo $info1['nombre'] . ' ' . $info1['apellido'] ?></h4>
+    </div>
+    
+    <div style="flex-shrink: 0; padding-right: 20px; white-space: nowrap;">Calificación: <?php echo $usuario1['puntaje'] ?></div>
+    <div style="flex: 2; white-space: normal; padding-left: 10px;"><?php echo $usuario1['comentario'] ?></div>
+  </div>
+  
+  <!-- Usuario 2 -->
+  <div class="postulante-row" style="display: flex; align-items: center; justify-content: space-between; padding: 10px; border-bottom: 1px solid #ccc;">
+    <img class="user__avatar" src="imagenes/<?php echo $info2['imagen'] ?>" alt="" style="width: 50px; height: 50px; border-radius: 50%; margin-right: 15px;">
+    
+    <div style="flex: 1;">
+      <h4 style="margin: 0;"><?php echo $info2['nombre'] . ' ' . $info2['apellido'] ?></h4>
+    </div>
+    
+    <div style="flex-shrink: 0; padding-right: 20px; white-space: nowrap;">Calificación: <?php echo $usuario2['puntaje'] ?></div>
+    
+    <div style="flex: 2; white-space: normal; padding-left: 10px;"><?php echo $usuario2['comentario'] ?></div>
+  </div>
+  
+</div>
+</div>
+
+<?php 
+  }
+}
+}
+?>
+
+ 
 
       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>

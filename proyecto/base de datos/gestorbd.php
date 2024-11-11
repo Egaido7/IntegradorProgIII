@@ -8,17 +8,20 @@ class GestorVeryDeli {
         $this->conn = $conexion;
     }
 
-    public function insertar_usuario($nombre, $apellido, $dni, $email, $pwd) {
+    public function insertar_usuario($nombre, $apellido, $dni, $email, $pwd, $responsable = null, $domicilio = null, $codPostal = null, $imagen = null) {
         try {
-            $this->stmt = $this->conn->prepare("INSERT INTO usuario(nombre, apellido, dni, 
-            email, contraseña) VALUES (?,?,?,?,?)");
-            $this->stmt->bind_param("ssiss", $nombre, $apellido, $dni, $email, $pwd);
+            $this->stmt = $this->conn->prepare("INSERT INTO usuario(nombre, apellido, dni, responsable, email, domicilio, codPostal, contraseña, imagen) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            if (!$this->stmt) {
+                throw new Exception("Error al preparar la consulta: " . $this->conn->error);
+            }
+            $this->stmt->bind_param("ssiississ", $nombre, $apellido, $dni, $responsable, $email, $domicilio, $codPostal, $pwd, $imagen);
             $this->stmt->execute();
             return $this->stmt->affected_rows;
         } catch (mysqli_sql_exception $e) {
             throw new Exception("Error al insertar un nuevo usuario: " . $e->getMessage());
         }
     }
+    
 
     public function insertar_publicacion($idUsuario, $volumenProducto, $pesoProducto, $provinciaOrigen, $provinciaDestino, $fechaPublicacion, $imagen, $descripcionProducto, $nombreRecibir, $nombreContacto, $nombreProducto, $localidadOrigen, $localidadDestino, $domicilioOrigen, $domicilioDestino) {
         try {
@@ -63,11 +66,11 @@ class GestorVeryDeli {
         }
     }
 
-    public function insertar_calificacion($idCalificacion, $idCalifica, $idCalificado, $puntaje, $comentario) {
+    public function insertar_calificacion($idCalifica, $puntaje, $comentario,$idCalificado,$idPublicacion ,$fecha) {
         try {
-            $this->stmt = $this->conn->prepare("INSERT INTO calificacion(idCalificacion, idCalifica, puntaje,
-            comentario, idCalificado) VALUES (?,?,?,?,?)");
-            $this->stmt->bind_param($idCalificacion, $idCalifica, $puntaje, $comentario, $idCalificado);
+            $this->stmt = $this->conn->prepare("INSERT INTO calificacion(idCalifica, puntaje,
+            comentario, idCalificado,idPublicacion,fecha) VALUES (?,?,?,?,?,?)");
+            $this->stmt->bind_param("iisiis", $idCalifica, $puntaje, $comentario, $idCalificado,$idPublicacion,$fecha);
             $this->stmt->execute();
             return $this->stmt->affected_rows;
         } catch (mysqli_sql_exception $e) {
@@ -174,9 +177,54 @@ class GestorVeryDeli {
 
     public function fetch_publicaciones_por_origen($Provinciaorigen) {
         try {
-            $this->stmt = $this->conn->prepare("SELECT * FROM publicacion WHERE origen = ?");
+            $sql = "
+            SELECT 
+                u.imagen AS usuarioImagen, 
+                u.nombre AS usuarioNombre, 
+                u.apellido AS usuarioApellido, 
+                p.volumen, 
+                p.peso, 
+                p.provinciaOrigen, 
+                p.provinciaDestino, 
+                p.imagenPublicacion,
+                p.titulo,
+                p.descripcion
+            FROM publicacion p
+            JOIN usuario u ON p.idUsuario = u.idUsuario
+            WHERE p.provinciaOrigen = ?
+        ";
+            $this->stmt = $this->conn->prepare($sql);
             $this->stmt->bind_param("s", $Provinciaorigen);
             $this->stmt->execute();
+            return $this->stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        } catch (mysqli_sql_exception $e) {
+            throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
+        }
+    }
+
+    public function fetch_publicaciones_por_peso($pesoPaquete) {
+        try {
+            $sql = "
+                SELECT 
+                    u.imagen AS usuarioImagen, 
+                    u.nombre AS usuarioNombre, 
+                    u.apellido AS usuarioApellido, 
+                    p.volumen, 
+                    p.peso, 
+                    p.provinciaOrigen, 
+                    p.provinciaDestino, 
+                    p.imagenPublicacion,
+                    p.titulo,
+                    p.descripcion
+                FROM publicacion p
+                JOIN usuario u ON p.idUsuario = u.idUsuario
+                WHERE p.volumen = ?
+            ";
+            
+            $this->stmt = $this->conn->prepare($sql);
+            $this->stmt->bind_param("i", $pesoPaquete);
+            $this->stmt->execute();
+            
             return $this->stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         } catch (mysqli_sql_exception $e) {
             throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
@@ -193,6 +241,40 @@ class GestorVeryDeli {
             throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
         }
     }
+    public function fetch_publicaciones_filtradas($Provinciaorigen, $pesoPaquete) {
+        try {
+            // Consulta combinada para filtrar por provincia y peso
+            $sql = "
+                SELECT 
+                    u.imagen AS usuarioImagen, 
+                    u.nombre AS usuarioNombre, 
+                    u.apellido AS usuarioApellido, 
+                    p.volumen, 
+                    p.peso, 
+                    p.provinciaOrigen, 
+                    p.provinciaDestino, 
+                    p.imagenPublicacion,
+                    p.titulo,
+                    p.descripcion
+                FROM publicacion p
+                JOIN usuario u ON p.idUsuario = u.idUsuario
+                WHERE p.provinciaOrigen = ? AND p.volumen = ?
+            ";
+            
+            $this->stmt = $this->conn->prepare($sql);
+            if (!$this->stmt) {
+                throw new Exception("Error en la consulta SQL: " . $this->conn->error);
+            }
+            
+            $this->stmt->bind_param("si", $Provinciaorigen, $pesoPaquete);
+            $this->stmt->execute();
+            
+            return $this->stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        } catch (mysqli_sql_exception $e) {
+            throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
+        }
+    }
+    
 
     public function fetch_publicaciones() {
         try {
@@ -203,8 +285,8 @@ class GestorVeryDeli {
                     u.apellido AS usuarioApellido, 
                     p.volumen, 
                     p.peso, 
-                    p.Provinciaorigen, 
-                    p.Provinciadestino, 
+                    p.provinciaOrigen, 
+                    p.provinciaDestino, 
                     p.imagenPublicacion,
                     p.titulo,
                     p.descripcion
@@ -244,8 +326,8 @@ class GestorVeryDeli {
                 <p>Descripcion: <?= htmlspecialchars($publicacion['descripcion']) ?></p>
                     <p>Volumen: <?= htmlspecialchars($publicacion['volumen']) ?> m³</p>
                     <p>Peso: <?= htmlspecialchars($publicacion['peso']) ?> kg</p>
-                    <p>Origen: <?= htmlspecialchars($publicacion['Provinciaorigen']) ?></p>
-                    <p>Destino: <?= htmlspecialchars($publicacion['Provinciadestino']) ?></p>
+                    <p>Origen: <?= htmlspecialchars($publicacion['provinciaOrigen']) ?></p>
+                    <p>Destino: <?= htmlspecialchars($publicacion['provinciaDestino']) ?></p>
                 </div>
 
             
@@ -355,8 +437,8 @@ class GestorVeryDeli {
                     u.apellido AS usuarioApellido, 
                     p.volumen, 
                     p.peso, 
-                    p.Provinciaorigen, 
-                    p.Provinciadestino, 
+                    p.provinciaOrigen, 
+                    p.provinciaDestino, 
                     p.idPublicacion,
                     p.idUsuario,
                     p.descripcion,
@@ -521,7 +603,7 @@ class GestorVeryDeli {
     
             try {
             
-                $this->stmt = $this->conn->prepare("SELECT COUNT(*) FROM calificacion WHERE idUsuario = ? AND idPublicacion = ?");
+                $this->stmt = $this->conn->prepare("SELECT COUNT(*) FROM calificacion WHERE idCalifica = ? AND idPublicacion = ?");
                 $this->stmt->bind_param("ii", $idUsuario,$idPublicacion);
                 $this->stmt->execute();
                 $this->stmt->bind_result($cant_calificacion);
@@ -529,9 +611,9 @@ class GestorVeryDeli {
 
                 // si el usuario califico la publicacion
                 if($cant_calificacion == 1) {
-                    return false;
+                    return 0;
                 } else {
-                    return true;
+                    return 1;
                 }
             } catch (mysqli_sql_exception $e) {
                 throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
@@ -541,28 +623,42 @@ class GestorVeryDeli {
     }
 
     public function publicacion_calificada($idPublicacion) {
-    
         try {
-        
-            $this->stmt = $this->conn->prepare("SELECT COUNT(*) FROM calificacion WHERE  idPublicacion = ?");
-            $this->stmt->bind_param("i",$idPublicacion);
-            $this->stmt->execute();
+            // Preparar la consulta
+            $this->stmt = $this->conn->prepare("SELECT COUNT(*) FROM calificacion WHERE idPublicacion = ?");
+    
+            // Verifica si `prepare()` ha fallado
+            if (!$this->stmt) {
+                throw new Exception("Error en la preparación de la consulta: " . $this->conn->error);
+            }
+    
+            // Enlaza el parámetro
+            if (!$this->stmt->bind_param("i", $idPublicacion)) {
+                throw new Exception("Error al enlazar el parámetro: " . $this->stmt->error);
+            }
+    
+            // Ejecuta la consulta
+            if (!$this->stmt->execute()) {
+                throw new Exception("Error en la ejecución de la consulta: " . $this->stmt->error);
+            }
+    
+            // Enlaza el resultado
             $this->stmt->bind_result($cant_calificacion);
             $this->stmt->fetch();
-
-            // si se calificaron ambos usuarios
-            if($cant_calificacion == 2) {
-                return false;
-            } else {
-                return true;
-            }
-        } catch (mysqli_sql_exception $e) {
-            throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
+    
+            // Si se calificaron ambos usuarios
+            return $cant_calificacion == 2 ? 1 : 0;
+        } catch (Exception $e) {
+            // Mostrar el mensaje de error
+            echo "Error: " . $e->getMessage();
             return false;
-        
+        } finally {
+            // Cierra la declaración
+            if ($this->stmt) {
+                $this->stmt->close();
+            }
+        }
     }
-}
-
     public function usuario_yaExiste($email) {
         try {
             $this->stmt = $this->conn->prepare("SELECT email FROM usuario WHERE email = ?");
@@ -586,6 +682,59 @@ class GestorVeryDeli {
             $this->stmt->execute();
             return $this->stmt->get_result();
         } catch (mysqli_sql_exception $e) {
+            throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
+        }
+    }
+    public function fetch_calificaciones_por_publicacion($idUsuario, $idPublicacion) {
+        try {
+            // Prepara la consulta
+            $this->stmt = $this->conn->prepare("SELECT * FROM calificacion WHERE idCalifica = ? AND idPublicacion = ?");
+            
+            // Verifica si la preparación fue exitosa
+            if ($this->stmt === false) {
+                throw new Exception("Error al preparar la consulta SQL.");
+            }
+            
+            // Vincula los parámetros
+            $this->stmt->bind_param("ii", $idUsuario, $idPublicacion);
+            
+            // Ejecuta la consulta
+            $this->stmt->execute();
+            
+            // Obtiene todos los resultados
+            $resultado = $this->stmt->get_result()->fetch_assoc();
+            
+            // Si no hay resultados, retorna null
+            if (empty($resultado)) {
+                return null;
+            }
+            
+            return $resultado;  // Devuelve el arreglo con todas las calificaciones encontradas
+        } catch (Exception $e) {
+            // Captura el error y muestra un mensaje controlado
+            error_log("Error al ejecutar la consulta: " . $e->getMessage()); // Log del error para desarrolladores
+            return null; // Retorna null si ocurre un error
+        }
+        }
+    public function actualizar_publicacionFinalizada($idPublicacion,$fecha) {
+        try {
+            // Preparar la consulta SQL para actualizar el postulante elegido
+            $this->stmt = $this->conn->prepare("UPDATE publicacion SET fechaPublicacion = ?, estado = 2 WHERE idPublicacion = ?;");
+            
+            // Enlazar los parámetros: 'i' para enteros
+            $this->stmt->bind_param("ii", $fecha, $idPublicacion);
+            
+            // Ejecutar la consulta
+            $this->stmt->execute();
+            
+            // Verificar cuántas filas fueron afectadas
+            $filasAfectadas = $this->stmt->affected_rows;
+            
+            // Retornar el número de filas afectadas
+            return $filasAfectadas;
+    
+        } catch (mysqli_sql_exception $e) {
+            // Lanzar una excepción en caso de error
             throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
         }
     }
