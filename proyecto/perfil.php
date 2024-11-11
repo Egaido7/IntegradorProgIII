@@ -127,7 +127,7 @@ if(!isset($_SESSION["usuario"])) {
                         <a class="nav-link" id="publicaciones-tab" data-bs-toggle="tab" href="#publicaciones" role="tab" aria-controls="profile" aria-selected="false">Mis Publicaciones (<?= $gestor->fetch_num_publicaciones_activas_por_usuario($usuario["idUsuario"]) ?>)</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" id="vehiculos-tab" data-bs-toggle="tab" href="#vehiculos" role="tab" aria-controls="vehiculos" aria-selected="false">Vehículos</a>
+                        <a class="nav-link" id="personal-tab" data-bs-toggle="tab" href="#personal" role="tab" aria-controls="personal" aria-selected="false">Datos Personales</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" id="calificaciones-tab" data-bs-toggle="tab" href="#calificaciones" role="tab" aria-controls="calificaciones" aria-selected="false">Calificaciones</a>
@@ -137,7 +137,62 @@ if(!isset($_SESSION["usuario"])) {
 
                 <div class="tab-content">
                     <div class="tab-pane fade show active" id="postulaciones" role="tabpanel" aria-labelledby="postulaciones-tab">
-                        <hr>
+                        
+
+                    </div>
+                    <div class="tab-pane fade" id="publicaciones" role="tabpanel" aria-labelledby="publicaciones-tab">
+                        <?php $publicaciones = $gestor->fetch_publicaciones_por_usuario($usuario["idUsuario"]);
+                        foreach($publicaciones as $pub) { 
+                            if($pub["estado"] != 2) { ?>
+                            <a href="#">
+                                <div class="card border-success">
+                                    <div class="card-body card-publicacion">
+                                        <h5 class="card-title"><?= $pub["titulo"] ?></h5>
+                                        <h6 class="card-subtitle mb-2 text-success">
+                                            <?= ($pub["estado"] == 0) ? "Disponible" : "En espera" ?>
+                                        </h6>
+                                        <h6 class="card-subtitle mb-2 text-muted">Origen: <?= $pub["localidadOrigen"] ?> - <?= $pub["Provinciaorigen"] ?></h6>
+                                        <h6 class="card-subtitle mb-2 text-muted">Destino: <?= $pub["localidadDestino"] ?> - <?= $pub["Provinciadestino"] ?></h6>
+                                        <p class="card-text">Descripción: <?= $pub["descripcion"] ?></p>
+                                    </div>
+                                </div>
+                            </a>
+                        <?php } else { ?>
+                            <a href="#">
+                            <div class="card border-muted">
+                                <div class="card-body card-publicacion">
+                                    <h5 class="card-title"><?= $pub["titulo"] ?></h5>
+                                    <h6 class="card-subtitle mb-2 text-muted">Finalizada</h6>
+                                    <h6 class="card-subtitle mb-2 text-muted">Origen: <?= $pub["localidadOrigen"] ?> - <?= $pub["Provinciaorigen"] ?></h6>
+                                    <h6 class="card-subtitle mb-2 text-muted">Destino: <?= $pub["localidadDestino"] ?> - <?= $pub["Provinciadestino"] ?></h6>
+                                    <p class="card-text">Descripción: <?= $pub["descripcion"] ?></p>
+                                </div>
+                            </div>
+                        </a>
+                        <?php }
+                        }
+                        ?>
+                        
+                        
+                    </div>
+                    <div class="tab-pane fade" id="personal" role="tabpanel" aria-labelledby="personal-tab">
+                        <button type="button" class="btn btn-primary">Nuevo Vehículo</button>
+                        <div class="card border-success">
+                            <img class="card-img-top" src="imagenes/publicacionDefault.jpg" alt="Card image cap">
+                            <div class="card-body">
+                                <h5 class="card-title">Modelo de vehículo</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">Nro Patente: 1234</h6>
+                                <p class="card-text">Categoría: 2</p>
+                            </div>
+                        </div>
+                        <div class="card border-success">
+                            <img class="card-img-top" src="imagenes/publicacionDefault.jpg" alt="Card image cap">
+                            <div class="card-body">
+                                <h5 class="card-title">Modelo de vehículo</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">Nro Patente: NR55</h6>
+                                <p class="card-text">Categoría: 1</p>
+                            </div>
+                        </div>
                         <form class="form" action="##" method="post" id="registrationForm">
                             <div class="form-group">
 
@@ -230,63 +285,6 @@ if(!isset($_SESSION["usuario"])) {
                                 </div>
                             </div>
                         </form>
-
-                        <hr>
-
-                    </div>
-                    <div class="tab-pane fade" id="publicaciones" role="tabpanel" aria-labelledby="publicaciones-tab">
-                        <?php $publicaciones = $gestor->fetch_publicaciones_por_usuario($usuario["idUsuario"]);
-                        foreach($publicaciones as $pub) { 
-                            if($pub["estado"] != 2) { ?>
-                            <a href="#">
-                                <div class="card border-success">
-                                    <div class="card-body card-publicacion">
-                                        <h5 class="card-title"><?= $pub["titulo"] ?></h5>
-                                        <h6 class="card-subtitle mb-2 text-success">
-                                            <?= ($pub["estado"] == 0) ? "Disponible" : "En espera" ?>
-                                        </h6>
-                                        <h6 class="card-subtitle mb-2 text-muted">Origen: <?= $pub["localidadOrigen"] ?> - <?= $pub["Provinciaorigen"] ?></h6>
-                                        <h6 class="card-subtitle mb-2 text-muted">Destino: <?= $pub["localidadDestino"] ?> - <?= $pub["Provinciadestino"] ?></h6>
-                                        <p class="card-text">Descripción: <?= $pub["descripcion"] ?></p>
-                                    </div>
-                                </div>
-                            </a>
-                        <?php } else { ?>
-                            <a href="#">
-                            <div class="card border-muted">
-                                <div class="card-body card-publicacion">
-                                    <h5 class="card-title"><?= $pub["titulo"] ?></h5>
-                                    <h6 class="card-subtitle mb-2 text-muted">Finalizada</h6>
-                                    <h6 class="card-subtitle mb-2 text-muted">Origen: <?= $pub["localidadOrigen"] ?> - <?= $pub["Provinciaorigen"] ?></h6>
-                                    <h6 class="card-subtitle mb-2 text-muted">Destino: <?= $pub["localidadDestino"] ?> - <?= $pub["Provinciadestino"] ?></h6>
-                                    <p class="card-text">Descripción: <?= $pub["descripcion"] ?></p>
-                                </div>
-                            </div>
-                        </a>
-                        <?php }
-                        }
-                        ?>
-                        
-                        
-                    </div>
-                    <div class="tab-pane fade" id="vehiculos" role="tabpanel" aria-labelledby="vehiculos-tab">
-                        <button type="button" class="btn btn-primary">Nuevo Vehículo</button>
-                        <div class="card border-success">
-                            <img class="card-img-top" src="imagenes/publicacionDefault.jpg" alt="Card image cap">
-                            <div class="card-body">
-                                <h5 class="card-title">Modelo de vehículo</h5>
-                                <h6 class="card-subtitle mb-2 text-muted">Nro Patente: 1234</h6>
-                                <p class="card-text">Categoría: 2</p>
-                            </div>
-                        </div>
-                        <div class="card border-success">
-                            <img class="card-img-top" src="imagenes/publicacionDefault.jpg" alt="Card image cap">
-                            <div class="card-body">
-                                <h5 class="card-title">Modelo de vehículo</h5>
-                                <h6 class="card-subtitle mb-2 text-muted">Nro Patente: NR55</h6>
-                                <p class="card-text">Categoría: 1</p>
-                            </div>
-                        </div>
                     </div>
                     <div class="tab-pane fade" id="calificaciones" role="tabpanel" aria-labelledby="calificaciones-tab">
                         <div class="card border-success">
