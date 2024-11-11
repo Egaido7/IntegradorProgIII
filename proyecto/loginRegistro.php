@@ -5,10 +5,8 @@ header('Content-Type: application/json');
 $response = ["success" => false, "debug" => []];
 
 include_once "base de datos/gestorbd.php";
-$response["debug"][] = "Archivo gestorbd.php incluido correctamente";
-
 $gestor = new GestorVeryDeli();
-$response["debug"][] = "Instancia de GestorVeryDeli creada";
+
 
 
 // Manejar el registro de un nuevo usuario

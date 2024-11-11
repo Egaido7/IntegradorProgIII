@@ -8,17 +8,20 @@ class GestorVeryDeli {
         $this->conn = $conexion;
     }
 
-    public function insertar_usuario($nombre, $apellido, $dni, $email, $pwd) {
+    public function insertar_usuario($nombre, $apellido, $dni, $email, $pwd, $responsable = null, $domicilio = null, $codPostal = null, $imagen = null) {
         try {
-            $this->stmt = $this->conn->prepare("INSERT INTO usuario(nombre, apellido, dni, 
-            email, contraseña) VALUES (?,?,?,?,?)");
-            $this->stmt->bind_param("ssiss", $nombre, $apellido, $dni, $email, $pwd);
+            $this->stmt = $this->conn->prepare("INSERT INTO usuario(nombre, apellido, dni, responsable, email, domicilio, codPostal, contraseña, imagen) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            if (!$this->stmt) {
+                throw new Exception("Error al preparar la consulta: " . $this->conn->error);
+            }
+            $this->stmt->bind_param("ssiississ", $nombre, $apellido, $dni, $responsable, $email, $domicilio, $codPostal, $pwd, $imagen);
             $this->stmt->execute();
             return $this->stmt->affected_rows;
         } catch (mysqli_sql_exception $e) {
             throw new Exception("Error al insertar un nuevo usuario: " . $e->getMessage());
         }
     }
+    
 
     public function insertar_publicacion($idUsuario, $volumenProducto, $pesoProducto, $provinciaOrigen, $provinciaDestino, $fechaPublicacion, $imagen, $descripcionProducto, $nombreRecibir, $nombreContacto, $nombreProducto, $localidadOrigen, $localidadDestino, $domicilioOrigen, $domicilioDestino) {
         try {
@@ -174,9 +177,54 @@ class GestorVeryDeli {
 
     public function fetch_publicaciones_por_origen($Provinciaorigen) {
         try {
-            $this->stmt = $this->conn->prepare("SELECT * FROM publicacion WHERE origen = ?");
+            $sql = "
+            SELECT 
+                u.imagen AS usuarioImagen, 
+                u.nombre AS usuarioNombre, 
+                u.apellido AS usuarioApellido, 
+                p.volumen, 
+                p.peso, 
+                p.provinciaOrigen, 
+                p.provinciaDestino, 
+                p.imagenPublicacion,
+                p.titulo,
+                p.descripcion
+            FROM publicacion p
+            JOIN usuario u ON p.idUsuario = u.idUsuario
+            WHERE p.provinciaOrigen = ?
+        ";
+            $this->stmt = $this->conn->prepare($sql);
             $this->stmt->bind_param("s", $Provinciaorigen);
             $this->stmt->execute();
+            return $this->stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        } catch (mysqli_sql_exception $e) {
+            throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
+        }
+    }
+
+    public function fetch_publicaciones_por_peso($pesoPaquete) {
+        try {
+            $sql = "
+                SELECT 
+                    u.imagen AS usuarioImagen, 
+                    u.nombre AS usuarioNombre, 
+                    u.apellido AS usuarioApellido, 
+                    p.volumen, 
+                    p.peso, 
+                    p.provinciaOrigen, 
+                    p.provinciaDestino, 
+                    p.imagenPublicacion,
+                    p.titulo,
+                    p.descripcion
+                FROM publicacion p
+                JOIN usuario u ON p.idUsuario = u.idUsuario
+                WHERE p.volumen = ?
+            ";
+            
+            $this->stmt = $this->conn->prepare($sql);
+            $this->stmt->bind_param("i", $pesoPaquete);
+            $this->stmt->execute();
+            
             return $this->stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         } catch (mysqli_sql_exception $e) {
             throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
@@ -193,6 +241,40 @@ class GestorVeryDeli {
             throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
         }
     }
+    public function fetch_publicaciones_filtradas($Provinciaorigen, $pesoPaquete) {
+        try {
+            // Consulta combinada para filtrar por provincia y peso
+            $sql = "
+                SELECT 
+                    u.imagen AS usuarioImagen, 
+                    u.nombre AS usuarioNombre, 
+                    u.apellido AS usuarioApellido, 
+                    p.volumen, 
+                    p.peso, 
+                    p.provinciaOrigen, 
+                    p.provinciaDestino, 
+                    p.imagenPublicacion,
+                    p.titulo,
+                    p.descripcion
+                FROM publicacion p
+                JOIN usuario u ON p.idUsuario = u.idUsuario
+                WHERE p.provinciaOrigen = ? AND p.volumen = ?
+            ";
+            
+            $this->stmt = $this->conn->prepare($sql);
+            if (!$this->stmt) {
+                throw new Exception("Error en la consulta SQL: " . $this->conn->error);
+            }
+            
+            $this->stmt->bind_param("si", $Provinciaorigen, $pesoPaquete);
+            $this->stmt->execute();
+            
+            return $this->stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        } catch (mysqli_sql_exception $e) {
+            throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
+        }
+    }
+    
 
     public function fetch_publicaciones() {
         try {
@@ -203,8 +285,8 @@ class GestorVeryDeli {
                     u.apellido AS usuarioApellido, 
                     p.volumen, 
                     p.peso, 
-                    p.Provinciaorigen, 
-                    p.Provinciadestino, 
+                    p.provinciaOrigen, 
+                    p.provinciaDestino, 
                     p.imagenPublicacion,
                     p.titulo,
                     p.descripcion
@@ -244,8 +326,8 @@ class GestorVeryDeli {
                 <p>Descripcion: <?= htmlspecialchars($publicacion['descripcion']) ?></p>
                     <p>Volumen: <?= htmlspecialchars($publicacion['volumen']) ?> m³</p>
                     <p>Peso: <?= htmlspecialchars($publicacion['peso']) ?> kg</p>
-                    <p>Origen: <?= htmlspecialchars($publicacion['Provinciaorigen']) ?></p>
-                    <p>Destino: <?= htmlspecialchars($publicacion['Provinciadestino']) ?></p>
+                    <p>Origen: <?= htmlspecialchars($publicacion['provinciaOrigen']) ?></p>
+                    <p>Destino: <?= htmlspecialchars($publicacion['provinciaDestino']) ?></p>
                 </div>
 
             
@@ -355,8 +437,8 @@ class GestorVeryDeli {
                     u.apellido AS usuarioApellido, 
                     p.volumen, 
                     p.peso, 
-                    p.Provinciaorigen, 
-                    p.Provinciadestino, 
+                    p.provinciaOrigen, 
+                    p.provinciaDestino, 
                     p.idPublicacion,
                     p.idUsuario,
                     p.descripcion,

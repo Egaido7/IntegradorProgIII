@@ -102,7 +102,8 @@
 .btn-primary {
     background-color: #52b04c;
     color: #eff2f5;
-    border: none;
+    border: 1px solid transparent;
+    box-sizing: border-box;
     border-radius: 20px; /* Bordes redondeados */
     padding: 10px 20px; /* Espacio alrededor del texto */
     transition: background-color 0.3s ease, color 0.3s ease;
@@ -113,8 +114,8 @@
 .btn-primary:focus, 
 .btn-primary:active {
     background-color: #eff2f5;
+    border: 1px solid #52b04c;
     color: #52b04c;
-    border: none;
 }
 
 .btn-secondary {
@@ -200,6 +201,7 @@
 
 body {
     background-color: #f1f2f5;
+    overflow-y: scroll;
 }
 
 .feed {
@@ -349,6 +351,64 @@ body {
     height: 4em;
 }
 
+.publicacionimg{
+    width: auto;   /* La imagen se ajusta al ancho del div */
+    height: auto;  /* La imagen ocupa toda la altura del div */
+    object-fit: cover;
+}
+.card {
+    display: flex;
+    flex-direction: row;
+}
+
+.tab-pane .card {
+    margin: auto;
+    margin-top: 5vh;
+    margin-bottom: 5vh;
+}
+
+.tab-pane a {
+    text-decoration: none;
+}
+
+.tab-pane button {
+    margin: auto;
+    margin-top: 3vh;
+}
+
+.tab-content {
+    max-height: 80vh; /* Ajusta según el diseño deseado */
+}
+
+.card-img-top {
+    width: 40%; /* Ajusta el tamaño según sea necesario */
+    height: auto; /* Mantiene la relación de aspecto */
+}
+
+.card-body {
+    padding: 20px; /* Espaciado alrededor del texto */
+}
+
+scroll-container {
+    margin:150px;
+    display: block;
+    width: 1000px;
+    height: 200px;
+    overflow-y: scroll;
+    scroll-behavior: smooth;
+  }
+  scroll-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    font-size: 5em;
+  }
+
+.hidden {
+    display: none;
+}
+
 @media (max-width: 768px) {
     .sidebar {
         display: none;
@@ -389,43 +449,6 @@ body {
     }
 }
 
-.publicacionimg{
-    width: auto;   /* La imagen se ajusta al ancho del div */
-    height: auto;  /* La imagen ocupa toda la altura del div */
-    object-fit: cover;
-}
-.card {
-    display: flex;
-    flex-direction: row;
-}
-
-.card-img-top {
-    width: 20%; /* Ajusta el tamaño según sea necesario */
-    height: auto; /* Mantiene la relación de aspecto */
-}
-
-.card-body {
-    padding: 20px; /* Espaciado alrededor del texto */
-}
-scroll-container {
-    margin:150px;
-    display: block;
-    width: 1000px;
-    height: 200px;
-    overflow-y: scroll;
-    scroll-behavior: smooth;
-  }
-  scroll-page {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    font-size: 5em;
-  }
-
-.hidden {
-    display: none;
-}
 
 @media (min-width: 992px) {
     .header__option:hover .material-icons {
@@ -505,6 +528,12 @@ scroll-container {
 
     .header__option:hover .material-icons {
         color: #52b04c; /* Cambiar el color del ícono a #52b04c */
+    }
+
+    .btn-primary, .btn-success {
+        height: 10vh;
+        border-radius: 0;
+        width: 100%;
     }
 }
 
