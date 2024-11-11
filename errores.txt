@@ -1,0 +1,10 @@
+poner postularse en publicacion simple
+hashear contraseña
+hacer vehiculo
+agregar destino
+poner boton en buscador.php
+arreglar postular
+arreglar cambio de datos
+arreglar mensajes
+division cuando no tiene
+crumjobs(tareas programadas)
