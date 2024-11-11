@@ -53,6 +53,7 @@ session_start();
         </div>
 
         <div class="header__responsive">
+            <?php if (isset($_SESSION["logeado"]) && $_SESSION["logeado"]) { ?>
             <a href="buscador.php" class="header__option">
                 <span class="material-icons"> home </span>
                 <span>Inicio</span>
@@ -65,10 +66,13 @@ session_start();
                 <span class="material-icons"> rocket_launch </span>
                 <span>Mis pedidos</span>
             </a>
-            <a href="#perfil" class="header__option">
+            <a href="perfil.php" class="header__option">
                 <span class="material-icons"> person </span>
                 <span>Perfil</span>
             </a>
+            <?php } else { ?>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal">Iniciar Sesión</button>
+            <?php } ?>
         </div>
     </div>
 

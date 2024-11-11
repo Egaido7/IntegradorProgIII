@@ -529,6 +529,12 @@ scroll-container {
     .header__option:hover .material-icons {
         color: #52b04c; /* Cambiar el color del ícono a #52b04c */
     }
+
+    .btn-primary, .btn-success {
+        height: 10vh;
+        border-radius: 0;
+        width: 100%;
+    }
 }
 
 @media (max-width: 767px) {
