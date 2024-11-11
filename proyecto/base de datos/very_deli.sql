@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 10-11-2024 a las 23:50:19
+-- Tiempo de generación: 11-11-2024 a las 14:50:11
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -32,8 +32,18 @@ CREATE TABLE `calificacion` (
   `idCalifica` int(11) NOT NULL,
   `puntaje` int(11) NOT NULL,
   `comentario` text NOT NULL,
-  `idCalificado` int(11) NOT NULL
+  `idCalificado` int(11) NOT NULL,
+  `idPublicacion` int(11) NOT NULL,
+  `fecha` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `calificacion`
+--
+
+INSERT INTO `calificacion` (`idCalificacion`, `idCalifica`, `puntaje`, `comentario`, `idCalificado`, `idPublicacion`, `fecha`) VALUES
+(30, 1, 5, 'muy boeno', 1, 4, '2024-11-11'),
+(31, 2, 5, 'AAAAAAAAAAAAAAAAAAAAAAAAA', 1, 4, '2024-11-11');
 
 -- --------------------------------------------------------
 
@@ -135,16 +145,19 @@ CREATE TABLE `mensaje` (
   `idUsuario` int(11) NOT NULL,
   `idPublicacion` int(11) NOT NULL,
   `comentario` text NOT NULL,
-  `fechaComentario` datetime NOT NULL
+  `fechaComentario` datetime NOT NULL,
+  `hora` time NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `mensaje`
 --
 
-INSERT INTO `mensaje` (`idUsuario`, `idPublicacion`, `comentario`, `fechaComentario`) VALUES
-(1, 4, 'este es un comentario', '2024-11-09 17:56:53'),
-(1, 4, 'otro comentario', '2024-11-09 18:36:27');
+INSERT INTO `mensaje` (`idUsuario`, `idPublicacion`, `comentario`, `fechaComentario`, `hora`) VALUES
+(1, 4, 'este es un comentario', '2024-11-09 17:56:53', '00:00:00'),
+(1, 4, 'otro comentario', '2024-11-09 18:36:27', '00:00:00'),
+(1, 4, 'ola', '2024-11-10 00:00:00', '20:26:01'),
+(1, 4, 'ola1', '2024-11-11 00:00:00', '01:21:49');
 
 -- --------------------------------------------------------
 
@@ -219,8 +232,8 @@ CREATE TABLE `publicacion` (
   `idUsuario` int(11) NOT NULL,
   `volumen` float NOT NULL,
   `peso` float NOT NULL,
-  `provinciaOrigen` varchar(40) NOT NULL,
-  `provinciaDestino` varchar(40) NOT NULL,
+  `Provinciaorigen` varchar(40) NOT NULL,
+  `Provinciadestino` varchar(40) NOT NULL,
   `fechaPublicacion` date NOT NULL,
   `imagenPublicacion` varchar(40) NOT NULL,
   `descripcion` text NOT NULL,
@@ -239,8 +252,8 @@ CREATE TABLE `publicacion` (
 -- Volcado de datos para la tabla `publicacion`
 --
 
-INSERT INTO `publicacion` (`idPublicacion`, `idUsuario`, `volumen`, `peso`, `provinciaOrigen`, `provinciaDestino`, `fechaPublicacion`, `imagenPublicacion`, `descripcion`, `contacto`, `postulanteElegido`, `titulo`, `estado`, `localidadOrigen`, `localidadDestino`, `domicilioOrigen`, `domicilioDestino`, `nombreRecibir`) VALUES
-(4, 1, 100, 200, 'san luis', 'la punta', '2024-11-07', 'imagenes/termostanley.webp', 'es un objeto muy bonito', 'ola01@gmail.com', 0, 'objeto bonito', 0, '', '', '', '', ''),
+INSERT INTO `publicacion` (`idPublicacion`, `idUsuario`, `volumen`, `peso`, `Provinciaorigen`, `Provinciadestino`, `fechaPublicacion`, `imagenPublicacion`, `descripcion`, `contacto`, `postulanteElegido`, `titulo`, `estado`, `localidadOrigen`, `localidadDestino`, `domicilioOrigen`, `domicilioDestino`, `nombreRecibir`) VALUES
+(4, 1, 100, 200, 'san luis', 'la punta', '2024-11-11', 'imagenes/termostanley.webp', 'es un objeto muy bonito', 'ola01@gmail.com', 1, 'objeto bonito', 2, '', '', '', '', ''),
 (6, 1, 10, 3, 'San Luis', 'San Luis', '2024-11-10', 'imagenes/publicacionDefault.jpg', 'botines nike en caja', '2664546384', 0, 'botines nike', 0, 'San Luis', 'Villa Mercedes', 'calle 3 sur', 'calle angosta 212', 'uriel gomez'),
 (7, 1, 10, 2, 'Buenos Aires', 'NeuquÃ©n', '2024-11-10', 'imagenes/publicacionDefault.jpg', 'maquina de cortar el pelo', '2664721223', 0, 'patillera suono', 0, 'La Plata', 'San MartÃ­n de los Andes', 'laplata2025', 'barilochepromo2021', 'juaquin munoz'),
 (8, 1, 10, 4, 'La Rioja', 'Corrientes', '2024-11-10', 'imagenes/publicacionDefault.jpg', 'termo stanley de 1lts', '2664339196', 0, 'termo stanley', 0, 'La Rioja', 'Goya', 'rioseco1212', 'desiertosahara21', 'emiliano gaido'),
@@ -270,7 +283,8 @@ CREATE TABLE `usuario` (
 --
 
 INSERT INTO `usuario` (`idUsuario`, `nombre`, `apellido`, `dni`, `responsable`, `email`, `domicilio`, `codPostal`, `contraseña`, `imagen`) VALUES
-(1, 'joaquin', 'muñoz', 45802248, 1, 'joaquinemunoz04@gmail.com', 'casa', 1234, '131231231231312312312313231231231231231231231231', 'e054903e6671684eff1264dc3ee6ec46.png');
+(1, 'joaquin', 'muñoz', 45802248, 1, 'joaquinemunoz04@gmail.com', 'casa', 1234, '131231231231312312312313231231231231231231231231', 'e054903e6671684eff1264dc3ee6ec46.png'),
+(2, 'gonza', 'si', 45802243, 1, 'jds@gmail.com', 'casa', 1234, 'aswdasd', '');
 
 -- --------------------------------------------------------
 
@@ -302,7 +316,8 @@ INSERT INTO `vehiculo` (`patente`, `idUsuario`, `modelo`, `categoria`) VALUES
 ALTER TABLE `calificacion`
   ADD PRIMARY KEY (`idCalificacion`),
   ADD KEY `idCalifica` (`idCalifica`,`idCalificado`),
-  ADD KEY `idCalificado` (`idCalificado`);
+  ADD KEY `idCalificado` (`idCalificado`),
+  ADD KEY `idPublicacion` (`idPublicacion`);
 
 --
 -- Indices de la tabla `localidad`
@@ -365,7 +380,7 @@ ALTER TABLE `vehiculo`
 -- AUTO_INCREMENT de la tabla `calificacion`
 --
 ALTER TABLE `calificacion`
-  MODIFY `idCalificacion` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `idCalificacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT de la tabla `localidad`
@@ -395,7 +410,7 @@ ALTER TABLE `publicacion`
 -- AUTO_INCREMENT de la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `idUsuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `idUsuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Restricciones para tablas volcadas
@@ -406,7 +421,8 @@ ALTER TABLE `usuario`
 --
 ALTER TABLE `calificacion`
   ADD CONSTRAINT `calificacion_ibfk_1` FOREIGN KEY (`idCalifica`) REFERENCES `usuario` (`idUsuario`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `calificacion_ibfk_2` FOREIGN KEY (`idCalificado`) REFERENCES `usuario` (`idUsuario`);
+  ADD CONSTRAINT `calificacion_ibfk_2` FOREIGN KEY (`idCalificado`) REFERENCES `usuario` (`idUsuario`),
+  ADD CONSTRAINT `calificacion_ibfk_3` FOREIGN KEY (`idPublicacion`) REFERENCES `publicacion` (`idPublicacion`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `localidad`

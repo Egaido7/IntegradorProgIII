@@ -437,8 +437,8 @@ class GestorVeryDeli {
                     u.apellido AS usuarioApellido, 
                     p.volumen, 
                     p.peso, 
-                    p.provinciaOrigen, 
-                    p.provinciaDestino, 
+                    p.Provinciaorigen, 
+                    p.Provinciadestino, 
                     p.idPublicacion,
                     p.idUsuario,
                     p.descripcion,
@@ -446,7 +446,13 @@ class GestorVeryDeli {
                     p.imagenPublicacion,
                     p.contacto,
                     p.postulanteElegido,
-                    p.estado
+                    p.estado,
+                    p.localidadOrigen,
+                    p.localidadDestino,
+                    p.domicilioOrigen,
+                    p.domicilioDestino,
+                    p.nombreRecibir,
+                    p.fechaPublicacion
                 FROM publicacion p
                 JOIN usuario u ON p.idUsuario = u.idUsuario
                 WHERE p.idPublicacion = ?");
