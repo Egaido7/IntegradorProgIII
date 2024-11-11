@@ -81,19 +81,19 @@ if (isset($_POST['botonFiltrar'])) {
 
         <div class="header__responsive">
             <?php if (isset($_SESSION["usuario"])) { ?>
-            <a href="buscador.php" class="header__option">
+            <a href="index.php" class="header__option">
                 <span class="material-icons"> home </span>
                 <span>Inicio</span>
             </a>
-            <a href="#buscar" class="header__option">
+            <a href="buscador.php" class="header__option">
                 <span class="material-icons"> search </span>
                 <span>Buscar Pedidos</span>
             </a>
-            <a href="#favoritos" class="header__option">
-                <span class="material-icons"> rocket_launch </span>
-                <span>Mis pedidos</span>
+            <a href="perfil.php?tab=calificaciones" class="header__option">
+                <span class="material-icons"> star </span>
+                <span>Calificaciones</span>
             </a>
-            <a href="perfil.php" class="header__option">
+            <a href="perfil.php?tab=publicaciones" class="header__option">
                 <span class="material-icons"> person </span>
                 <span>Perfil</span>
             </a>

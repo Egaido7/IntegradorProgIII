@@ -234,7 +234,7 @@ class GestorVeryDeli {
 
     public function fetch_publicaciones_por_usuario($idUsuario) {
         try {
-            $this->stmt = $this->conn->prepare("SELECT * FROM publicacion WHERE idUsuario = ?");
+            $this->stmt = $this->conn->prepare("SELECT * FROM publicacion WHERE idUsuario = ? ORDER BY estado ASC;");
             $this->stmt->bind_param("i", $idUsuario);
             $this->stmt->execute();
             return $this->stmt->get_result()->fetch_all(MYSQLI_ASSOC);
@@ -242,6 +242,18 @@ class GestorVeryDeli {
             throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
         }
     }
+
+    public function fetch_num_publicaciones_activas_por_usuario($idUsuario) {
+        try {
+            $this->stmt = $this->conn->prepare("SELECT COUNT(*) FROM publicacion WHERE idUsuario = ? AND estado != 2");
+            $this->stmt->bind_param("i", $idUsuario);
+            $this->stmt->execute();
+            return $this->stmt->get_result()->fetch_row()[0];
+        } catch (mysqli_sql_exception $e) {
+            throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
+        }
+    }
+
     public function fetch_publicaciones_filtradas($Provinciaorigen, $pesoPaquete) {
         try {
             // Consulta combinada para filtrar por provincia y peso
@@ -379,13 +391,17 @@ class GestorVeryDeli {
 
     public function fetch_calificaciones_por_usuario($idUsuario) {
         try {
-            $this->stmt = $this->conn->prepare("SELECT * FROM calificacion WHERE idUsuario = ?");
+            $this->stmt = $this->conn->prepare("SELECT * FROM calificacion WHERE idCalificado = ?");
             $this->stmt->bind_param("i", $idUsuario);
             $this->stmt->execute();
             return $this->stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         } catch (mysqli_sql_exception $e) {
             throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
         }
+    }
+
+    public function fetch_num_calificaciones_por_usuario($idUsuario) {
+        return count($this->fetch_calificaciones_por_usuario($idUsuario));
     }
 
     public function fetch_calificaciones_por_usuario_ultimas3($idUsuario) {
