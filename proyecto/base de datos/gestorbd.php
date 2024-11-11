@@ -8,12 +8,9 @@ class GestorVeryDeli {
         $this->conn = $conexion;
     }
 
-    public function insertar_usuario($nombre, $apellido, $dni, $email, $pwd, $responsable = null, $domicilio = null, $codPostal = null, $imagen = null) {
+    public function insertar_usuario($nombre, $apellido, $dni, $email, $pwd, $responsable = 0, $domicilio = null, $codPostal = null, $imagen = null) {
         try {
             $this->stmt = $this->conn->prepare("INSERT INTO usuario(nombre, apellido, dni, responsable, email, domicilio, codPostal, contraseña, imagen) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            if (!$this->stmt) {
-                throw new Exception("Error al preparar la consulta: " . $this->conn->error);
-            }
             $this->stmt->bind_param("ssiississ", $nombre, $apellido, $dni, $responsable, $email, $domicilio, $codPostal, $pwd, $imagen);
             $this->stmt->execute();
             return $this->stmt->affected_rows;

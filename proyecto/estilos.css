@@ -59,7 +59,6 @@
     justify-content: center;
 }
 
-
 .header__option {
     display: flex;
     align-items: center;
@@ -510,11 +509,6 @@ scroll-container {
         background-color: #52b04c; /* Fondo de cada opción */
         flex-grow: 1; /* Para que ocupe todo el espacio disponible */
         text-align: center;
-    }
-
-    .header__option i {
-        font-size: 20px;
-        margin-bottom: 2px;
     }
 
     .header__option:hover {

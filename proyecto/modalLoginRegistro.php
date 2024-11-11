@@ -24,8 +24,8 @@
                             echo $errorLogin;
                         } ?>    
                     </div>
-                    <div class="modal-footer">
-                        <input type="submit" id="btnEnviarLogin" name="btnEnviarLoginphp" class="btn btn-primary">
+                    <div class="modal-footer"> 
+                        <input type="submit" id="btnEnviarLogin" name="btnEnviarLoginphp" class="btn btn-primary" value="Iniciar Sesión">
                         <button type="button" class="btn btn-success" data-bs-dismiss="modal" data-bs-toggle="modal"
                             data-bs-target="#registroModal">Crear nueva cuenta</button>
                     </div>

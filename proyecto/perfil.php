@@ -1,6 +1,9 @@
 ﻿<?php
 include 'loginRegistro.php';
 
+if(!isset($_SESSION["usuario"])) {
+    header("Location: index.php");
+} else {
 
 ?>
 
@@ -21,7 +24,9 @@ include 'loginRegistro.php';
 <body>
     <div class="header">
         <div class="header__left">
-            <img src="LogoVeryDeli.svg" alt="Logo" class="logo">
+            <a href="index.php">
+                <img src="LogoVeryDeli.svg" alt="Logo" class="logo">
+            </a>
             <div class="header__input" id="header_busqueda">
                 <span class="material-icons"> search </span>
                 <input type="text" placeholder="Buscar publicaciones" id="barraBusqueda" />
@@ -29,13 +34,13 @@ include 'loginRegistro.php';
         </div>
 
         <div class="header__middle" id="header_medio">
-            <div class="header__option active">
+            <div class="header__option">
                 <span class="material-icons"> home </span>
             </div>
             <div class="header__option">
                 <span class="material-icons"> storefront </span>
             </div>
-            <div class="header__option">
+            <div class="header__option active">
                 <span class="material-icons"> supervised_user_circle </span>
             </div>
         </div>
@@ -314,3 +319,5 @@ include 'loginRegistro.php';
 </body>
 
 </html>
+
+<?php }

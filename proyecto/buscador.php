@@ -1,30 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-  <title>Facebook Clone</title>
-  <link rel="stylesheet" href="estilos.css" />
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
-</head>
-
-<body>
 <?php
-session_start();
-require 'base de datos/gestorbd.php';
 
-// Conexión a la base de datos
-$conexion = mysqli_connect('localhost', 'user_personas', '45382003', 'very_deli');
-if (!$conexion) {
-    die("Conexión fallida: " . mysqli_connect_error());
-}
-mysqli_set_charset($conexion, 'utf8mb4');
-
-// Crear instancia del controlador de publicaciones
-$filtroController = new GestorVeryDeli($conexion);
+include 'loginRegistro.php';
 
 // Variables para almacenar resultados
 $publicaciones = [];
@@ -38,21 +14,19 @@ if (isset($_POST['botonFiltrar'])) {
     // Consultar publicaciones aplicando los filtros de manera dinámica
     if (!empty($filtroProvincias) && !empty($filtroPeso)) {
         // Obtener publicaciones filtradas por provincia y peso
-        $publicaciones = $filtroController->fetch_publicaciones_filtradas($filtroProvincias, $filtroPeso);
+        $publicaciones = $gestor->fetch_publicaciones_filtradas($filtroProvincias, $filtroPeso);
     } elseif (!empty($filtroProvincias)) {
-        $publicaciones = $filtroController->fetch_publicaciones_por_origen($filtroProvincias);
+        $publicaciones = $gestor->fetch_publicaciones_por_origen($filtroProvincias);
     } elseif (!empty($filtroPeso)) {
-        $publicaciones = $filtroController->fetch_publicaciones_por_peso($filtroPeso);
+        $publicaciones = $gestor->fetch_publicaciones_por_peso($filtroPeso);
     } else {
         // Si no hay filtros, obtener todas las publicaciones
-        $publicaciones = $filtroController->fetch_publicaciones();
+        $publicaciones = $gestor->fetch_publicaciones();
     }
 } else {
     // Si no se aplicaron filtros, obtener todas las publicaciones
-    $publicaciones = $filtroController->fetch_publicaciones();
+    $publicaciones = $gestor->fetch_publicaciones();
 }
-
-mysqli_close($conexion);
 ?>
 
 <!DOCTYPE html>
@@ -65,37 +39,69 @@ mysqli_close($conexion);
     <title>Facebook Clone</title>
     <link rel="stylesheet" href="estilos.css" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </head>
 
 <body>
 <!-- header starts -->
 <div class="header">
-    <div class="header__left">
-        <img src="LogoVeryDeli.svg" alt="Logo" class="logo">
-        <div class="header__input" id="header_busqueda">
-            <span class="material-icons"> search </span>
-            <input type="text" placeholder="Buscar publicaciones" id="barraBusqueda" />
+        <div class="header__left">
+            <a href="index.php">
+                <img src="LogoVeryDeli.svg" alt="Logo" class="logo">
+            </a>
+            <div class="header__input" id="header_busqueda">
+                <span class="material-icons"> search </span>
+                <input type="text" placeholder="Buscar publicaciones" id="barraBusqueda" />
+            </div>
+        </div>
+
+        <div class="header__middle" id="header_medio">
+            <div class="header__option">
+                <a href="index.php"><span class="material-icons"> home </span></a>
+            </div>
+            <div href="buscador.php" class="header__option active">
+                <a href="buscador.php"><span class="material-icons"> storefront </span></a>
+            </div> 
+            <div class="header__option">
+                <a href="perfil.php"><span class="material-icons"> account_circle </span></a>
+            </div>
+        </div>
+
+        <div class="header__right">
+            <div class="header__info">
+                <?php if (isset($_SESSION["usuario"])) { ?>
+                    <form action="cerrarSesion.php" method="post">
+                        <button type="submit" class="btn btn-secondary">Cerrar Sesión</button>
+                    </form>
+                <?php } else { ?>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal">Iniciar Sesión</button>
+                <?php } ?>
+            </div>
+        </div>
+
+        <div class="header__responsive">
+            <?php if (isset($_SESSION["usuario"])) { ?>
+            <a href="buscador.php" class="header__option">
+                <span class="material-icons"> home </span>
+                <span>Inicio</span>
+            </a>
+            <a href="#buscar" class="header__option">
+                <span class="material-icons"> search </span>
+                <span>Buscar Pedidos</span>
+            </a>
+            <a href="#favoritos" class="header__option">
+                <span class="material-icons"> rocket_launch </span>
+                <span>Mis pedidos</span>
+            </a>
+            <a href="perfil.php" class="header__option">
+                <span class="material-icons"> person </span>
+                <span>Perfil</span>
+            </a>
+            <?php } else { ?>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal">Iniciar Sesión</button>
+            <?php } ?>
         </div>
     </div>
-    <div class="header__middle" id="header_medio">
-        <div class="header__option active">
-            <span class="material-icons"> home </span>
-        </div>
-        <div class="header__option">
-            <span class="material-icons"> storefront </span>
-        </div>
-        <div class="header__option">
-            <span class="material-icons"> supervised_user_circle </span>
-        </div>
-    </div>
-    <div class="header__right">
-        <div class="header__info">
-            <?php if (isset($_SESSION["id"])) {
-                echo "<p>Bienvenido a su sesion " . htmlspecialchars($_SESSION['id']) . "</p>";
-            } ?>
-        </div>
-    </div>
-</div>
 <!-- header ends -->
 
 <!-- main body starts -->
@@ -201,6 +207,10 @@ mysqli_close($conexion);
       barraBusquedaContainer.classList.remove("headerExpandido");
     });
   </script>
+    <?php 
+    include 'modalLoginRegistro.php';
+    include 'validarRegistro.php';
+    ?>
 </body>
 
 </html>
