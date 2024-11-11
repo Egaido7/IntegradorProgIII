@@ -244,36 +244,36 @@ echo "inicie sesion para poder postularte";
   </div>
   <!-- MODAL -->
   <!-- MODAL Login -->
-  <div class="modal fade" id="postulacionModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="modalLabel">ingrese monto</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="modal fade" id="postulacionModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="modalLabel">ingrese monto</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="formpostulacion" method="post" action="publicacion.php">
+              <div class="form-group">
+                <label for="monto">Monto:</label>
+                <input type="number" class="form-control" id="monto" name="monto" required>
+                <div class="invalid-feedback" id="loginPwdFeedback"></div>
+              </div>
+              <?php
+              if ($error == 1) {
+                echo $errorm;
+              }
+
+              ?>
+              <div class="modal-footer">
+                <input type="submit" id="btnpostularse" name="btnpostularse" class="btn btn-primary"></input>
+
+              </div>
+            </form>
+          </div>
+
         </div>
-        <div class="modal-body">
-          <form id="formpostulacion" method="post" action="publicacion.php">
-            <div class="form-group">
-              <label for="monto">Monto:</label>
-              <input type="number" class="form-control" id="monto" name="monto" required>
-              <div class="invalid-feedback" id="loginPwdFeedback"></div>
-            </div>
-            <?php
-            if ($error == 1) {
-              echo $errorm;
-            }
-
-            ?>
-            <div class="modal-footer">
-              <input type="submit" id="btnpostularse" name="btnpostularse" class="btn btn-primary"></input>
-
-            </div>
-          </form>
-        </div>
-
       </div>
     </div>
-  </div>
 
   <?php
   if ($tipo == 1 && $publicacion['estado'] != 1) {

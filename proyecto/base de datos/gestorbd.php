@@ -79,7 +79,7 @@ class GestorVeryDeli {
         try {
             $this->stmt = $this->conn->prepare("INSERT INTO vehiculo(patente, idUsuario, modelo, categoria)
             VALUES (?,?,?,?)");
-            $this->stmt->bind_param($patente, $idUsuario, $modelo, $categoria);
+            $this->stmt->bind_param("sisi",$patente, $idUsuario, $modelo, $categoria);
             $this->stmt->execute();
             return $this->stmt->affected_rows;
         } catch (mysqli_sql_exception $e) {
@@ -763,6 +763,44 @@ class GestorVeryDeli {
         } catch (mysqli_sql_exception $e) {
             // Lanzar una excepción en caso de error
             throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
+        }
+    }
+
+    public function tiene_maximo_vehiculos($idPublicacion) {
+        try {
+            // Preparar la consulta
+            $this->stmt = $this->conn->prepare("SELECT COUNT(*) FROM vehiculo WHERE idUsuario = ?");
+    
+            // Verifica si `prepare()` ha fallado
+            if (!$this->stmt) {
+                throw new Exception("Error en la preparación de la consulta: " . $this->conn->error);
+            }
+    
+            // Enlaza el parámetro
+            if (!$this->stmt->bind_param("i", $idPublicacion)) {
+                throw new Exception("Error al enlazar el parámetro: " . $this->stmt->error);
+            }
+    
+            // Ejecuta la consulta
+            if (!$this->stmt->execute()) {
+                throw new Exception("Error en la ejecución de la consulta: " . $this->stmt->error);
+            }
+    
+            // Enlaza el resultado
+            $this->stmt->bind_result($tiene);
+            $this->stmt->fetch();
+    
+            // Si se calificaron ambos usuarios
+            return $tiene == 2 ? 1 : 0;
+        } catch (Exception $e) {
+            // Mostrar el mensaje de error
+            echo "Error: " . $e->getMessage();
+            return false;
+        } finally {
+            // Cierra la declaración
+            if ($this->stmt) {
+                $this->stmt->close();
+            }
         }
     }
 }
