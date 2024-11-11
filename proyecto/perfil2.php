@@ -1,6 +1,6 @@
 ﻿<?php
 include 'loginRegistro.php';
-require_once 'base de datos/gestorbd.php'; // si el archivo está en una carpeta llamada src
+
 if(!isset($_SESSION["usuario"])) {
     header("Location: index.php");
 } else {
@@ -239,28 +239,28 @@ if(!isset($_SESSION["usuario"])) {
     $publicaciones = $gestor->fetch_publicaciones_por_usuario($usuario["idUsuario"]);
     foreach ($publicaciones as $pub) { 
         if ($pub["estado"] != 2) { ?>
-            <a href="publicacionSimple.php?idPublicacion=<?php echo $pub['idPublicacion']; ?>" class="text-decoration-none">
+            <a href="publicacionSimple.php?idPublicacion=<?= $pub['idPublicacion'] ?>" class="text-decoration-none">
                 <div class="card border-success">
                     <div class="card-body card-publicacion">
-                        <h5 class="card-title"><?= htmlspecialchars($pub["titulo"]); ?></h5>
+                        <h5 class="card-title"><?= htmlspecialchars($pub["titulo"]) ?></h5>
                         <h6 class="card-subtitle mb-2 text-success">
                             <?= ($pub["estado"] == 0) ? "Disponible" : "En espera"; ?>
                         </h6>
-                        <h6 class="card-subtitle mb-2 text-muted">Origen: <?= htmlspecialchars($pub["localidadOrigen"]); ?> - <?= htmlspecialchars($pub["provinciaOrigen"]); ?></h6>
-                        <h6 class="card-subtitle mb-2 text-muted">Destino: <?= htmlspecialchars($pub["localidadDestino"]); ?> - <?= htmlspecialchars($pub["provinciaDestino"]); ?></h6>
+                        <h6 class="card-subtitle mb-2 text-muted">Origen: <?= htmlspecialchars($pub["localidadOrigen"]) ?> - <?= htmlspecialchars($pub["provinciaOrigen"]) ?></h6>
+                        <h6 class="card-subtitle mb-2 text-muted">Destino: <?= htmlspecialchars($pub["localidadDestino"]) ?> - <?= htmlspecialchars($pub["provinciaDestino"]) ?></h6>
                         <p class="card-text">Descripción: <?= htmlspecialchars($pub["descripcion"]); ?></p>
                     </div>
                 </div>
             </a>
         <?php } else { ?>
-            <a href="publicacionSimple.php?idPublicacion=<?php echo $pub['idPublicacion']; ?>" class="text-decoration-none">
+            <a href="publicacionSimple.php?idPublicacion=<?php echo $pub['idPublicacion'] ?>" class="text-decoration-none">
                 <div class="card border-muted">
                     <div class="card-body card-publicacion">
-                        <h5 class="card-title"><?= htmlspecialchars($pub["titulo"]); ?></h5>
+                        <h5 class="card-title"><?= htmlspecialchars($pub["titulo"]) ?></h5>
                         <h6 class="card-subtitle mb-2 text-muted">Finalizada</h6>
-                        <h6 class="card-subtitle mb-2 text-muted">Origen: <?= htmlspecialchars($pub["localidadOrigen"]); ?> - <?= htmlspecialchars($pub["provinciaOrigen"]); ?></h6>
-                        <h6 class="card-subtitle mb-2 text-muted">Destino: <?= htmlspecialchars($pub["localidadDestino"]); ?> - <?= htmlspecialchars($pub["provinciaDestino"]); ?></h6>
-                        <p class="card-text">Descripción: <?= htmlspecialchars($pub["descripcion"]); ?></p>
+                        <h6 class="card-subtitle mb-2 text-muted">Origen: <?= htmlspecialchars($pub["localidadOrigen"]) ?> - <?= htmlspecialchars($pub["provinciaOrigen"]) ?></h6>
+                        <h6 class="card-subtitle mb-2 text-muted">Destino: <?= htmlspecialchars($pub["localidadDestino"]) ?> - <?= htmlspecialchars($pub["provinciaDestino"]) ?></h6>
+                        <p class="card-text">Descripción: <?= htmlspecialchars($pub["descripcion"]) ?></p>
                     </div>
                 </div>
             </a>

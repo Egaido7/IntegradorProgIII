@@ -27,53 +27,64 @@
   date_default_timezone_set('America/Argentina/San_Luis');
   ?>
 
-  <div class="row header">
-    <div class="col-3 header__left">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Facebook_f_logo_%282019%29.svg/1200px-Facebook_f_logo_%282019%29.svg.png" alt="">
-      <img src="LogoVeryDeli.svg" alt="Logo" class="logo">
-      <div class="header__input">
-        <span class="material-icons">search</span>
-        <input type="text" placeholder="Search">
-      </div>
-    </div>
-    <div class="col header__middle">
-      <div class="header__option active">
-        <span class="material-icons">home</span>
-      </div>
-      <div class="header__option">
-        <span class="material-icons">storefront</span>
-      </div>
-      <div class="header__option">
-        <span class="material-icons">supervised_user_circle</span>
-      </div>
-    </div>
+<div class="header">
+            <div class="header__left">
+                <a href="index.php">
+                    <img src="LogoVeryDeli.svg" alt="Logo" class="logo">
+                </a>
+                <div class="header__input" id="header_busqueda">
+                    <span class="material-icons"> search </span>
+                    <input type="text" placeholder="Buscar publicaciones" id="barraBusqueda" />
+                </div>
+            </div>
 
-    <div class="col header__right">
-      <div class="header__info">
-        <img class="user__avatar" src="imagenes/publicacionDefault.jpg" alt="">
-        <h4>Somanath Goudar</h4>
-      </div>
-    </div>
+            <div class="header__middle" id="header_medio">
+                <div class="header__option">
+                    <a href="index.php"><span class="material-icons"> home </span></a>
+                </div>
+                <div class="header__option active">
+                    <a href="buscador.php"><span class="material-icons"> storefront </span></a>
+                </div>
+                <div class="header__option">
+                    <a href="perfil.php"><span class="material-icons"> account_circle </span></a>
+                </div>
+            </div>
 
-    <div class="header__responsive">
-      <a href="buscador.php" class="header__option">
-        <span class="material-icons">home</span>
-        <span>Inicio</span>
-      </a>
-      <a href="#buscar" class="header__option">
-        <span class="material-icons">search</span>
-        <span>Buscar Pedidos</span>
-      </a>
-      <a href="#favoritos" class="header__option">
-        <span class="material-icons">rocket_launch</span>
-        <span>Mis pedidos</span>
-      </a>
-      <a href="#perfil" class="header__option">
-        <span class="material-icons">person</span>
-        <span>Perfil</span>
-      </a>
-    </div>
-  </div>
+            <div class="header__right">
+                <div class="header__info">
+                    <?php if (isset($_SESSION["usuario"])) { ?>
+                        <form action="cerrarSesion.php" method="post">
+                            <button type="submit" class="btn btn-secondary">Cerrar Sesión</button>
+                        </form>
+                    <?php } else { ?>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal">Iniciar Sesión</button>
+                    <?php } ?>
+                </div>
+            </div>
+
+            <div class="header__responsive">
+                <?php if (isset($_SESSION["usuario"])) { ?>
+                    <a href="index.php" class="header__option">
+                        <span class="material-icons"> home </span>
+                        <span>Inicio</span>
+                    </a>
+                    <a href="buscador.php" class="header__option">
+                        <span class="material-icons"> search </span>
+                        <span>Buscar Pedidos</span>
+                    </a>
+                    <a href="perfil.php?tab=calificaciones" class="header__option">
+                        <span class="material-icons"> star </span>
+                        <span>Calificaciones</span>
+                    </a>
+                    <a href="perfil.php?tab=publicaciones" class="header__option">
+                        <span class="material-icons"> person </span>
+                        <span>Perfil</span>
+                    </a>
+                <?php } else { ?>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal">Iniciar Sesión</button>
+                <?php } ?>
+            </div>
+        </div>
 
   <!-- contenido del producto -->
   <div class="card d-flex flex-row flex-wrap container" style="width: 70%;">
