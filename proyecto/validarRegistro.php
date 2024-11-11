@@ -1,3 +1,5 @@
+<script>
+
 function mostrarMensajeError(input, mensaje) {
     input.nextElementSibling.textContent = mensaje;
     input.classList.add('is-invalid');
@@ -53,32 +55,11 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!validarRegistro()) {
             event.preventDefault();
         } else {
-            event.preventDefault(); // Evita el envío estándar del formulario
-
-            let formData = new FormData(this);
-            formData.append("btnEnviarRegistro", "submit");
-            fetch('loginRegistro.php', {
-                method: 'POST',
-                body: formData
-            })
-                .then(response => response.json())
-                .then(data => {
-                    console.log("Respuesta del servidor:", data);  // Verificar qué se está recibiendo
-                    try {
-                        const jsonData = JSON.parse(data);  // Intentar convertirla a JSON
-                        if (jsonData.success) {
-                            window.location.href = "perfil.php";
-                        } else {
-                            document.getElementById('msgErrorLogin').textContent = jsonData.error || '';
-                        }
-                    } catch (e) {
-                        document.getElementById('msgErrorLogin').textContent = "Error de servidor. Verifique los registros.";
-                        console.error("Error al parsear JSON:", e);
-                    }
-                })
-                .catch(error => {
-                    document.getElementById('msgErrorLogin').textContent = "Error de conexión. Inténtelo de nuevo.";
-                });
+            var mostrarLogin = <?php echo json_encode($mostrarLogin); ?>;
+            if (mostrarLogin) {
+                var registroModal = new bootstrap.Modal(document.getElementById('registroModal'));
+                registroModal.show();
+            }
         }
     });
 
@@ -87,37 +68,15 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!validarLogin()) {
             event.preventDefault(); // Prevenir el envío si hay errores de validación
         } else {
-            event.preventDefault(); // Evita el envío estándar del formulario
-
-            let formData = new FormData(this);
-            formData.append("btnEnviarLoginphp", "submit");
-            fetch('loginRegistro.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log("Respuesta del servidor:", data);  // Verificar qué se está recibiendo
-                try {
-                    const jsonData = JSON.parse(data);  // Intentar convertirla a JSON
-                    if (jsonData.success) {
-                        window.location.href = "perfil.php";
-                    } else {
-                        document.getElementById('msgErrorLogin').textContent = jsonData.error || '';
-                    }
-                } catch (e) {
-                    document.getElementById('msgErrorLogin').textContent = "Error de servidor. Verifique los registros.";
-                    console.error("Error al parsear JSON:", e);
-                }
-            })
-            .catch(error => {
-                console.error("Error en la petición:", error); // Para depurar errores
-                document.getElementById('msgErrorLogin').textContent = "Error de conexión. Inténtelo de nuevo.";
-            });
+            var mostrarLogin = <?php echo json_encode($mostrarLogin); ?>;
+            if (mostrarLogin) {
+                var loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+                loginModal.show();
+            }
         }
     });
 });
-
+</script>
 
 
 

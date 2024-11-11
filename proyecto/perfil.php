@@ -1,5 +1,6 @@
 ﻿<?php
-session_start();
+include 'loginRegistro.php';
+
 
 ?>
 
@@ -15,7 +16,6 @@ session_start();
     <link rel="stylesheet" href="estilosPerfil.css" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <script src="validarRegistro.js" defer></script>
 </head>
 
 <body>
@@ -42,7 +42,7 @@ session_start();
 
         <div class="header__right">
             <div class="header__info">
-                <?php if (isset($_SESSION["logeado"]) && $_SESSION["logeado"]) { ?>
+                <?php if (isset($_SESSION["usuario"])) { ?>
                     <form action="cerrarSesion.php" method="post">
                         <button type="submit" class="btn btn-secondary">Cerrar Sesión</button>
                     </form>
@@ -53,7 +53,7 @@ session_start();
         </div>
 
         <div class="header__responsive">
-            <?php if (isset($_SESSION["logeado"]) && $_SESSION["logeado"]) { ?>
+            <?php if (isset($_SESSION["usuario"])) { ?>
             <a href="buscador.php" class="header__option">
                 <span class="material-icons"> home </span>
                 <span>Inicio</span>
@@ -307,7 +307,10 @@ session_start();
             });
         </script>
     </div>
-    <?php include 'modalLoginRegistro.html'; ?>
+    <?php 
+    include 'modalLoginRegistro.php';
+    include 'validarRegistro.php';
+    ?>
 </body>
 
 </html>
