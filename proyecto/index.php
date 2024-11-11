@@ -210,7 +210,7 @@
         </div>
 
         <div class="messageSender__bottom">
-          <?php if (isset($_SESSION["id"])) {
+          <?php if (isset($_SESSION["usuario"])) {
             echo "<div class='messageSender__option'>";
             echo "<span style='color: red' class='material-icons'> publish </span>";
             echo "<button data-bs-toggle='modal' data-bs-target='#publicarModal' style='background: none; border: none; padding: 0; color: inherit; font: inherit; cursor: pointer;' >publicar</button> ";

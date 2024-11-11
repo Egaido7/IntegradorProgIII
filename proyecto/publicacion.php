@@ -25,30 +25,30 @@
   $comentarios = $publicacionControl->fetch_mensajes_por_publicacion($publicacion['idPublicacion']);
   $fechap = date('Y-m-d');
   $id = $publicacion['idPublicacion'];
-
   date_default_timezone_set('America/Argentina/San_Luis');
 
-  if (isset($_SESSION["idUsuario"])) {
+  if (!isset($_SESSION['usuario'])) {
     $tipo = 0;
     //cambiar el 1 por session de la id de usuario
-  } elseif (1 == $publicacion['idUsuario']) {
-    $tipo = 1; //$_SESSION["idUsuario"]
-
-  } elseif ($publicacion['postulanteElegido'] == 2) {
+  } else
+  
+$usuario = $_SESSION['usuario'];
+  if ($usuario == $publicacion['idUsuario']) {
+    $tipo = 1;
+  } elseif ($publicacion['postulanteElegido'] == $usuario) {
     $tipo = 2;
-  } elseif ($publicacionControl->es_postulante(1, $publicacion['idPublicacion'])) {
+  } elseif ($publicacionControl->es_postulante($usuario, $publicacion['idPublicacion'])) {
     $tipo = 3;
   } else {
     $tipo = 4;
   }
   $control = 0;
-
-  $tipo = 2;
   $error = 0;
-
+  $er = 0;
+  $aviso = "si";
   // control al postularse
   if (isset($btnpostularse)) {
-    $vehiculo = $publicacionControl->tiene_vehiculo_por_usuario(1);
+    $vehiculo = $publicacionControl->tiene_vehiculo_por_usuario($usuario);
     $publicacionE = $publicacionControl->fetch_publicacion(4);
     $error = 0;
 
@@ -61,7 +61,7 @@
     } elseif ($publicacionE['estado'] != 0) {
       $errorm = "La publicación ya tiene un postulante elegido";
       $error = 1;
-    } elseif (!$publicacionControl->usuario_puede_postularse(1)) {
+    } elseif (!$publicacionControl->usuario_puede_postularse($usuario)) {
       $errorm = "Debe tener el estado responsable para poder postularse a más de una publicación";
       $error = 1;
     } else {
@@ -70,7 +70,7 @@
       //  Usar sesión para pasar los datos
       $_SESSION['id'] = $publicacion['idPublicacion'];
       $_SESSION['monto'] = floatval($monto);
-      $_SESSION['usuario_id'] = 2;  // Cambiar 2 por el ID de usuario real
+      $_SESSION['usuario_id'] = $usuario;  // Cambiar 2 por el ID de usuario real
       $_SESSION['publicacion_id'] = 4; // Cambiar 4 por el ID de publicación real
       $_SESSION['estado'] = 0;
 
@@ -82,24 +82,24 @@
 
   if (isset($enviarCalificacion)) {
     $fechaComentario = date('Y-m-d');
-    if (1 == $publicacion['idUsuario']) {
-      $calificado = $publicacion['idUsuario'];
-    } else {
+   if ($usuario == $publicacion['idUsuario']) {
       $calificado = $publicacion['postulanteElegido'];
+    } else {
+      $calificado = $publicacion['idUsuario'];
     }
     $calificacion = intval($calificacion);
-    echo $calificacion;
-    $publicacionControl->insertar_calificacion(1, $calificacion, $opinion, $calificado, $publicacion['idPublicacion'], $fechaComentario);
+  
+    $publicacionControl->insertar_calificacion($usuario, $calificacion, $opinion, $calificado, $publicacion['idPublicacion'], $fechaComentario);
     header("Location: " . $_SERVER['PHP_SELF']); // Redirige a la misma página sin datos en POST
     exit(); // Asegura que se detenga el procesamiento adicional  
   }
-
+  
   if (isset($comentarioBtn)) {
 
     // Obtener la fecha y hora actual
     $fecha = date('Y-m-d');
     $hora = date('H:i:s');
-    $publicacionControl->insertar_mensaje(1, $publicacion['idPublicacion'], $mensajeA, $fecha, $hora);
+    $publicacionControl->insertar_mensaje($usuario, $publicacion['idPublicacion'], $mensajeA, $fecha, $hora);
     header("Location: " . $_SERVER['PHP_SELF']); // Redirige a la misma página sin datos en POST
     exit(); // Asegura que se detenga el procesamiento adicional    
   }
@@ -225,7 +225,7 @@ if(empty($usuario2)){
         <?php }  
         ?>
         
-        <?php if($tipo == 3 && $publicacion['estado'] == 0){?>
+        <?php if($tipo == 4 && $publicacion['estado'] == 0){?>
         <a href="#" class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#postulacionModal">postularse</a>
        <?php
         }
@@ -368,38 +368,50 @@ if ($tipo == 1 || $tipo == 2 || $tipo == 3) {
 
       </div>
     </div>
+    <?php if ($publicacion['estado'] != 2){?>
     <form method="post" action="publicacion.php" class="chat-form">
       <label></label><br>
       <input type="text" id="mensajeA" name="mensajeA" style="width: 80%; height: 30px; " required>
       <input type="submit" name="comentarioBtn" value="enviar" style="width: 18%;">
-    </form>
+    </form> 
+    <?php }?>
   </div>
+ 
 <?php
+    
 }
 ?>
 <!-- Contenedor Principal -->
-<?php  if($publicacion['estado'] == 2  && $tipo == 1 ||$tipo == 2){?>  
+<?php  if($publicacion['estado'] == 2  and ($tipo == 1 or $tipo == 2)){?>  
 
   <div class="container " style="padding-left: 50px;">
     <h1>Calificacion</h1>
   </div>
-  <div class="card d-flex flex-wrap container" style="padding-bottom: 80px; padding-top: 20px; width: 70%; margin-bottom: 20px; display: flex; flex-direction: column; justify-content: center; max-height: 80vh;">
-    <?php if ($publicacionControl->publicacion_calificada($publicacion['idPublicacion']) == 0 && $publicacionControl->usuario_califico(1, $publicacion['idPublicacion']) == 1) { ?>
-      <form method="post" action="publicacion.php">
-        <label>calificacion: <select name="calificacion">
-            <option name="calificacion" value="1">1</option>
-            <option name="calificacion" value="2">2</option>
-            <option name="calificacion" value="3">3</option>
-            <option name="calificacion" value="4">4</option>
-            <option name="calificacion" value="5">5</option>
-          </select>
-        </label>
+  <div class="card container" style="padding-bottom: 80px; padding-top: 20px; width: 70%; margin-bottom: 20px; max-height: 80vh;">
+  <?php if ($publicacionControl->publicacion_calificada($publicacion['idPublicacion']) == 0) { ?>
+    <form method="post" action="publicacion.php">
+      <div class="mb-3">
+        <label for="calificacion" class="form-label">Calificación:</label>
+        <select name="calificacion" id="calificacion" class="form-select">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
+      </div>
 
-        <p><label>comentario<input type="text" name="opinion"></p>
-        <p><input type="submit" name="enviarCalificacion"></p>
-      </form>
-  </div>
+      <div class="mb-3">
+        <label for="opinion" class="form-label">Comentario:</label>
+        <input type="text" name="opinion" id="opinion" class="form-control" placeholder="Escribe tu comentario">
+      </div>
 
+      <div class="text-center">
+        <button type="submit" name="enviarCalificacion" class="btn btn-primary">Enviar Calificación</button>
+      </div>
+    </form>
+  <?php  ?>
+</div>
 
   <?php
     } else {
@@ -411,6 +423,7 @@ if ($tipo == 1 || $tipo == 2 || $tipo == 3) {
         $info1 = $publicacionControl->fetch_usuario_por_id($usuario1['idCalifica']);
         $info2 = $publicacionControl->fetch_usuario_por_id($usuario2['idCalifica']);
   ?>
+
     <div class="container" style="padding-bottom: 80px; padding-top: 20px; width: 100%; margin-bottom: 20px; display: flex; flex-direction: column; justify-content: center; max-height: 80vh;">
       <div class="scrollable-div" style="overflow-y: auto; max-height: 400px; border: 1px solid #757575; padding: 10px; border-radius: 8px; background-color: rgb(255, 255, 255);">
 
