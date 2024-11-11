@@ -275,18 +275,18 @@ foreach ($postulantes as $postulacion){
 <div class="card d-flex flex-row flex-wrap container" style="width: 70%; border: 1px solid #757575">
   <?php if($publicacionControl->publicacion_calificada($publicacion['idPublicacion'])){?>
 <form method="post" action="publicacion.php">
-<label>calificacion <select name="calificacion">
-<option  name="calificacion" value="0">0</option>
-<option  name="calificacion" value="1">1</option>
-<option  name="calificacion" value="2">2</option>
-<option  name="calificacion" value="3">3</option>
-<option  name="calificacion" value="4">4</option>
-<option  name="calificacion" value="5">5</option>
-</select>
-</label>
+  <label for="calificacion">calificacion</label>
+  <select name="calificacion" id="calificacion">
+    <option  name="calificacion" value="0">0</option>
+    <option  name="calificacion" value="1">1</option>
+    <option  name="calificacion" value="2">2</option>
+    <option  name="calificacion" value="3">3</option>
+    <option  name="calificacion" value="4">4</option>
+    <option  name="calificacion" value="5">5</option>
+  </select>
 
-<p><label>opinion<input type="text" name="opinion"></p>
-<p><input type="submit" name="enviarCalificaion"></p>
+  <p><label for="opinion">opinion</label><input type="text" name="opinion" id="opinion"></p>
+  <p><input type="submit" name="enviarCalificaion"></p>
 </form>
 <?php }else{?>
 
@@ -337,7 +337,7 @@ if($tipo == 1 || $tipo == 2 || $tipo == 3){
         <!-- Avatar -->
         <div class="comment-avatar"><img src="imagenes/<?php echo $usuario['imagen']?>" alt=""></div>
         <!-- Contenedor del Comentario -->
-        <div class="comment-box" style="">
+        <div class="comment-box">
           <div class="comment-head">
             <h6 class="comment-name <?php if($usuario['idUsuario'] == $publicacion['idUsuario']){echo "by-author";}?>"><a href="http://creaticode.com/blog"><?php echo $usuario['nombre'] ?></a></h6>
               <span><?php echo $mensaje['fechaComentario']." ".$mensaje['hora']?></span>         
