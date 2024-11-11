@@ -1,0 +1,24 @@
+IDE:
+utilizamos visual studio code porque podemos enlazar el proyecto de github y pasarnos los cambios facilmente
+
+Problemas: 
+al postularse se dejaba de funcionar la pagina 
+solucion:crear un archivo donde mandar la insersion y hacer la verificacion.
+al enviar mensajes se mandaba el último mensaje que se escribió en vez de el mensaje que se queria
+solucion:hacer que cuando se envie un mensaje actualize la pagina para evitar que quede un mensaje antiguo 
+el verifica si el usuario califico no detecta si el usuario califico 
+
+tareas:
+publicacion: joaquin Muñoz
+perfil:Uriel Gomez y emiliano gaido
+inicio de seseion:Emiliano gaido
+pagina Princiopal:Emiliano gaido
+sistema de calificacion:joaquin Muñoz
+sistema de posutlacion:joaquin MUuñoz
+filtro de busqueda:emiliano gaido
+registro:emiliano gaido
+comentarios:joaquin Muñoz
+logo:uriel gomez
+metodos de insersion y select:uriel gomez
+header responsive:uriel gomez
+revision de calificacion a los 7 dias: joaquin muñoz

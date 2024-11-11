@@ -4,7 +4,37 @@ include 'loginRegistro.php';
 if (!isset($_SESSION["usuario"])) {
     header("Location: index.php");
 } else {
-
+    extract($_POST);
+$error = 0;
+$errorm = "";
+$us = $_SESSION["usuario"];
+    if (isset($enviarVehiculo)) {
+       
+        $error = 0;
+        if (empty($patente)) {
+          $errorm = "Ingrese patente";
+          $error = 1;
+        } elseif (empty($modelo)) {
+            $errorm = "Ingrese modelo";
+            $error = 1;
+          }
+        elseif ($gestor->tiene_maximo_vehiculos($us) == 1) {
+          $errorm = "tienes el maximo de vehiculos";
+          $error = 1;
+        } else {
+          // No hay errores; redirigir a insertar_postulante.php
+    
+          //  Usar sesión para pasar los datos
+         
+          $_SESSION['patente'] = $patente;
+          $_SESSION['modelo'] = $modelo; 
+          $_SESSION['categoria'] = $categoria;
+    
+          //Redirige a insertar_postulante.php
+          header("Location: insertarVehiculo.php");
+              exit();
+        }
+      }
 ?>
 
 <!DOCTYPE html>
@@ -307,6 +337,95 @@ if (!isset($_SESSION["usuario"])) {
                                 </div>
                             </div>
                         </form>
+
+                        <hr>
+
+                    </div>
+                    <div class="tab-pane fade" id="publicaciones" role="tabpanel" aria-labelledby="publicaciones-tab">
+                        <?php $publicaciones = $gestor->fetch_publicaciones_por_usuario($usuario["idUsuario"]);
+                        foreach($publicaciones as $pub) { 
+                            if($pub["estado"] != 2) { ?>
+                            <a href="#">
+                                <div class="card border-success">
+                                    <div class="card-body card-publicacion">
+                                        <h5 class="card-title"><?= $pub["titulo"] ?></h5>
+                                        <h6 class="card-subtitle mb-2 text-success">
+                                            <?= ($pub["estado"] == 0) ? "Disponible" : "En espera" ?>
+                                        </h6>
+                                        <h6 class="card-subtitle mb-2 text-muted">Origen: <?= $pub["localidadOrigen"] ?> - <?= $pub["Provinciaorigen"] ?></h6>
+                                        <h6 class="card-subtitle mb-2 text-muted">Destino: <?= $pub["localidadDestino"] ?> - <?= $pub["Provinciadestino"] ?></h6>
+                                        <p class="card-text">Descripción: <?= $pub["descripcion"] ?></p>
+                                    </div>
+                                </div>
+                            </a>
+                        <?php } else { ?>
+                            <a href="#">
+                            <div class="card border-muted">
+                                <div class="card-body card-publicacion">
+                                    <h5 class="card-title"><?= $pub["titulo"] ?></h5>
+                                    <h6 class="card-subtitle mb-2 text-muted">Finalizada</h6>
+                                    <h6 class="card-subtitle mb-2 text-muted">Origen: <?= $pub["localidadOrigen"] ?> - <?= $pub["Provinciaorigen"] ?></h6>
+                                    <h6 class="card-subtitle mb-2 text-muted">Destino: <?= $pub["localidadDestino"] ?> - <?= $pub["Provinciadestino"] ?></h6>
+                                    <p class="card-text">Descripción: <?= $pub["descripcion"] ?></p>
+                                </div>
+                            </div>
+                        </a>
+                        <?php }
+                        }
+                        ?>
+                        
+                        
+                    </div>
+                    <div class="tab-pane fade" id="vehiculos" role="tabpanel" aria-labelledby="vehiculos-tab">
+                    <div class="card container" style="padding-bottom: 80px; padding-top: 20px; width: 70%; margin-bottom: 20px; max-height: 80vh;">
+                    
+    <form method="post" action="perfil.php">
+      <div class="mb-3">
+        <div class="mb-3"><h3>nuevo vehiculo</h3></div>
+        <div class="mb-3">
+        <label for="pateme" class="form-label">patente:</label>
+        <input type="text" name="patente" id="patente" class="form-control" placeholder="escribe la patente" require>
+        <label for="modelo" class="form-label">modelo:</label>
+        <input type="text" name="modelo" id="modelo" class="form-control" placeholder="escribe el modelo del auto" require>
+      </div>
+        <label for="categoria" class="form-label">Calificación:</label>
+        <select name="categoria" id="categoria" class="form-select">
+          <option value="1">liviano</option>
+          <option value="2">mediano</option>
+          <option value="3">pesado</option>
+        </select>
+      </div>
+
+      
+
+      <div class="text-center">
+      <button type="submit" name="enviarVehiculo" class="btn btn-primary">Enviar Calificación</button>
+      </div>
+      <?php  
+      if($error = 1){
+        echo $errorm;
+      }
+      ?>
+    </form>
+</div>
+                    </div>
+                        
+                        <div class="card border-success">
+                            <img class="card-img-top" src="imagenes/publicacionDefault.jpg" alt="Card image cap">
+                            <div class="card-body">
+                                <h5 class="card-title">Modelo de vehículo</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">Nro Patente: 1234</h6>
+                                <p class="card-text">Categoría: 2</p>
+                            </div>
+                        </div>
+                        <div class="card border-success">
+                            <img class="card-img-top" src="imagenes/publicacionDefault.jpg" alt="Card image cap">
+                            <div class="card-body">
+                                <h5 class="card-title">Modelo de vehículo</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">Nro Patente: NR55</h6>
+                                <p class="card-text">Categoría: 1</p>
+                            </div>
+                        </div>
                     </div>
                     <div class="tab-pane fade" id="calificaciones" role="tabpanel" aria-labelledby="calificaciones-tab">
                         <?php $calificaciones = $gestor->fetch_calificaciones_hechas_por_usuario($usuario["idUsuario"]);
@@ -368,6 +487,10 @@ if (!isset($_SESSION["usuario"])) {
     include 'modalLoginRegistro.php';
     include 'validarRegistro.php';
     ?>
+      </div>
+    </div>
+  </div>
+
 
     <script>
         window.onload = function() {
@@ -386,7 +509,6 @@ if (!isset($_SESSION["usuario"])) {
         };
     </script>
 </body>
-
+<?php }?>
 </html>
 
-<?php }
