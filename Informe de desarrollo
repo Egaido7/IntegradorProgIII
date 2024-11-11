@@ -4,7 +4,9 @@ utilizamos visual studio code porque podemos enlazar el proyecto de github y pas
 Problemas: 
 al postularse se dejaba de funcionar la pagina 
 solucion:crear un archivo donde mandar la insersion y hacer la verificacion.
-
+al enviar mensajes se mandaba el último mensaje que se escribió en vez de el mensaje que se queria
+solucion:hacer que cuando se envie un mensaje actualize la pagina para evitar que quede un mensaje antiguo 
+el verifica si el usuario califico no detecta si el usuario califico 
 
 tareas:
 publicacion: joaquin Muñoz
