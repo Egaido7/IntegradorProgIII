@@ -309,27 +309,35 @@ if (!isset($_SESSION["usuario"])) {
                         </form>
                     </div>
                     <div class="tab-pane fade" id="calificaciones" role="tabpanel" aria-labelledby="calificaciones-tab">
-                        <div class="card border-success">
-                            <img class="card-img-top" src="imagenes/publicacionDefault.jpg" alt="Card image cap">
-                            <div class="card-body">
-                                <h5 class="card-title">Somanath Goudar</h5>
-                                <h6 class="card-subtitle mb-2 text-muted">2024-11-07 objeto bonito</h6>
-                                <form method="post" action="#">
-                                    <label for="calificacion">Calificación:</label>
-                                    <select name="calificacion" id="calificacion">
-                                        <option name="calificacion" value="0">0</option>
-                                        <option name="calificacion" value="1">1</option>
-                                        <option name="calificacion" value="2">2</option>
-                                        <option name="calificacion" value="3">3</option>
-                                        <option name="calificacion" value="4">4</option>
-                                        <option name="calificacion" value="5">5</option>
-                                    </select>
+                        <?php $calificaciones = $gestor->fetch_calificaciones_hechas_por_usuario($usuario["idUsuario"]);
+                        foreach($calificaciones as $c) {
+                            $calificado = $gestor->fetch_nombre_usuario_por_id($c["idCalificado"]);
+                            ?>
+                            
+                            <div class="card border-success">
+                                <div class="card-body">
+                                    <h5 class="card-title"><?= $calificado["apellido"] . " " . $calificado["nombre"] ?></h5>
+                                    <h6 class="card-subtitle mb-2 text-muted">Fecha: <?= $c["fecha"] ?></h6>
+                                    <form method="post" action="#">
+                                        <label for="calificacion">Calificación:</label>
+                                        <select name="calificacion" id="calificacion">
+                                            <option name="calificacion" value="0">0</option>
+                                            <option name="calificacion" value="1">1</option>
+                                            <option name="calificacion" value="2">2</option>
+                                            <option name="calificacion" value="3">3</option>
+                                            <option name="calificacion" value="4">4</option>
+                                            <option name="calificacion" value="5">5</option>
+                                        </select>
 
-                                    <p><label for="opinion">opinion</label><input type="text" name="opinion" id="opinion"></p>
-                                    <p><input type="submit" name="enviarCalificaion"></p>
-                                </form>
+                                        <p><label for="opinion">opinion</label><input type="text" name="opinion" id="opinion"></p>
+                                        <p><input type="submit" name="enviarCalificaion" value="Calificar"></p>
+                                    </form>
+                                </div>
                             </div>
-                        </div>
+                        <?php } ?>
+                        
+                        ?>
+                        
                     </div>
                 </div>
 

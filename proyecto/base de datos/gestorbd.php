@@ -108,6 +108,18 @@ class GestorVeryDeli {
         }
     }
 
+    public function fetch_nombre_usuario_por_id($idUsuario) {
+        try {
+            $this->stmt = $this->conn->prepare("SELECT nombre, apellido FROM usuario WHERE idUsuario = ?");
+            $this->stmt->bind_param("i", $idUsuario);
+            $this->stmt->execute();
+            return $this->stmt->get_result()->fetch_assoc();
+        } catch (mysqli_sql_exception $e) {
+            throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
+        }
+    }
+
+
     //retorna un booleano
     public function fetch_usuario_es_responsable($idUsuario) {
         try {
@@ -392,6 +404,17 @@ class GestorVeryDeli {
     public function fetch_calificaciones_por_usuario($idUsuario) {
         try {
             $this->stmt = $this->conn->prepare("SELECT * FROM calificacion WHERE idCalificado = ?");
+            $this->stmt->bind_param("i", $idUsuario);
+            $this->stmt->execute();
+            return $this->stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        } catch (mysqli_sql_exception $e) {
+            throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
+        }
+    }
+
+    public function fetch_calificaciones_hechas_por_usuario($idUsuario) {
+        try {
+            $this->stmt = $this->conn->prepare("SELECT * FROM calificacion WHERE idCalifica = ?");
             $this->stmt->bind_param("i", $idUsuario);
             $this->stmt->execute();
             return $this->stmt->get_result()->fetch_all(MYSQLI_ASSOC);
