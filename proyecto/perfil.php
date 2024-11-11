@@ -59,17 +59,17 @@ if(!isset($_SESSION["usuario"])) {
 
         <div class="header__responsive">
             <?php if (isset($_SESSION["usuario"])) { ?>
-            <a href="buscador.php" class="header__option">
+            <a href="index.php" class="header__option">
                 <span class="material-icons"> home </span>
                 <span>Inicio</span>
             </a>
-            <a href="#buscar" class="header__option">
+            <a href="buscador.php" class="header__option">
                 <span class="material-icons"> search </span>
                 <span>Buscar Pedidos</span>
             </a>
-            <a href="#favoritos" class="header__option">
-                <span class="material-icons"> rocket_launch </span>
-                <span>Mis pedidos</span>
+            <a href="perfil.php" class="header__option">
+                <span class="material-icons"> star </span>
+                <span>Calificaciones</span>
             </a>
             <a href="perfil.php" class="header__option">
                 <span class="material-icons"> person </span>
@@ -86,24 +86,35 @@ if(!isset($_SESSION["usuario"])) {
         <div class="row">
             <div class="col-sm-4" style="margin-top: 50px;">
                 <div class="text-center">
-                    <img src="http://ssl.gstatic.com/accounts/ui/avatar_2x.png" class="avatar img-circle img-thumbnail"
+                    <!-- Se muestra imagen y -->
+                    <?php if(!isset($usuario['imagen'])) { ?>
+                        <img src="http://ssl.gstatic.com/accounts/ui/avatar_2x.png" class="avatar rounded-circle img-fluid border"
                         alt="avatar">
-                    <h3>Somanath Goudar</h3>
+                    <?php } else { ?>
+                        <img src="imagenes/<?= $usuario["imagen"] ?>" alt="avatar" class="avatar rounded-circle img-fluid border">
+                    <?php } ?>
+                    <h3><?= ucfirst($usuario["nombre"]) . " " . ucfirst($usuario["apellido"]) ?></h3>
                 </div>
                 </hr><br>
 
 
-
+                
                 <ul class="list-group">
-                    <li class="list-group-item text-right"><span class="pull-left"><strong>Calificacion Promedio</strong></span> 4.5</li>
                     <li class="list-group-item text-right">
                         <span class="pull-left">
-                            <strong>Usuario Responsable</strong>
+                            <strong>Calificación:</strong>
                         </span>
-                        <span class="material-icons"> check_circle </span>
+                        <?= $gestor->fetch_promedio_calificaciones_por_usuario($usuario["idUsuario"]) ?>
+                        <span class="text-muted"> - Total: <?= $gestor->fetch_num_calificaciones_por_usuario($usuario["idUsuario"]) ?></span>
                     </li>
-
+                    <?php if($gestor->fetch_usuario_es_responsable($usuario["idUsuario"])) { ?>
+                    <li class="list-group-item text-right">
+                        <span class="pull-left">
+                            <strong class="text-success">Usuario Responsable</strong>
+                        </span>
+                        <span class="material-icons text-success"> check_circle </span>
                     </li>
+                    <?php } ?>
                 </ul>
             </div>
 
@@ -113,7 +124,7 @@ if(!isset($_SESSION["usuario"])) {
                         <a class="nav-link active" id="postulaciones-tab" data-bs-toggle="tab" href="#postulaciones" role="tab" aria-controls="postulaciones" aria-selected="true">Postulaciones (2)</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" id="publicaciones-tab" data-bs-toggle="tab" href="#publicaciones" role="tab" aria-controls="profile" aria-selected="false">Mis Publicaciones (3)</a>
+                        <a class="nav-link" id="publicaciones-tab" data-bs-toggle="tab" href="#publicaciones" role="tab" aria-controls="profile" aria-selected="false">Mis Publicaciones (<?= $gestor->fetch_num_publicaciones_activas_por_usuario($usuario["idUsuario"]) ?>)</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" id="vehiculos-tab" data-bs-toggle="tab" href="#vehiculos" role="tab" aria-controls="vehiculos" aria-selected="false">Vehículos</a>
@@ -224,26 +235,39 @@ if(!isset($_SESSION["usuario"])) {
 
                     </div>
                     <div class="tab-pane fade" id="publicaciones" role="tabpanel" aria-labelledby="publicaciones-tab">
-                        <a href="#">
-                            <div class="card border-success">
-                                <div class="card-body card-publicacion">
-                                    <h5 class="card-title">Titulo Publicacion</h5>
-                                    <h6 class="card-subtitle mb-2 text-success">En Espera</h6>
-                                    <h6 class="card-subtitle mb-2 text-muted">Provincia 1 - Provincia 2</h6>
-                                    <p class="card-text">descripcion: Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat tenetur quia adipisci. Dolores magni animi repellendus quod eligendi, ipsam nulla!</p>
+                        <?php $publicaciones = $gestor->fetch_publicaciones_por_usuario($usuario["idUsuario"]);
+                        foreach($publicaciones as $pub) { 
+                            if($pub["estado"] != 2) { ?>
+                            <a href="#">
+                                <div class="card border-success">
+                                    <div class="card-body card-publicacion">
+                                        <h5 class="card-title"><?= $pub["titulo"] ?></h5>
+                                        <h6 class="card-subtitle mb-2 text-success">
+                                            <?= ($pub["estado"] == 0) ? "Disponible" : "En espera" ?>
+                                        </h6>
+                                        <h6 class="card-subtitle mb-2 text-muted">Origen: <?= $pub["localidadOrigen"] ?> - <?= $pub["Provinciaorigen"] ?></h6>
+                                        <h6 class="card-subtitle mb-2 text-muted">Destino: <?= $pub["localidadDestino"] ?> - <?= $pub["Provinciadestino"] ?></h6>
+                                        <p class="card-text">Descripción: <?= $pub["descripcion"] ?></p>
+                                    </div>
                                 </div>
-                            </div>
-                        </a>
-                        <a href="#">
+                            </a>
+                        <?php } else { ?>
+                            <a href="#">
                             <div class="card border-muted">
                                 <div class="card-body card-publicacion">
-                                    <h5 class="card-title">Titulo Publicacion</h5>
-                                    <h6 class="card-subtitle mb-2 text-muted">Finalizado</h6>
-                                    <h6 class="card-subtitle mb-2 text-muted">Provincia 1 - Provincia 2</h6>
-                                    <p class="card-text">descripcion: Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat tenetur quia adipisci. Dolores magni animi repellendus quod eligendi, ipsam nulla!</p>
+                                    <h5 class="card-title"><?= $pub["titulo"] ?></h5>
+                                    <h6 class="card-subtitle mb-2 text-muted">Finalizada</h6>
+                                    <h6 class="card-subtitle mb-2 text-muted">Origen: <?= $pub["localidadOrigen"] ?> - <?= $pub["Provinciaorigen"] ?></h6>
+                                    <h6 class="card-subtitle mb-2 text-muted">Destino: <?= $pub["localidadDestino"] ?> - <?= $pub["Provinciadestino"] ?></h6>
+                                    <p class="card-text">Descripción: <?= $pub["descripcion"] ?></p>
                                 </div>
                             </div>
                         </a>
+                        <?php }
+                        }
+                        ?>
+                        
+                        
                     </div>
                     <div class="tab-pane fade" id="vehiculos" role="tabpanel" aria-labelledby="vehiculos-tab">
                         <button type="button" class="btn btn-primary">Nuevo Vehículo</button>

@@ -1,3 +1,9 @@
+.avatar {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+}
+
 @media (max-width: 768px) {
     .row .col-sm-4, 
     .row .col-sm-8 {
