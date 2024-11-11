@@ -35,13 +35,13 @@ if(!isset($_SESSION["usuario"])) {
 
         <div class="header__middle" id="header_medio">
             <div class="header__option">
-                <span class="material-icons"> home </span>
+                <a href="index.php"><span class="material-icons"> home </span></a>
             </div>
-            <div class="header__option">
-                <span class="material-icons"> storefront </span>
-            </div>
+            <div href="buscador.php" class="header__option">
+                <a href="buscador.php"><span class="material-icons"> storefront </span></a>
+            </div> 
             <div class="header__option active">
-                <span class="material-icons"> supervised_user_circle </span>
+                <a href="perfil.php"><span class="material-icons"> account_circle </span></a>
             </div>
         </div>
 
@@ -67,11 +67,11 @@ if(!isset($_SESSION["usuario"])) {
                 <span class="material-icons"> search </span>
                 <span>Buscar Pedidos</span>
             </a>
-            <a href="perfil.php" class="header__option">
+            <a href="perfil.php?tab=calificaciones" class="header__option">
                 <span class="material-icons"> star </span>
                 <span>Calificaciones</span>
             </a>
-            <a href="perfil.php" class="header__option">
+            <a href="perfil.php?tab=publicaciones" class="header__option">
                 <span class="material-icons"> person </span>
                 <span>Perfil</span>
             </a>
@@ -340,6 +340,23 @@ if(!isset($_SESSION["usuario"])) {
     include 'modalLoginRegistro.php';
     include 'validarRegistro.php';
     ?>
+
+<script>
+    window.onload = function() {
+        // Obtiene el valor del parámetro 'tab' en la URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const tab = urlParams.get('tab');
+
+        // Si existe el parámetro 'tab' y corresponde a 'publicaciones', activa la tab
+        if (tab === 'publicaciones') {
+            const publicacionesTab = new bootstrap.Tab(document.getElementById('publicaciones-tab'));
+            publicacionesTab.show(); // Activa la tab 'publicaciones'
+        } else if (tab === 'calificaciones') {
+            const calificacionesTab = new bootstrap.Tab(document.getElementById('calificaciones-tab'));
+            calificacionesTab.show(); // Activa la tab 'publicaciones'
+        }
+    };
+</script>
 </body>
 
 </html>
