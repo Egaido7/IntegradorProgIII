@@ -1,0 +1,12 @@
+<!--gestorbd-->
+
+
+<div class="post__option">
+                <span class="material-icons"> near_me </span>
+                <form action="./publicacion.php" method = "POST">
+                   <input type="submit" name="verPublicacion" id="verPublicacion" value = "<?=$publicacion['idPublicacion']?>">     
+                </form>
+                <p>Postularse</p>
+                </div>
+
+
