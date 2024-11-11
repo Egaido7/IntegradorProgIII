@@ -7,7 +7,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="formLogin" method="POST" action="loginRegistro.php" novalidate>
+                <form id="formLogin" method="POST" action="" novalidate>
                     <div class="form-group">
                         <label for="loginEmail">Correo Electrónico:</label>
                         <input type="email" class="form-control" id="loginEmail" name="loginEmail" required>
@@ -20,7 +20,9 @@
                         <div class="invalid-feedback" id="loginPwdFeedback"></div>
                     </div>
                     <div class="invalid-feedback d-block" id="msgErrorLogin">
-                        <!-- AGREGAR MENSAJE DE ERROR  -->
+                        <?php if(isset($errorLogin)) {
+                            echo $errorLogin;
+                        } ?>    
                     </div>
                     <div class="modal-footer">
                         <input type="submit" id="btnEnviarLogin" name="btnEnviarLoginphp" class="btn btn-primary">
@@ -42,7 +44,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="formRegistro" method="POST" action="loginRegistro.php" novalidate>
+                <form id="formRegistro" method="POST" action="" novalidate>
                     <div class="form-group">
                         <label for="registroNombre">Nombre:</label>
                         <input type="text" class="form-control" id="registroNombre" name="registroNombre" required
@@ -79,7 +81,9 @@
                         <div class="invalid-feedback" id="regPwdConfirmFeedback"></div>
                     </div>
                     <div class="invalid-feedback d-block" id="msgErrorRegistro">
-                        <!-- AGREGAR MENSAJE DE LOGIN INCORRECTO -->
+                        <?php if(isset($errorLogin)) {
+                            echo $errorLogin;
+                        } ?>
                     </div>
                     <div class="modal-footer">
                         <input type="submit" name="btnEnviarRegistro" id="btnEnviarRegistrophp" class="btn btn-primary">

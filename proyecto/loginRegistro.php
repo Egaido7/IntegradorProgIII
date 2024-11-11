@@ -1,16 +1,17 @@
 <?php  
 
-session_start(); // Inicia la sesión al comienzo del script
-header('Content-Type: application/json');
-$response = ["success" => false, "debug" => []];
+session_start();
 
-include_once "base de datos/gestorbd.php";
+include_once 'base de datos/gestorbd.php';
 $gestor = new GestorVeryDeli();
 
 
+$mostrarLogin = false;
 
-// Manejar el registro de un nuevo usuario
-if (isset($_POST['btnEnviarRegistro'])) {
+if(isset($_SESSION['usuario'])) {
+    $usuario = $gestor->fetch_usuario_por_id($_SESSION['usuario']);
+} else if (isset($_POST['btnEnviarRegistro'])) { // Manejar el registro de un nuevo usuario
+
     $nombre = trim($_POST['registroNombre']);
     $apellido = trim($_POST['registroApellido']);
     $dni = trim($_POST['registroDni']);
@@ -20,26 +21,23 @@ if (isset($_POST['btnEnviarRegistro'])) {
 
     // Verificar si el usuario ya existe
     if ($gestor->usuario_yaExiste($correo)) {
-        $response["error"] = "El correo electrónico ya pertenece a una cuenta. Por favor inicie sesión.";
+        $errorLogin = "El correo electrónico ya pertenece a una cuenta. Por favor inicie sesión.";
+        $mostrarLogin = true;
     } else {
         // Insertar el nuevo usuario
         
 
         if ($gestor->insertar_usuario($nombre, $apellido, $dni, $correo, $contraseña)) {
             $idUsuario = $gestor->fetch_insert_id(); // Obtiene el último ID insertado en la conexión actual
-            $_SESSION['id'] = $idUsuario; // Guardar el ID en la sesión
-            $_SESSION['logeado'] = true;
-            $response["success"] = true;
+            $_SESSION['usuario'] = $idUsuario; // Almacenar el idUsuario en la sesión
+            header("refresh: 0");
+            exit();
         } else {
-            $response["error"] = "Error al registrar el usuario.";
+            $errorRegistro = "Error al registrar el usuario.";
+            $mostrarLogin = true;
         }
     }
-}
-
-// Manejar el inicio de sesión
-if (isset($_POST['btnEnviarLoginphp'])) {
-
-    $response["debug"][] = "Procesando el inicio de sesión";
+} else if (isset($_POST['btnEnviarLoginphp'])) { // Manejar el inicio de sesión
 
     $correo = trim($_POST['loginEmail']);
     $contraseña = trim($_POST['loginPwd']);
@@ -50,16 +48,11 @@ if (isset($_POST['btnEnviarLoginphp'])) {
 
     if ($resultado->num_rows == 1) {
         $fila = mysqli_fetch_assoc($resultado); // Obtener los resultados como un array asociativo
-        $_SESSION['id'] = $resultado->fetch_assoc()["idUsuario"]; // Almacenar el idUsuario en la sesión
-
-        $response["debug"][] = "Inicio de sesión exitoso para ID de usuario: " . $fila["idUsuario"];
-
-        $_SESSION['logeado'] = true;
-        $response["success"] = true;
+        $_SESSION['usuario'] = $fila["idUsuario"]; // Almacenar el idUsuario en la sesión
+        header("refresh: 0");
+        exit();
     } else {
-        $response["error"] = "Usuario o contraseña incorrectos.";
-        $response["debug"][] = "Credenciales incorrectas o usuario no encontrado";
+        $errorLogin = "Usuario o contraseña incorrectos.";
+        $mostrarLogin = true;
     }
 }
-
-echo json_encode($response);
