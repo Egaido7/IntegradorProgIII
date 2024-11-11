@@ -51,7 +51,34 @@ document.addEventListener("DOMContentLoaded", function () {
     // Envío del formulario de registro
     document.getElementById("formRegistro").addEventListener("submit", function (event) {
         if (!validarRegistro()) {
-            event.preventDefault(); // Prevenir el envío si hay errores de validación
+            event.preventDefault();
+        } else {
+            event.preventDefault(); // Evita el envío estándar del formulario
+
+            let formData = new FormData(this);
+            formData.append("btnEnviarRegistro", "submit");
+            fetch('loginRegistro.php', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Respuesta del servidor:", data);  // Verificar qué se está recibiendo
+                    try {
+                        const jsonData = JSON.parse(data);  // Intentar convertirla a JSON
+                        if (jsonData.success) {
+                            window.location.href = "perfil.php";
+                        } else {
+                            document.getElementById('msgErrorLogin').textContent = jsonData.error || '';
+                        }
+                    } catch (e) {
+                        document.getElementById('msgErrorLogin').textContent = "Error de servidor. Verifique los registros.";
+                        console.error("Error al parsear JSON:", e);
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('msgErrorLogin').textContent = "Error de conexión. Inténtelo de nuevo.";
+                });
         }
     });
 
@@ -59,6 +86,34 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("formLogin").addEventListener("submit", function (event) {
         if (!validarLogin()) {
             event.preventDefault(); // Prevenir el envío si hay errores de validación
+        } else {
+            event.preventDefault(); // Evita el envío estándar del formulario
+
+            let formData = new FormData(this);
+            formData.append("btnEnviarLoginphp", "submit");
+            fetch('loginRegistro.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("Respuesta del servidor:", data);  // Verificar qué se está recibiendo
+                try {
+                    const jsonData = JSON.parse(data);  // Intentar convertirla a JSON
+                    if (jsonData.success) {
+                        window.location.href = "perfil.php";
+                    } else {
+                        document.getElementById('msgErrorLogin').textContent = jsonData.error || '';
+                    }
+                } catch (e) {
+                    document.getElementById('msgErrorLogin').textContent = "Error de servidor. Verifique los registros.";
+                    console.error("Error al parsear JSON:", e);
+                }
+            })
+            .catch(error => {
+                console.error("Error en la petición:", error); // Para depurar errores
+                document.getElementById('msgErrorLogin').textContent = "Error de conexión. Inténtelo de nuevo.";
+            });
         }
     });
 });

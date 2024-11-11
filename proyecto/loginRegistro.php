@@ -1,16 +1,13 @@
 <?php  
+
 session_start(); // Inicia la sesión al comienzo del script
+header('Content-Type: application/json');
+$response = ["success" => false, "debug" => []];
 
 include_once "base de datos/gestorbd.php";
-
 $gestor = new GestorVeryDeli();
 
-// Configurar la conexión a la base de datos
-$conexion = mysqli_connect('localhost', 'user_personas', '45382003', 'very_deli');
-if (!$conexion) {
-    die("Conexión fallida: " . mysqli_connect_error());
-}
-mysqli_set_charset($conexion, 'utf8mb4');
+
 
 // Manejar el registro de un nuevo usuario
 if (isset($_POST['btnEnviarRegistro'])) {
@@ -23,7 +20,7 @@ if (isset($_POST['btnEnviarRegistro'])) {
 
     // Verificar si el usuario ya existe
     if ($gestor->usuario_yaExiste($correo)) {
-        $_SESSION['mensajeRegistro'] = "El correo electrónico ya pertenece a una cuenta. Por favor inicie sesión.";
+        $response["error"] = "El correo electrónico ya pertenece a una cuenta. Por favor inicie sesión.";
     } else {
         // Insertar el nuevo usuario
         
@@ -31,16 +28,19 @@ if (isset($_POST['btnEnviarRegistro'])) {
         if ($gestor->insertar_usuario($nombre, $apellido, $dni, $correo, $contraseña)) {
             $idUsuario = $gestor->fetch_insert_id(); // Obtiene el último ID insertado en la conexión actual
             $_SESSION['id'] = $idUsuario; // Guardar el ID en la sesión
-            header("Location: perfil.php"); // Redirigir solo si se crea con éxito
-            exit();
+            $_SESSION['logeado'] = true;
+            $response["success"] = true;
         } else {
-            $_SESSION['mensajeRegistro'] = "Error al registrar el usuario: " . mysqli_error($conexion);
+            $response["error"] = "Error al registrar el usuario.";
         }
     }
 }
 
 // Manejar el inicio de sesión
 if (isset($_POST['btnEnviarLoginphp'])) {
+
+    $response["debug"][] = "Procesando el inicio de sesión";
+
     $correo = trim($_POST['loginEmail']);
     $contraseña = trim($_POST['loginPwd']);
 
@@ -51,9 +51,15 @@ if (isset($_POST['btnEnviarLoginphp'])) {
     if ($resultado->num_rows == 1) {
         $fila = mysqli_fetch_assoc($resultado); // Obtener los resultados como un array asociativo
         $_SESSION['id'] = $resultado->fetch_assoc()["idUsuario"]; // Almacenar el idUsuario en la sesión
-        header("Location: perfil.php"); // Redirigir solo si el login es exitoso
-        exit();
+
+        $response["debug"][] = "Inicio de sesión exitoso para ID de usuario: " . $fila["idUsuario"];
+
+        $_SESSION['logeado'] = true;
+        $response["success"] = true;
     } else {
-        $_SESSION['mensajeLogin'] = "Usuario o contraseña incorrectos.";
+        $response["error"] = "Usuario o contraseña incorrectos.";
+        $response["debug"][] = "Credenciales incorrectas o usuario no encontrado";
     }
 }
+
+echo json_encode($response);
