@@ -1,3 +1,88 @@
+<?php
+include 'loginRegistro.php';
+
+if (isset($_POST['btnEnviarPublicacion'])) {
+  // Usar una ruta absoluta para la carpeta de destino
+  $carpetaDestinoAbsoluta = $_SERVER['DOCUMENT_ROOT'] . "/Integrador/IntegradorProgIII/proyecto/imagenes/";
+
+  // Verificar que la carpeta de destino exista, si no, crearla
+  if (!is_dir($carpetaDestinoAbsoluta)) {
+    mkdir($carpetaDestinoAbsoluta, 0777, true); // Crear la carpeta con permisos adecuados
+  }
+
+  // Ruta por defecto para la imagen
+  $rutaImagen = 'imagenes/publicacionDefault.jpg';
+
+  // Verificar si se subió una imagen
+  if (isset($_FILES['PubliArchivo']) && $_FILES['PubliArchivo']['error'] === UPLOAD_ERR_OK) {
+    // Crear un nombre único para la imagen
+    $nombreImagenGuardada = uniqid() . "_" . basename($_FILES['PubliArchivo']['name']);
+    $rutaFinalAbsoluta = $carpetaDestinoAbsoluta . $nombreImagenGuardada;
+
+    // Intentar mover la imagen a la carpeta de destino
+    if (move_uploaded_file($_FILES['PubliArchivo']['tmp_name'], $rutaFinalAbsoluta)) {
+      // Guardar la ruta relativa en la variable para la base de datos
+      $rutaImagen = 'imagenes/' . $nombreImagenGuardada;
+    } else {
+      echo "<script>alert('Error al mover el archivo de imagen');</script>";
+    }
+  }
+
+
+  // Datos del formulario, escapados
+  $nombreProducto = $gestor->fetch_escape_string(trim($_POST['PubliNombre']));
+  $descripcionProducto = $gestor->fetch_escape_string(trim($_POST['PubliDescripcion']));
+  $volumenProducto = $gestor->fetch_escape_string(trim($_POST['PubliVolumen']));
+  $pesoProducto = $gestor->fetch_escape_string(trim($_POST['PubliPeso']));
+  $provinciaOrigenID = $gestor->fetch_escape_string(trim($_POST['ProvinciaOrigen']));
+  $provinciaDestinoID = $gestor->fetch_escape_string(trim($_POST['ProvinciaDestino']));
+  $localidadOrigenID = $gestor->fetch_escape_string(trim($_POST['LocalidadOrigen']));
+  $localidadDestinoID = $gestor->fetch_escape_string(trim($_POST['Localidad_Destino']));
+  $domicilioOrigen = $gestor->fetch_escape_string(trim($_POST['PubliDomicilio_Origen']));
+  $domicilioDestino = $gestor->fetch_escape_string(trim($_POST['PubliDomicilio_Destino']));
+  $nombreRecibir = $gestor->fetch_escape_string(trim($_POST['PubliRecibir']));
+  $nombreContacto = $gestor->fetch_escape_string(trim($_POST['PubliContacto']));
+
+  // Consultas para obtener el nombre de la provincia y localidad
+  $provinciaOrigen = $gestor->fetch_nombre_provincia_por_id($provinciaOrigenID);
+  $provinciaDestino = $gestor->fetch_nombre_provincia_por_id($provinciaDestinoID);
+
+  $localidadOrigen = $gestor->fetch_nombre_localidad_por_id($localidadOrigenID);
+  $localidadDestino = $gestor->fetch_nombre_localidad_por_id($localidadDestinoID);
+  // Guardar la publicación
+  $idUsuario = $_SESSION['usuario'];
+  $fechaPublicacion = date('Y-m-d');
+  $resultado = $gestor->insertar_publicacion(
+    $idUsuario,
+    $volumenProducto,
+    $pesoProducto,
+    $provinciaOrigen, // Guarda el nombre de la provincia
+    $provinciaDestino, // Guarda el nombre de la provincia
+    $fechaPublicacion,
+    $rutaImagen,
+    $descripcionProducto,
+    $nombreRecibir,
+    $nombreContacto,
+    $nombreProducto,
+    $localidadOrigen, // Guarda el nombre de la localidad
+    $localidadDestino, // Guarda el nombre de la localidad
+    $domicilioOrigen,
+    $domicilioDestino
+  );
+
+  if ($resultado > 0) { ?>
+    <script>
+      console.log('Publicación insertada exitosamente');
+    </script>
+  <?php } else { ?>
+    <script>
+      console.log('Error al insertar la publicación');
+    </script>
+<?php }
+}
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,165 +95,73 @@
   <link rel="stylesheet" href="estilos.css" />
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-  
+
 </head>
 
 <body>
-
-  <?php
-  include 'loginRegistro.php';
-
-  if (isset($_POST['btnEnviarPublicacion'])) {
-    // Usar una ruta absoluta para la carpeta de destino
-    $carpetaDestinoAbsoluta = $_SERVER['DOCUMENT_ROOT'] . "/Integrador/IntegradorProgIII/proyecto/imagenes/";
-
-    // Verificar que la carpeta de destino exista, si no, crearla
-    if (!is_dir($carpetaDestinoAbsoluta)) {
-      mkdir($carpetaDestinoAbsoluta, 0777, true); // Crear la carpeta con permisos adecuados
-    }
-
-    // Ruta por defecto para la imagen
-    $rutaImagen = 'imagenes/publicacionDefault.jpg';
-
-    // Verificar si se subió una imagen
-    if (isset($_FILES['PubliArchivo']) && $_FILES['PubliArchivo']['error'] === UPLOAD_ERR_OK) {
-      // Crear un nombre único para la imagen
-      $nombreImagenGuardada = uniqid() . "_" . basename($_FILES['PubliArchivo']['name']);
-      $rutaFinalAbsoluta = $carpetaDestinoAbsoluta . $nombreImagenGuardada;
-
-      // Intentar mover la imagen a la carpeta de destino
-      if (move_uploaded_file($_FILES['PubliArchivo']['tmp_name'], $rutaFinalAbsoluta)) {
-        // Guardar la ruta relativa en la variable para la base de datos
-        $rutaImagen = 'imagenes/' . $nombreImagenGuardada;
-      } else {
-        echo "<script>alert('Error al mover el archivo de imagen');</script>";
-      }
-    }
-
-
-    // Datos del formulario, escapados
-    $nombreProducto = mysqli_real_escape_string($conexion, trim($_POST['PubliNombre']));
-    $descripcionProducto = mysqli_real_escape_string($conexion, trim($_POST['PubliDescripcion']));
-    $volumenProducto = mysqli_real_escape_string($conexion, trim($_POST['PubliVolumen']));
-    $pesoProducto = mysqli_real_escape_string($conexion, trim($_POST['PubliPeso']));
-    $provinciaOrigenID = mysqli_real_escape_string($conexion, trim($_POST['ProvinciaOrigen']));
-    $provinciaDestinoID = mysqli_real_escape_string($conexion, trim($_POST['ProvinciaDestino']));
-    $localidadOrigenID = mysqli_real_escape_string($conexion, trim($_POST['LocalidadOrigen']));
-    $localidadDestinoID = mysqli_real_escape_string($conexion, trim($_POST['Localidad_Destino']));
-    $domicilioOrigen = mysqli_real_escape_string($conexion, trim($_POST['PubliDomicilio_Origen']));
-    $domicilioDestino = mysqli_real_escape_string($conexion, trim($_POST['PubliDomicilio_Destino']));
-    $nombreRecibir = mysqli_real_escape_string($conexion, trim($_POST['PubliRecibir']));
-    $nombreContacto = mysqli_real_escape_string($conexion, trim($_POST['PubliContacto']));
-
-    // Consultas para obtener el nombre de la provincia y localidad
-    $consultaProvinciaOrigen = "SELECT nombreProvincia FROM provincia WHERE idProvincia = '$provinciaOrigenID'";
-    $provinciaOrigen = mysqli_fetch_assoc(mysqli_query($conexion, $consultaProvinciaOrigen))['nombreProvincia'];
-
-    $consultaProvinciaDestino = "SELECT nombreProvincia FROM provincia WHERE idProvincia = '$provinciaDestinoID'";
-    $provinciaDestino = mysqli_fetch_assoc(mysqli_query($conexion, $consultaProvinciaDestino))['nombreProvincia'];
-
-    $consultaLocalidadOrigen = "SELECT Nombrelocalidad FROM localidad WHERE idLocalidad = '$localidadOrigenID'";
-    $localidadOrigen = mysqli_fetch_assoc(mysqli_query($conexion, $consultaLocalidadOrigen))['Nombrelocalidad'];
-
-    $consultaLocalidadDestino = "SELECT Nombrelocalidad FROM localidad WHERE idLocalidad = '$localidadDestinoID'";
-    $localidadDestino = mysqli_fetch_assoc(mysqli_query($conexion, $consultaLocalidadDestino))['Nombrelocalidad'];
-
-    // Guardar la publicación
-    try {
-      $idUsuario = $_SESSION['id'];
-      $fechaPublicacion = date('Y-m-d');
-      $resultado = $gestor->insertar_publicacion(
-        $idUsuario,
-        $volumenProducto,
-        $pesoProducto,
-        $provinciaOrigen, // Guarda el nombre de la provincia
-        $provinciaDestino, // Guarda el nombre de la provincia
-        $fechaPublicacion,
-        $rutaImagen,
-        $descripcionProducto,
-        $nombreRecibir,
-        $nombreContacto,
-        $nombreProducto,
-        $localidadOrigen, // Guarda el nombre de la localidad
-        $localidadDestino, // Guarda el nombre de la localidad
-        $domicilioOrigen,
-        $domicilioDestino
-      );
-
-      if ($resultado > 0) {
-        echo "<script>console.log('Publicación insertada exitosamente');</script>";
-      } else {
-        echo "<script>console.log('Error al insertar la publicación');</script>";
-        echo mysqli_error($conexion);
-      }
-    } catch (Exception $e) {
-      echo "<script>alert('Error: " . $e->getMessage() . "');</script>";
-    }
-  }
-  ?>
 
 
 
 
   <!-- header starts -->
   <div class="header">
-        <div class="header__left">
-            <a href="index.php">
-                <img src="LogoVeryDeli.svg" alt="Logo" class="logo">
-            </a>
-            <div class="header__input" id="header_busqueda">
-                <span class="material-icons"> search </span>
-                <input type="text" placeholder="Buscar publicaciones" id="barraBusqueda" />
-            </div>
-        </div>
-
-        <div class="header__middle" id="header_medio">
-            <div class="header__option active">
-                <a href="index.php"><span class="material-icons"> home </span></a>
-            </div>
-            <div href="buscador.php" class="header__option">
-                <a href="buscador.php"><span class="material-icons"> storefront </span></a>
-            </div> 
-            <div class="header__option">
-                <a href="perfil.php"><span class="material-icons"> account_circle </span></a>
-            </div>
-        </div>
-
-        <div class="header__right">
-            <div class="header__info">
-                <?php if (isset($_SESSION["usuario"])) { ?>
-                    <form action="cerrarSesion.php" method="post">
-                        <button type="submit" class="btn btn-secondary">Cerrar Sesión</button>
-                    </form>
-                <?php } else { ?>
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal">Iniciar Sesión</button>
-                <?php } ?>
-            </div>
-        </div>
-
-        <div class="header__responsive">
-            <?php if (isset($_SESSION["usuario"])) { ?>
-            <a href="index.php" class="header__option">
-                <span class="material-icons"> home </span>
-                <span>Inicio</span>
-            </a>
-            <a href="buscador.php" class="header__option">
-                <span class="material-icons"> search </span>
-                <span>Buscar Pedidos</span>
-            </a>
-            <a href="perfil.php?tab=calificaciones" class="header__option">
-                <span class="material-icons"> star </span>
-                <span>Calificaciones</span>
-            </a>
-            <a href="perfil.php?tab=publicaciones" class="header__option">
-                <span class="material-icons"> person </span>
-                <span>Perfil</span>
-            </a>
-            <?php } else { ?>
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal">Iniciar Sesión</button>
-            <?php } ?>
-        </div>
+    <div class="header__left">
+      <a href="index.php">
+        <img src="LogoVeryDeli.svg" alt="Logo" class="logo">
+      </a>
+      <div class="header__input" id="header_busqueda">
+        <span class="material-icons"> search </span>
+        <input type="text" placeholder="Buscar publicaciones" id="barraBusqueda" />
+      </div>
     </div>
+
+    <div class="header__middle" id="header_medio">
+      <div class="header__option active">
+        <a href="index.php"><span class="material-icons"> home </span></a>
+      </div>
+      <div href="buscador.php" class="header__option">
+        <a href="buscador.php"><span class="material-icons"> storefront </span></a>
+      </div>
+      <div class="header__option">
+        <a href="perfil.php"><span class="material-icons"> account_circle </span></a>
+      </div>
+    </div>
+
+    <div class="header__right">
+      <div class="header__info">
+        <?php if (isset($_SESSION["usuario"])) { ?>
+          <form action="cerrarSesion.php" method="post">
+            <button type="submit" class="btn btn-secondary">Cerrar Sesión</button>
+          </form>
+        <?php } else { ?>
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal">Iniciar Sesión</button>
+        <?php } ?>
+      </div>
+    </div>
+
+    <div class="header__responsive">
+      <?php if (isset($_SESSION["usuario"])) { ?>
+        <a href="index.php" class="header__option">
+          <span class="material-icons"> home </span>
+          <span>Inicio</span>
+        </a>
+        <a href="buscador.php" class="header__option">
+          <span class="material-icons"> search </span>
+          <span>Buscar Pedidos</span>
+        </a>
+        <a href="perfil.php?tab=calificaciones" class="header__option">
+          <span class="material-icons"> star </span>
+          <span>Calificaciones</span>
+        </a>
+        <a href="perfil.php?tab=publicaciones" class="header__option">
+          <span class="material-icons"> person </span>
+          <span>Perfil</span>
+        </a>
+      <?php } else { ?>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal">Iniciar Sesión</button>
+      <?php } ?>
+    </div>
+  </div>
   <!-- header ends -->
 
   <!-- main body starts -->

@@ -19,11 +19,14 @@ class GestorVeryDeli {
         }
     }
     
+    public function fetch_escape_string($str) {
+        return $this->conn->escape_string($str);
+    }
 
     public function insertar_publicacion($idUsuario, $volumenProducto, $pesoProducto, $provinciaOrigen, $provinciaDestino, $fechaPublicacion, $imagen, $descripcionProducto, $nombreRecibir, $nombreContacto, $nombreProducto, $localidadOrigen, $localidadDestino, $domicilioOrigen, $domicilioDestino) {
         try {
             // Preparar la sentencia SQL sin el campo de autoincremento `idPublicacion`
-            $this->stmt = $this->conn->prepare("INSERT INTO publicacion(idUsuario, volumen, peso, provinciaOrigen, provinciaDestino, fechaPublicacion, imagenPublicacion, descripcion, nombreRecibir, contacto, titulo, localidadOrigen, localidadDestino, domicilioOrigen, domicilioDestino) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+            $this->stmt = $this->conn->prepare("INSERT INTO publicacion(idUsuario, volumen, peso, Provinciaorigen, Provinciadestino, fechaPublicacion, imagenPublicacion, descripcion, nombreRecibir, contacto, titulo, localidadOrigen, localidadDestino, domicilioOrigen, domicilioDestino) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
     
             // Definir tipos de parámetros: 'i' para integer, 'd' para double, 's' para string
             $this->stmt->bind_param("iddssssssssssss", $idUsuario, $volumenProducto, $pesoProducto, $provinciaOrigen, $provinciaDestino, $fechaPublicacion, $imagen, $descripcionProducto, $nombreRecibir, $nombreContacto, $nombreProducto, $localidadOrigen, $localidadDestino, $domicilioOrigen, $domicilioDestino);
@@ -785,6 +788,28 @@ class GestorVeryDeli {
     
         } catch (mysqli_sql_exception $e) {
             // Lanzar una excepción en caso de error
+            throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
+        }
+    }
+
+    public function fetch_nombre_provincia_por_id($idProvincia) {
+        try {
+            $this->stmt = $this->conn->prepare("SELECT nombreProvincia FROM provincia WHERE idProvincia = ?");
+            $this->stmt->bind_param("i", $idProvincia);
+            $this->stmt->execute();
+            return $this->stmt->get_result()->fetch_assoc()["nombreProvincia"];
+        } catch (mysqli_sql_exception $e) {
+            throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
+        }
+    }
+
+    public function fetch_nombre_localidad_por_id($idLocalidad) {
+        try {
+            $this->stmt = $this->conn->prepare("SELECT Nombrelocalidad FROM localidad WHERE idLocalidad = ?");
+            $this->stmt->bind_param("i", $idLocalidad);
+            $this->stmt->execute();
+            return $this->stmt->get_result()->fetch_assoc()["Nombrelocalidad"];
+        } catch (mysqli_sql_exception $e) {
             throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
         }
     }
