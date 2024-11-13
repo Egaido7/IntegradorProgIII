@@ -80,6 +80,14 @@ if (isset($_POST['btnEnviarPublicacion'])) {
     </script>
 <?php }
 }
+
+if (isset($_POST['verPublicacion'])) {
+  //  id de la publicacion
+  $_SESSION['publicacion'] = $_POST['Publicacion'];
+  // Redirige a publicacion.php
+  header("Location: publicacion.php");
+  exit();
+}
 ?>
 
 

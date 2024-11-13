@@ -20,7 +20,8 @@
 
   require 'base de datos\gestorbd.php';
   $publicacionControl = new GestorVeryDeli();
-  $publicacion = $publicacionControl->fetch_publicacion($verPublicacion);
+  $idPublicacion = $_SESSION["publicacion"];
+  $publicacion = $publicacionControl->fetch_publicacion($idPublicacion);
   $postulantes = $publicacionControl->fetch_postulaciones_por_publicacion($publicacion['idPublicacion']);
   $comentarios = $publicacionControl->fetch_mensajes_por_publicacion($publicacion['idPublicacion']);
   $fechap = date('Y-m-d');
@@ -46,10 +47,11 @@
   $error = 0;
   $er = 0;
   $aviso = "si";
+  echo $usuario;
   // control al postularse
   if (isset($btnpostularse)) {
     $vehiculo = $publicacionControl->tiene_vehiculo_por_usuario($usuario);
-    $publicacionE = $publicacionControl->fetch_publicacion(4);
+    $publicacionE = $publicacionControl->fetch_publicacion($publicacion);
     $error = 0;
 
     if (empty($monto)) {
@@ -71,7 +73,7 @@
       $_SESSION['id'] = $publicacion['idPublicacion'];
       $_SESSION['monto'] = floatval($monto);
       $_SESSION['usuario_id'] = $usuario;  // Cambiar 2 por el ID de usuario real
-      $_SESSION['publicacion_id'] = 4; // Cambiar 4 por el ID de publicación real
+      $_SESSION['publicacion_id'] = $publicacion; // Cambiar 4 por el ID de publicación real
       $_SESSION['estado'] = 0;
 
       // Redirige a insertar_postulante.php

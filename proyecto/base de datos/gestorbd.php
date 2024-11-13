@@ -437,9 +437,9 @@ class GestorVeryDeli {
                         
                 <div class="post__option">
                 <span class="material-icons"> near_me </span>
-                <form action="  ./publicacion.php" method="POST">
-                    <input type="submit"  id="verPublicacion" value="postularse"  class="btn btn-link p-0" style="text-decoration: none; color: inherit;">     
-                    <input type="hidden" name="verPublicacion" value="<?= $publicacion['idPublicacion'] ?>">
+                <form action="./index.php" method="POST">
+                    <input type="submit"  id="verPublicacion"  name = "verPublicacion"value="postularse"  class="btn btn-link p-0" style="text-decoration: none; color: inherit;">     
+                    <input type="hidden" name="Publicacion" value="<?= $publicacion['idPublicacion'] ?>">
                 </form>
                 </div>
             </div>

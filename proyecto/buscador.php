@@ -39,6 +39,14 @@ if (isset($_POST['botonBuscar']) && !empty($_POST['buscar'])) {
     // Si no se aplicaron filtros, obtener todas las publicaciones
     $publicaciones = $gestor->fetch_publicaciones();
 }
+
+if (isset($_POST['verPublicacion'])) {
+    //  id de la publicacion
+    $_SESSION['publicacion'] = $_POST['Publicacion'];
+    // Redirige a publicacion.php
+    header("Location: publicacion.php");
+    exit();
+  }
 ?>
 
 <!DOCTYPE html>
@@ -198,9 +206,9 @@ if (isset($_POST['botonBuscar']) && !empty($_POST['buscar'])) {
                     <div class="post__options">
                         <div class="post__option">
                             <span class="material-icons"> near_me </span>
-                            <form action="publicacion.php" method="POST">
+                            <form action="buscador.php" method="POST">
                             <input type="submit"  name="verPublicacion" id="verPublicacion" value="postularse"  class="btn btn-link p-0" style="text-decoration: none; color: inherit;">     
-                            <input type="hidden" name="verPublicacion" value="<?= $publicacion['idPublicacion'] ?>">
+                            <input type="hidden" name="Publicacion" value="<?= $publicacion['idPublicacion'] ?>">
                             </form>
                         </div>
                     </div>
