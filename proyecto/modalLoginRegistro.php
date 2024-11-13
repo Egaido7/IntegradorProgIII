@@ -60,7 +60,9 @@
                     <div class="form-group">
                         <label for="registroDni">DNI:</label>
                         <input type="text" class="form-control" id="registroDni" name="registroDni" required
-                            pattern="^[1-9]\d{7,9}">
+       pattern="^[0-9]{8}$" maxlength="8" title="El DNI debe tener exactamente 8 dígitos" />
+
+
                         <div class="invalid-feedback" id="regDniFeedback"></div>
                     </div>
                     <div class="form-group">

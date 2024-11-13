@@ -25,9 +25,8 @@ if(isset($_SESSION['usuario'])) {
         $mostrarLogin = true;
     } else {
         // Insertar el nuevo usuario
-        
-
         if ($gestor->insertar_usuario($nombre, $apellido, $dni, $correo, $contraseña)) {
+            
             $idUsuario = $gestor->fetch_insert_id(); // Obtiene el último ID insertado en la conexión actual
             $_SESSION['usuario'] = $idUsuario; // Almacenar el idUsuario en la sesión
             header("refresh: 0");
