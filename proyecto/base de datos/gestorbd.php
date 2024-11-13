@@ -217,6 +217,66 @@ class GestorVeryDeli {
         }
     }
 
+
+    public function fetch_publicaciones_por_origen_y_destino($Provinciaorigen,$Provinciadestino) {
+        try {
+            $sql = "
+            SELECT 
+                u.imagen AS usuarioImagen, 
+                u.nombre AS usuarioNombre, 
+                u.apellido AS usuarioApellido, 
+                p.volumen, 
+                p.peso, 
+                p.provinciaOrigen, 
+                p.provinciaDestino, 
+                p.imagenPublicacion,
+                p.titulo,
+                p.descripcion,
+                p.estado
+            FROM publicacion p
+            JOIN usuario u ON p.idUsuario = u.idUsuario
+            WHERE p.provinciaOrigen = ? AND p.provinciaDestino= ?
+            AND p.estado = 0
+        ";
+            $this->stmt = $this->conn->prepare($sql);
+            $this->stmt->bind_param("ss", $Provinciaorigen,$Provinciadestino);
+            $this->stmt->execute();
+            return $this->stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        } catch (mysqli_sql_exception $e) {
+            throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
+        }
+    }
+
+
+    public function fetch_publicaciones_por_destino($Provinciadestino) {
+        try {
+            $sql = "
+            SELECT 
+                u.imagen AS usuarioImagen, 
+                u.nombre AS usuarioNombre, 
+                u.apellido AS usuarioApellido, 
+                p.volumen, 
+                p.peso, 
+                p.provinciaOrigen, 
+                p.provinciaDestino, 
+                p.imagenPublicacion,
+                p.titulo,
+                p.descripcion,
+                p.estado
+            FROM publicacion p
+            JOIN usuario u ON p.idUsuario = u.idUsuario
+            WHERE p.provinciaDestino = ?
+            AND p.estado = 0
+        ";
+            $this->stmt = $this->conn->prepare($sql);
+            $this->stmt->bind_param("s", $Provinciadestino);
+            $this->stmt->execute();
+            return $this->stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        } catch (mysqli_sql_exception $e) {
+            throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
+        }
+    }
+
     public function fetch_publicaciones_por_peso($pesoPaquete) {
         try {
             $sql = "
@@ -270,7 +330,7 @@ class GestorVeryDeli {
         }
     }
 
-    public function fetch_publicaciones_filtradas($Provinciaorigen, $pesoPaquete) {
+    public function fetch_publicaciones_filtradas($Provinciaorigen, $pesoPaquete, $Provinciadestino) {
         try {
             // Consulta combinada para filtrar por provincia y peso
             $sql = "
@@ -288,7 +348,7 @@ class GestorVeryDeli {
                     p.estado
                 FROM publicacion p
                 JOIN usuario u ON p.idUsuario = u.idUsuario
-                WHERE p.provinciaOrigen = ? AND p.volumen = ? AND
+                WHERE p.provinciaOrigen = ? AND p.volumen = ? AND p.provinciaDestino = ? AND
                 p.estado = 0
             ";
             
@@ -297,7 +357,7 @@ class GestorVeryDeli {
                 throw new Exception("Error en la consulta SQL: " . $this->conn->error);
             }
             
-            $this->stmt->bind_param("si", $Provinciaorigen, $pesoPaquete);
+            $this->stmt->bind_param("sis", $Provinciaorigen, $pesoPaquete, $Provinciadestino);
             $this->stmt->execute();
             
             return $this->stmt->get_result()->fetch_all(MYSQLI_ASSOC);
@@ -922,4 +982,24 @@ class GestorVeryDeli {
             throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
         }
     }
+
+    public function fetch_provincias_ALL() {
+        try {
+            $sql = "SELECT nombreProvincia, idProvincia FROM provincia";
+            $this->stmt = $this->conn->prepare($sql);
+    
+            if (!$this->stmt) {
+                throw new Exception("Error al preparar la consulta: " . $this->conn->error);
+            }
+    
+            $this->stmt->execute();
+            $result = $this->stmt->get_result();
+    
+            // Devuelve todas las provincias en un arreglo
+            return $result->fetch_all(MYSQLI_ASSOC);
+        } catch (mysqli_sql_exception $e) {
+            throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
+        }
+    }
+    
 }

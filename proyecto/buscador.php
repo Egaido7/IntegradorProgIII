@@ -9,17 +9,23 @@ $publicaciones = [];
 if (isset($_POST['botonFiltrar'])) {
     // Obtener y limpiar filtros de provincia y peso
     $filtroProvincias = $gestor->fetch_escape_string(trim($_POST['select_provincias']));
-    $filtroPeso = $gestor->fetch_escape_string(trim($_POST['select_descripcion']));
+    $filtroPeso = $gestor->fetch_escape_string(trim($_POST['select_descripcion'])); 
+    $filtroProvinciasDestino =  $gestor->fetch_escape_string(trim($_POST['select_provinciasDestino']));
 
     // Consultar publicaciones aplicando los filtros de manera dinámica
-    if (!empty($filtroProvincias) && !empty($filtroPeso)) {
+    if (!empty($filtroProvincias) && !empty($filtroPeso) && !empty($filtroProvinciasDestino)) {
         // Obtener publicaciones filtradas por provincia y peso
-        $publicaciones = $gestor->fetch_publicaciones_filtradas($filtroProvincias, $filtroPeso);
-    } elseif (!empty($filtroProvincias)) {
+        $publicaciones = $gestor->fetch_publicaciones_filtradas($filtroProvincias, $filtroPeso,$filtroProvinciasDestino );
+    } else if(!empty($filtroProvincias) && !empty($filtroProvinciasDestino)){
+        $publicaciones = $gestor->fetch_publicaciones_por_origen_y_destino($filtroProvincias,$filtroProvinciasDestino );
+    }elseif (!empty($filtroProvincias)) {
         $publicaciones = $gestor->fetch_publicaciones_por_origen($filtroProvincias);
     } elseif (!empty($filtroPeso)) {
         $publicaciones = $gestor->fetch_publicaciones_por_peso($filtroPeso);
-    } else {
+    } elseif(!empty($filtroProvinciasDestino)){
+        $publicaciones = $gestor->fetch_publicaciones_por_destino($filtroProvinciasDestino);
+    }
+    else {
         // Si no hay filtros, obtener todas las publicaciones
         $publicaciones = $gestor->fetch_publicaciones();
     }
@@ -111,20 +117,34 @@ if (isset($_POST['botonFiltrar'])) {
         <div class="sidebar">
             <h4>Filtros</h4>
         </div>
-        <form action="buscador.php" method="POST">
-            <label for ="select_provincias">Provincias que tienen envios disponibles</label>
-            <select class="form-select" name="select_provincias" >
-                <option value="" selected>Provincias Disponibles</option>
-                <?php
-                $conexion = mysqli_connect('localhost', 'user_personas', '45382003', 'very_deli');
-                $consul = "SELECT nombreProvincia, idProvincia FROM provincia";
-                $resultado = mysqli_query($conexion, $consul);
-                while ($row = mysqli_fetch_assoc($resultado)) {
-                    echo "<option value='{$row['nombreProvincia']}'>{$row['nombreProvincia']}</option>";
-                }
-                mysqli_close($conexion);
-                ?>
-            </select><br>
+        <form action="buscador.php" method="POST" action = "">
+        <label for="select_provincias">Provincias que tienen envíos disponibles</label>
+        <select class="form-select" name="select_provincias">
+        <option value="" selected>Provincias Disponibles</option>
+        <?php
+        // Obtiene las provincias usando el método fetch_provincias
+        $provincias = $gestor->fetch_provincias_ALL();             
+         // Itera sobre cada provincia y crea una opción para el <select>
+         foreach ($provincias as $provincia) {
+         echo "<option value='{$provincia['nombreProvincia']}'>{$provincia['nombreProvincia']}</option>";
+         }
+         ?>
+        </select><br>
+
+
+            <label for ="select_provinciasDestino">Provincias que tienen destinos disponibles</label>
+            <select class="form-select" name="select_provinciasDestino" >
+            <option value="" selected>Provincias Disponibles</option>
+        <?php
+        // Obtiene las provincias usando el método fetch_provincias
+        $provincias = $gestor->fetch_provincias_ALL();             
+         // Itera sobre cada provincia y crea una opción para el <select>
+         foreach ($provincias as $provincia) {
+         echo "<option value='{$provincia['nombreProvincia']}'>{$provincia['nombreProvincia']}</option>";
+         }
+         ?>
+        </select><br>
+
             <label for="select_descripcion">Filtro por volumen</label>
             <select name="select_descripcion" class="form-select" >
                 <option value="">Filtro por volumen</option>
