@@ -6,33 +6,23 @@ if (!isset($_SESSION["usuario"])) {
 } else {
     extract($_POST);
     $error = 0;
-    $errorm = "";
     $us = $_SESSION["usuario"];
-    if (isset($enviarVehiculo)) {
-
-        $error = 0;
-        if (empty($patente)) {
-            $errorm = "Ingrese patente";
-            $error = 1;
-        } elseif (empty($modelo)) {
-            $errorm = "Ingrese modelo";
-            $error = 1;
-        } elseif ($gestor->tiene_maximo_vehiculos($us) == 1) {
-            $errorm = "tienes el maximo de vehiculos";
-            $error = 1;
-        } else {
-            // No hay errores; redirigir a insertar_postulante.php
-
-            //  Usar sesión para pasar los datos
-
+    $info = $gestor->tiene_maximo_vehiculos_para_Ingresar($us);
+    if ($info == true) {
+        $errorm = "tienes el maximo de vehiculos permitidos";
+        $error = 1;
+    }else{
+        if (isset($enviarVehiculo)) {
             $_SESSION['patente'] = $patente;
             $_SESSION['modelo'] = $modelo;
             $_SESSION['categoria'] = $categoria;
-
             //Redirige a insertar_postulante.php
             header("Location: insertarVehiculo.php");
             exit();
         }
+    }
+
+    
     }
 ?>
 
@@ -149,7 +139,7 @@ if (!isset($_SESSION["usuario"])) {
                 <div class="col-sm-8" style="margin-top: 50px;">
                     <ul class="nav nav-tabs" id="secciones" role="tablist">
                         <li class="nav-item">
-                            <a class="nav-link active" id="postulaciones-tab" data-bs-toggle="tab" href="#postulaciones" role="tab" aria-controls="postulaciones" aria-selected="true">Postulaciones (2)</a>
+                            <a class="nav-link active" id="postulaciones-tab" data-bs-toggle="tab" href="#postulaciones" role="tab" aria-controls="postulaciones" aria-selected="true">Postulaciones </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" id="publicaciones-tab" data-bs-toggle="tab" href="#publicaciones" role="tab" aria-controls="profile" aria-selected="false">Mis Publicaciones (<?= $gestor->fetch_num_publicaciones_activas_por_usuario($usuario["idUsuario"]) ?>)</a>
@@ -202,8 +192,8 @@ if (!isset($_SESSION["usuario"])) {
                                                 <h6 class="card-subtitle mb-2 text-success">
                                                     <?= ($pub["estado"] == 0) ? "Disponible" : "En espera" ?>
                                                 </h6>
-                                                <h6 class="card-subtitle mb-2 text-muted">Origen: <?= htmlspecialchars($pub["localidadOrigen"]) ?> - <?= htmlspecialchars($pub["Provinciaorigen"]) ?></h6>
-                                                <h6 class="card-subtitle mb-2 text-muted">Destino: <?= htmlspecialchars($pub["localidadDestino"]) ?> - <?= htmlspecialchars($pub["Provinciadestino"]) ?></h6>
+                                                <h6 class="card-subtitle mb-2 text-muted">Origen: <?= htmlspecialchars($pub["localidadOrigen"]) ?> - <?= htmlspecialchars($pub["provinciaOrigen"]) ?></h6>
+                                                <h6 class="card-subtitle mb-2 text-muted">Destino: <?= htmlspecialchars($pub["localidadDestino"]) ?> - <?= htmlspecialchars($pub["provinciaDestino"]) ?></h6>
                                                 <p class="card-text">Descripción: <?= htmlspecialchars($pub["descripcion"]); ?></p>
                                             </div>
                                         </div>
@@ -226,24 +216,26 @@ if (!isset($_SESSION["usuario"])) {
 
 
                         </div>
+                        <!-- MODELO PARA VISTA DE AUTO-->
                         <div class="tab-pane fade" id="personal" role="tabpanel" aria-labelledby="personal-tab">
-                            <button type="button" class="btn btn-primary">Nuevo Vehículo</button>
-                            <div class="card border-success">
-                                <img class="card-img-top" src="imagenes/publicacionDefault.jpg" alt="Card image cap">
-                                <div class="card-body">
-                                    <h5 class="card-title">Modelo de vehículo</h5>
-                                    <h6 class="card-subtitle mb-2 text-muted">Nro Patente: 1234</h6>
-                                    <p class="card-text">Categoría: 2</p>
-                                </div>
-                            </div>
-                            <div class="card border-success">
-                                <img class="card-img-top" src="imagenes/publicacionDefault.jpg" alt="Card image cap">
-                                <div class="card-body">
-                                    <h5 class="card-title">Modelo de vehículo</h5>
-                                    <h6 class="card-subtitle mb-2 text-muted">Nro Patente: NR55</h6>
-                                    <p class="card-text">Categoría: 1</p>
-                                </div>
-                            </div>
+                            <!-- Button trigger modal -->
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#registroVehiculo">
+                             Registrar Vehiculo
+                            </button>
+                            <?php
+$vehiculos = $gestor->obtener_vehiculos_por_usuario($us);
+?>
+                            <?php foreach ($vehiculos as $vehiculo): ?>
+        <div class="card border-success" style="margin-top: 15px;">
+            <img class="card-img-top" src="imagenes/publicacionDefault.jpg" alt="Imagen de vehículo">
+            <div class="card-body">
+                <h5 class="card-title">Modelo: <?= htmlspecialchars($vehiculo['modelo']) ?></h5>
+                <h6 class="card-subtitle mb-2 text-muted">Nro Patente: <?= htmlspecialchars($vehiculo['patente']) ?></h6>
+                <p class="card-text">Categoría: <?= htmlspecialchars($vehiculo['categoria']) ?></p>
+            </div>
+        </div>
+    <?php endforeach; ?>
+                             <!-- FIN MODELO PARA VISTA DE AUTO-->
                             <form class="form" action="##" method="post" id="registrationForm">
                                 <div class="form-group">
 
@@ -375,59 +367,9 @@ if (!isset($_SESSION["usuario"])) {
 
 
                         </div>
-                        <div class="tab-pane fade" id="vehiculos" role="tabpanel" aria-labelledby="vehiculos-tab">
-                            <div class="card container" style="padding-bottom: 80px; padding-top: 20px; width: 70%; margin-bottom: 20px; max-height: 80vh;">
+                        
 
-                                <form method="post" action="perfil.php">
-                                    <div class="mb-3">
-                                        <div class="mb-3">
-                                            <h3>nuevo vehiculo</h3>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="pateme" class="form-label">patente:</label>
-                                            <input type="text" name="patente" id="patente" class="form-control" placeholder="escribe la patente" require>
-                                            <label for="modelo" class="form-label">modelo:</label>
-                                            <input type="text" name="modelo" id="modelo" class="form-control" placeholder="escribe el modelo del auto" require>
-                                        </div>
-                                        <label for="categoria" class="form-label">Calificación:</label>
-                                        <select name="categoria" id="categoria" class="form-select">
-                                            <option value="1">liviano</option>
-                                            <option value="2">mediano</option>
-                                            <option value="3">pesado</option>
-                                        </select>
-                                    </div>
-
-
-
-                                    <div class="text-center">
-                                        <button type="submit" name="enviarVehiculo" class="btn btn-primary">Enviar Calificación</button>
-                                    </div>
-                                    <?php
-                                    if ($error = 1) {
-                                        echo $errorm;
-                                    }
-                                    ?>
-                                </form>
-                            </div>
-                        </div>
-
-                        <div class="card border-success">
-                            <img class="card-img-top" src="imagenes/publicacionDefault.jpg" alt="Card image cap">
-                            <div class="card-body">
-                                <h5 class="card-title">Modelo de vehículo</h5>
-                                <h6 class="card-subtitle mb-2 text-muted">Nro Patente: 1234</h6>
-                                <p class="card-text">Categoría: 2</p>
-                            </div>
-                        </div>
-                        <div class="card border-success">
-                            <img class="card-img-top" src="imagenes/publicacionDefault.jpg" alt="Card image cap">
-                            <div class="card-body">
-                                <h5 class="card-title">Modelo de vehículo</h5>
-                                <h6 class="card-subtitle mb-2 text-muted">Nro Patente: NR55</h6>
-                                <p class="card-text">Categoría: 1</p>
-                            </div>
-                        </div>
-                    </div>
+                      
                     <div class="tab-pane fade" id="calificaciones" role="tabpanel" aria-labelledby="calificaciones-tab">
                         <?php $calificaciones = $gestor->fetch_calificaciones_hechas_por_usuario($usuario["idUsuario"]);
                         foreach ($calificaciones as $c) {
@@ -456,13 +398,53 @@ if (!isset($_SESSION["usuario"])) {
                             </div>
                         <?php } ?>
 
-                        ?>
-
                     </div>
                 </div>
 
             </div>
         </div>
+
+        <!-- Modal VEHICULO -->
+<div class="modal fade" id="registroVehiculo" tabindex="-1" aria-labelledby="registroVehiculoLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="registroVehiculoLabel">Registar Vehiculo</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+      <form method="POST" action="perfil.php">
+                    <label for="patente" class="form-label">patente:</label>
+                     <input type="text" name ="patente" id="patente" class="form-control" placeholder="escribe la patente SIN ESPACIOS (LLLNNN O LLNNLL)"  pattern="^[A-Za-z]{2}[0-9]{3}[A-Z]{2}$|^[A-Z]{3}[0-9]{3}$" 
+           title="Debe ser LLLNNN o LLNNNLL" 
+           maxlength="7"  required>
+                    <label for="modelo" class="form-label">modelo(marca):</label>
+                  <input type="text" name="modelo" id="modelo" class="form-control" placeholder="escribe el modelo Y la marca del auto " pattern="^[A-Za-z0-9 ]{5,30}$" 
+                  title="Debe contener entre 5 y 30 caracteres, solo letras, números y espacios"  maxlength="30" required>
+                  <label for="categoria" class="form-label">Clasificacion:</label>
+                  <select name="categoria" name = "categoria"id="categoria" class="form-select" title = "debe elegir una opcion" required>
+                  <option value="" selected>Seleccione una opcion</option>
+                        <option value="1">liviano(auto)</option>
+                         <option value="2">mediano(utilitario/camioneta)</option>
+                         <option value="3">pesado(camion)</option>
+                 </select>
+         <?php if ($error != 0): ?>
+    <p style = "color:red"><?= $errorm ?></p>
+    <input type='submit' class='btn btn-primary' name='enviarVehiculo' disabled value='Inscribir Vehiculo' 
+    style = "background-color: #52b04c;
+    color: #eff2f5; border: 1px solid #eff2f5;">
+<?php else: ?>
+    <input type='submit' class='btn btn-primary' name='enviarVehiculo' value='Inscribir Vehiculo'>
+<?php endif; ?>
+<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+         </form>
+      </div>
+      <div class="modal-footer">
+     
+      </div>
+    </div>
+  </div>
+</div>
 
         <script type="text/javascript">
             $(document).ready(function() {
@@ -510,6 +492,6 @@ if (!isset($_SESSION["usuario"])) {
             };
         </script>
     </body>
-<?php } ?>
+<?php  ?>
 
     </html>

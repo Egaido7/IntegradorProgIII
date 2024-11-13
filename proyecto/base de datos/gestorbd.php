@@ -82,13 +82,14 @@ class GestorVeryDeli {
         try {
             $this->stmt = $this->conn->prepare("INSERT INTO vehiculo(patente, idUsuario, modelo, categoria)
             VALUES (?,?,?,?)");
-            $this->stmt->bind_param("sisi",$patente, $idUsuario, $modelo, $categoria);
+            $this->stmt->bind_param("siss",$patente, $idUsuario, $modelo, $categoria);
             $this->stmt->execute();
             return $this->stmt->affected_rows;
         } catch (mysqli_sql_exception $e) {
-            throw new Exception("Error al insertar un nuevo usuario: " . $e->getMessage());
+            throw new Exception("Error al insertar un nuevo vehiculo: " . $e->getMessage());
         }
     }
+   
 
     public function fetch_usuarios() {
         try {
@@ -833,6 +834,61 @@ class GestorVeryDeli {
             }
         }
     }
+
+
+
+    public function tiene_maximo_vehiculos_para_Ingresar($idUsuario) {
+        try {
+            if (!$this->conn) {
+                throw new Exception("Error de conexión a la base de datos: " . mysqli_connect_error());
+            }
+    
+            $sql = "SELECT COUNT(*) FROM vehiculo WHERE idUsuario = ?";
+            $this->stmt = $this->conn->prepare($sql);
+            
+            if (!$this->stmt) {
+                throw new Exception("Error al preparar la consulta: " . $this->conn->error);
+            }
+    
+            $this->stmt->bind_param("i", $idUsuario);
+            $this->stmt->execute();
+    
+            $result = $this->stmt->get_result();
+            $row = $result->fetch_row();
+    
+            // Verifica si el número de vehículos es 2 o más
+            return $row[0] >= 2; // Devuelve true solo si el usuario tiene 2 o más vehículos
+        } catch (mysqli_sql_exception $e) {
+            throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
+        }
+    }
+
+    public function obtener_vehiculos_por_usuario($idUsuario) {
+        try {
+            $sql = "SELECT patente, modelo, categoria FROM vehiculo WHERE idUsuario = ?";
+            $stmt = $this->conn->prepare($sql);
+    
+            if (!$stmt) {
+                throw new Exception("Error al preparar la consulta: " . $this->conn->error);
+            }
+    
+            $stmt->bind_param("i", $idUsuario);
+            $stmt->execute();
+            $result = $stmt->get_result();
+    
+            // Crea un arreglo para almacenar los vehículos
+            $vehiculos = [];
+            while ($row = $result->fetch_assoc()) {
+                $vehiculos[] = $row;
+            }
+    
+            return $vehiculos;
+        } catch (mysqli_sql_exception $e) {
+            throw new Exception("Error al obtener vehículos: " . $e->getMessage());
+        }
+    }
+    
+    
 
     public function fetch_nombre_provincia_por_id($idProvincia) {
         try {
