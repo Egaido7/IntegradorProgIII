@@ -1001,5 +1001,47 @@ class GestorVeryDeli {
             throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
         }
     }
+
+    
+    public function fetch_publicaciones_por_busqueda($provincia_localidad) { 
+        try {
+            $sql = "
+            SELECT 
+                u.imagen AS usuarioImagen, 
+                u.nombre AS usuarioNombre, 
+                u.apellido AS usuarioApellido, 
+                p.volumen, 
+                p.peso, 
+                p.provinciaOrigen, 
+                p.provinciaDestino, 
+                p.localidadOrigen,
+                p.localidadDestino,
+                p.imagenPublicacion,
+                p.idPublicacion,
+                p.titulo,
+                p.descripcion,
+                p.estado
+            FROM publicacion p
+            JOIN usuario u ON p.idUsuario = u.idUsuario
+            WHERE (p.provinciaDestino = ? OR p.provinciaOrigen = ? OR p.localidadOrigen = ? OR p.localidadDestino = ?)
+            AND p.estado = 0
+            ";
+            
+            $this->stmt = $this->conn->prepare($sql);
+    
+            if (!$this->stmt) {
+                throw new Exception("Error al preparar la consulta: " . $this->conn->error);
+            }
+    
+            // Vincula el parámetro en las cuatro condiciones de búsqueda
+            $this->stmt->bind_param("ssss", $provincia_localidad, $provincia_localidad, $provincia_localidad, $provincia_localidad);
+            $this->stmt->execute();
+            
+            return $this->stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        } catch (mysqli_sql_exception $e) {
+            throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
+        }
+    }
+    
     
 }

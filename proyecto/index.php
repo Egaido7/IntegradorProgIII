@@ -22,7 +22,7 @@ if (isset($_POST['btnEnviarPublicacion'])) {
     // Intentar mover la imagen a la carpeta de destino
     if (move_uploaded_file($_FILES['PubliArchivo']['tmp_name'], $rutaFinalAbsoluta)) {
       // Guardar la ruta relativa en la variable para la base de datos
-      $rutaImagen = $nombreImagenGuardada;
+      $rutaImagen = 'imagenes/' . $nombreImagenGuardada;
     } else {
       echo "<script>alert('Error al mover el archivo de imagen');</script>";
     }

@@ -5,8 +5,14 @@ include 'loginRegistro.php';
 // Variables para almacenar resultados
 $publicaciones = [];
 
-// Verificar si se presionó el botón de filtro
-if (isset($_POST['botonFiltrar'])) {
+
+if (isset($_POST['botonBuscar']) && !empty($_POST['buscar'])) {
+    // Captura y limpia el término de búsqueda
+    $terminoBusqueda = trim($_POST['buscar']);
+    
+    // Usa el método fetch_publicaciones_por_busqueda del objeto $gestor
+    $publicaciones = $gestor->fetch_publicaciones_por_busqueda($terminoBusqueda);
+} elseif (isset($_POST['botonFiltrar'])) {
     // Obtener y limpiar filtros de provincia y peso
     $filtroProvincias = $gestor->fetch_escape_string(trim($_POST['select_provincias']));
     $filtroPeso = $gestor->fetch_escape_string(trim($_POST['select_descripcion'])); 
@@ -57,7 +63,11 @@ if (isset($_POST['botonFiltrar'])) {
             </a>
             <div class="header__input" id="header_busqueda">
                 <span class="material-icons"> search </span>
-                <input type="text" placeholder="Buscar publicaciones" id="barraBusqueda" />
+                <form action="" method= "POST">
+                <input type="text" name="buscar" placeholder="Buscar localidad o provincia" id="barraBusqueda" />
+        <button type="submit" name="botonBuscar" class="btn btn-link p-0" style="display: none;"></button>
+
+                </form>
             </div>
         </div>
 
@@ -188,7 +198,10 @@ if (isset($_POST['botonFiltrar'])) {
                     <div class="post__options">
                         <div class="post__option">
                             <span class="material-icons"> near_me </span>
-                            <p>Postularse</p>
+                            <form action="publicacion.php" method="POST">
+                            <input type="submit"  name="verPublicacion" id="verPublicacion" value="postularse"  class="btn btn-link p-0" style="text-decoration: none; color: inherit;">     
+                            <input type="hidden" name="verPublicacion" value="<?= $publicacion['idPublicacion'] ?>">
+                            </form>
                         </div>
                     </div>
                 <?php }
