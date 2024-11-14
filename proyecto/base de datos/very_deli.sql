@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 11-11-2024 a las 14:50:11
+-- Tiempo de generación: 13-11-2024 a las 18:52:33
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -178,7 +178,7 @@ CREATE TABLE `postulacion` (
 --
 
 INSERT INTO `postulacion` (`idPostulacion`, `idUsuario`, `monto`, `idPublicacion`, `alerta`) VALUES
-(1, 1, 1000, 4, 0);
+(1, 2, 1000, 7, 0);
 
 -- --------------------------------------------------------
 
@@ -188,14 +188,14 @@ INSERT INTO `postulacion` (`idPostulacion`, `idUsuario`, `monto`, `idPublicacion
 
 CREATE TABLE `provincia` (
   `idProvincia` int(11) NOT NULL,
-  `nombreProvincia` varchar(100) NOT NULL
+  `nombre` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Volcado de datos para la tabla `provincia`
 --
 
-INSERT INTO `provincia` (`idProvincia`, `nombreProvincia`) VALUES
+INSERT INTO `provincia` (`idProvincia`, `nombre`) VALUES
 (1, 'Buenos Aires'),
 (2, 'Catamarca'),
 (3, 'Chaco'),
@@ -232,8 +232,6 @@ CREATE TABLE `publicacion` (
   `idUsuario` int(11) NOT NULL,
   `volumen` float NOT NULL,
   `peso` float NOT NULL,
-  `Provinciaorigen` varchar(40) NOT NULL,
-  `Provinciadestino` varchar(40) NOT NULL,
   `fechaPublicacion` date NOT NULL,
   `imagenPublicacion` varchar(40) NOT NULL,
   `descripcion` text NOT NULL,
@@ -252,12 +250,15 @@ CREATE TABLE `publicacion` (
 -- Volcado de datos para la tabla `publicacion`
 --
 
-INSERT INTO `publicacion` (`idPublicacion`, `idUsuario`, `volumen`, `peso`, `Provinciaorigen`, `Provinciadestino`, `fechaPublicacion`, `imagenPublicacion`, `descripcion`, `contacto`, `postulanteElegido`, `titulo`, `estado`, `localidadOrigen`, `localidadDestino`, `domicilioOrigen`, `domicilioDestino`, `nombreRecibir`) VALUES
-(4, 1, 100, 200, 'san luis', 'la punta', '2024-11-11', 'imagenes/termostanley.webp', 'es un objeto muy bonito', 'ola01@gmail.com', 1, 'objeto bonito', 2, '', '', '', '', ''),
-(6, 1, 10, 3, 'San Luis', 'San Luis', '2024-11-10', 'imagenes/publicacionDefault.jpg', 'botines nike en caja', '2664546384', 0, 'botines nike', 0, 'San Luis', 'Villa Mercedes', 'calle 3 sur', 'calle angosta 212', 'uriel gomez'),
-(7, 1, 10, 2, 'Buenos Aires', 'NeuquÃ©n', '2024-11-10', 'imagenes/publicacionDefault.jpg', 'maquina de cortar el pelo', '2664721223', 0, 'patillera suono', 0, 'La Plata', 'San MartÃ­n de los Andes', 'laplata2025', 'barilochepromo2021', 'juaquin munoz'),
-(8, 1, 10, 4, 'La Rioja', 'Corrientes', '2024-11-10', 'imagenes/publicacionDefault.jpg', 'termo stanley de 1lts', '2664339196', 0, 'termo stanley', 0, 'La Rioja', 'Goya', 'rioseco1212', 'desiertosahara21', 'emiliano gaido'),
-(9, 1, 100, 25, 'Tierra del Fuego', 'Chaco', '2024-11-10', 'imagenes/67313163268a1_bici.jpg', 'bicicleta raleigh rodado 29 7 cambios', '2664546384', 0, 'bicicleta raleigh', 0, 'Ushuaia', 'Saenz PeÃ±a', 'eliglu2012', 'pomberito2', 'uriel gomez');
+INSERT INTO `publicacion` (`idPublicacion`, `idUsuario`, `volumen`, `peso`, `fechaPublicacion`, `imagenPublicacion`, `descripcion`, `contacto`, `postulanteElegido`, `titulo`, `estado`, `localidadOrigen`, `localidadDestino`, `domicilioOrigen`, `domicilioDestino`, `nombreRecibir`) VALUES
+(4, 1, 100, 200, '2024-11-11', 'imagenes/termostanley.webp', 'es un objeto muy bonito', 'ola01@gmail.com', 2, 'objeto bonito', 1, '', '', '', '', ''),
+(6, 1, 10, 3, '2024-11-10', 'imagenes/publicacionDefault.jpg', 'botines nike en caja', '2664546384', 0, 'botines nike', 0, 'San Luis', 'Villa Mercedes', 'calle 3 sur', 'calle angosta 212', 'uriel gomez'),
+(7, 1, 10, 2, '2024-11-10', 'imagenes/publicacionDefault.jpg', 'maquina de cortar el pelo', '2664721223', 2, 'patillera suono', 1, 'La Plata', 'San Martí­n de los Andes', 'laplata2025', 'barilochepromo2021', 'juaquin munoz'),
+(8, 1, 10, 4, '2024-11-10', 'imagenes/publicacionDefault.jpg', 'termo stanley de 1lts', '2664339196', 0, 'termo stanley', 0, 'La Rioja', 'Goya', 'rioseco1212', 'desiertosahara21', 'emiliano gaido'),
+(9, 1, 100, 25, '2024-11-10', 'imagenes/67313163268a1_bici.jpg', 'bicicleta raleigh rodado 29 7 cambios', '2664546384', 0, 'bicicleta raleigh', 0, 'Ushuaia', 'Saenz PeÃ±a', 'eliglu2012', 'pomberito2', 'uriel gomez'),
+(11, 1, 100, 12, '2024-11-11', 'imagenes/publicacionDefault.jpg', 'asdasdasqwe', '26645555555', 0, 'asdasd', 0, 'Goya', 'General Pico', 'colon 222', 'ituzaingo 23', 'Ramon'),
+(12, 1, 100, 50, '2024-11-11', 'imagenes/publicacionDefault.jpg', 'aoisdjoaiwdj', '266455555', 0, 'asdkajsldk', 0, 'Pirané', 'Trelew', 'colon 222', 'tero muerto 450', 'joaquito'),
+(13, 2, 100, 97, '2024-11-12', 'imagenes/publicacionDefault.jpg', 'caja x12', '2664338785', 0, 'caja de cigarrilos', 0, 'Concordia', 'San Rafael', 'cocnoonsnd', 'licitacion4manzana', 'pepito');
 
 -- --------------------------------------------------------
 
@@ -272,8 +273,8 @@ CREATE TABLE `usuario` (
   `dni` int(11) NOT NULL,
   `responsable` tinyint(1) NOT NULL,
   `email` varchar(40) NOT NULL,
+  `idLocalidad` int(11) NOT NULL,
   `domicilio` varchar(50) NOT NULL,
-  `codPostal` int(11) NOT NULL,
   `contraseña` varchar(100) NOT NULL,
   `imagen` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -282,9 +283,9 @@ CREATE TABLE `usuario` (
 -- Volcado de datos para la tabla `usuario`
 --
 
-INSERT INTO `usuario` (`idUsuario`, `nombre`, `apellido`, `dni`, `responsable`, `email`, `domicilio`, `codPostal`, `contraseña`, `imagen`) VALUES
-(1, 'joaquin', 'muñoz', 45802248, 1, 'joaquinemunoz04@gmail.com', 'casa', 1234, '131231231231312312312313231231231231231231231231', 'e054903e6671684eff1264dc3ee6ec46.png'),
-(2, 'gonza', 'si', 45802243, 1, 'jds@gmail.com', 'casa', 1234, 'aswdasd', '');
+INSERT INTO `usuario` (`idUsuario`, `nombre`, `apellido`, `dni`, `responsable`, `email`, `idLocalidad`, `domicilio`, `contraseña`, `imagen`) VALUES
+(1, 'joaquin', 'muñoz', 45802248, 1, 'joaquinemunoz04@gmail.com', 55, 'Colon 222', '131231231231312312312313231231231231231231231231', 'e054903e6671684eff1264dc3ee6ec46.png'),
+(2, 'El', 'Admin', 22222222, 1, 'test@gmail.com', 62, 'Junin 980', '1234a4321', '');
 
 -- --------------------------------------------------------
 
@@ -362,8 +363,7 @@ ALTER TABLE `usuario`
   ADD UNIQUE KEY `dni` (`dni`),
   ADD UNIQUE KEY `contraseña` (`contraseña`),
   ADD UNIQUE KEY `email` (`email`),
-  ADD KEY `idUsuario` (`idUsuario`),
-  ADD KEY `idUsuario_2` (`idUsuario`);
+  ADD KEY `idUsuario` (`idUsuario`);
 
 --
 -- Indices de la tabla `vehiculo`
@@ -404,7 +404,7 @@ ALTER TABLE `provincia`
 -- AUTO_INCREMENT de la tabla `publicacion`
 --
 ALTER TABLE `publicacion`
-  MODIFY `idPublicacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `idPublicacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT de la tabla `usuario`
