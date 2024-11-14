@@ -527,8 +527,12 @@ class GestorVeryDeli {
                 $suma_puntajes += $calif["puntaje"];
             }
         }
-        $promedio = $suma_puntajes / $cant_calif;
-        return round($promedio * 2) / 2; // Esta expresión trunca el promedio a intervalos de 0.5
+        if($cant_calif == 0) {
+            return "";
+        } else {
+            $promedio = $suma_puntajes / $cant_calif;
+            return round($promedio * 2) / 2; // Esta expresión trunca el promedio a intervalos de 0.5
+        }
     }
 
     public function fetch_mensajes_por_publicacion($idPublicacion) {
