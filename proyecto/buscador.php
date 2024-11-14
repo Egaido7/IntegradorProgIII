@@ -1,7 +1,8 @@
 <?php
 
 include 'loginRegistro.php';
-
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 // Variables para almacenar resultados
 $publicaciones = [];
 
@@ -40,6 +41,7 @@ if (isset($_POST['botonFiltrar'])) {
     <link rel="stylesheet" href="estilos.css" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    
 </head>
 
 <body>
@@ -116,14 +118,10 @@ if (isset($_POST['botonFiltrar'])) {
             <select class="form-select" name="select_provincias" >
                 <option value="" selected>Provincias Disponibles</option>
                 <?php
-                $conexion = mysqli_connect('localhost', 'user_personas', '45382003', 'very_deli');
-                $consul = "SELECT nombreProvincia, idProvincia FROM provincia";
-                $resultado = mysqli_query($conexion, $consul);
-                while ($row = mysqli_fetch_assoc($resultado)) {
-                    echo "<option value='{$row['nombreProvincia']}'>{$row['nombreProvincia']}</option>";
-                }
-                mysqli_close($conexion);
-                ?>
+                $provincias = $gestor->fetch_provincias();
+                foreach($provincias as $row) { ?>
+                    <option value='<?= $row['nombre'] ?>'><?= $row['nombre'] ?></option>
+                <?php } ?>
             </select><br>
             <label for="select_descripcion">Filtro por volumen</label>
             <select name="select_descripcion" class="form-select" >
@@ -155,8 +153,8 @@ if (isset($_POST['botonFiltrar'])) {
                         <p>Descripción: <?= htmlspecialchars($publicacion['descripcion']) ?></p>
                         <p>Volumen: <?= htmlspecialchars($publicacion['volumen']) ?> m³</p>
                         <p>Peso: <?= htmlspecialchars($publicacion['peso']) ?> kg</p>
-                        <p>Origen: <?= htmlspecialchars($publicacion['provinciaOrigen']) ?></p>
-                        <p>Destino: <?= htmlspecialchars($publicacion['provinciaDestino']) ?></p>
+                        <p>Origen: <?= htmlspecialchars($gestor->fetch_provinciaYLocalidad_por_idLocalidad($publicacion['localidadOrigen'])) ?></p>
+                        <p>Destino: <?= htmlspecialchars($gestor->fetch_provinciaYLocalidad_por_idLocalidad($publicacion['localidadDestino'])) ?></p>
                     </div>
                     <div class="post__image">
                         <?php if (!isset($publicacion['imagenPublicacion'])) { ?>
@@ -191,7 +189,6 @@ if (isset($_POST['botonFiltrar'])) {
     crossorigin="anonymous"
     src="https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v10.0"
     nonce="zUxEq08J"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
   <script>
     const barraBusquedaContainer = document.getElementById("header_busqueda");
     const barraBusqueda = document.getElementById("barraBusqueda");

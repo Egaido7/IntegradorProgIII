@@ -282,20 +282,11 @@ if (isset($_POST['btnEnviarPublicacion'])) {
               <select class="form-select" aria-label="ProvinciaOrigen" name="ProvinciaOrigen" id="ProvinciaOrigen" required>
                 <option value="">Selecciona la provincia</option>
                 <?php
-                $conexion = mysqli_connect('localhost', 'user_personas', '45382003', 'very_deli');
-                if (!$conexion) {
-                  die("Conexión fallida: " . mysqli_connect_error());
-                }
+                $provincias = $gestor->fetch_provincias();
 
-                // Configurar la conexión para usar UTF-8
-                mysqli_set_charset($conexion, 'utf8mb4');
-                $consul = "SELECT nombreProvincia, idProvincia FROM provincia";
-                $resultado = mysqli_query($conexion, $consul);
-
-                while ($row = mysqli_fetch_assoc($resultado)) {
-                  echo "<option value= '{$row['idProvincia']}'> {$row['nombreProvincia']} </option>";
-                }
-                ?>
+                foreach($provincias as $row) { ?>
+                  <option value= '<?= $row['idProvincia'] ?>'> <?= $row['nombre'] ?> </option>
+                <?php } ?>
               </select>
 
               <div class="invalid-feedback" id="pubProvinciaOrigen"></div>

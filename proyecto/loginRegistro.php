@@ -1,5 +1,5 @@
 <?php  
-
+//Maneja del inicio de sesión y el registro de usuario para todas las páginas que tengan login y registro
 session_start();
 
 include_once 'base de datos/gestorbd.php';
