@@ -47,11 +47,11 @@
   $error = 0;
   $er = 0;
   $aviso = "si";
-  echo $usuario;
+
   // control al postularse
   if (isset($btnpostularse)) {
     $vehiculo = $publicacionControl->tiene_vehiculo_por_usuario($usuario);
-    $publicacionE = $publicacionControl->fetch_publicacion($publicacion);
+    $publicacionE = $publicacionControl->fetch_publicacion($publicacion['idPublicacion']);
     $error = 0;
 
     if (empty($monto)) {
@@ -70,10 +70,9 @@
       // No hay errores; redirigir a insertar_postulante.php
 
       //  Usar sesión para pasar los datos
-      $_SESSION['id'] = $publicacion['idPublicacion'];
       $_SESSION['monto'] = floatval($monto);
       $_SESSION['usuario_id'] = $usuario;  // Cambiar 2 por el ID de usuario real
-      $_SESSION['publicacion_id'] = $publicacion; // Cambiar 4 por el ID de publicación real
+      $_SESSION['publicacion_id'] = $publicacion['idPublicacion']; // Cambiar 4 por el ID de publicación real
       $_SESSION['estado'] = 0;
 
       // Redirige a insertar_postulante.php
@@ -390,7 +389,7 @@ if ($tipo == 1 || $tipo == 2 || $tipo == 3) {
     <h1>Calificacion</h1>
   </div>
   <div class="card container" style="padding-bottom: 80px; padding-top: 20px; width: 70%; margin-bottom: 20px; max-height: 80vh;">
-  <?php if ($publicacionControl->publicacion_calificada($publicacion['idPublicacion']) == 0) { ?>
+  <?php if ($publicacionControl->publicacion_calificada($publicacion['idPublicacion']) == 0 && $publicacionControl->usuario_califico($usuario,$publicacion['idPublicacion']) == 0) { ?>
     <form method="post" action="publicacion.php">
       <div class="mb-3">
         <label for="calificacion" class="form-label">Calificación:</label>
