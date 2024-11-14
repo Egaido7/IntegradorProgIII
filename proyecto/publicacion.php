@@ -27,7 +27,6 @@
   $fechap = date('Y-m-d');
   $id = $publicacion['idPublicacion'];
   date_default_timezone_set('America/Argentina/San_Luis');
-
   if (isset($_SESSION['usuario'])) {
     $usuario = $_SESSION['usuario'];
   }

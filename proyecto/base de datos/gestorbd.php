@@ -11,7 +11,8 @@ class GestorVeryDeli {
     public function insertar_usuario($nombre, $apellido, $dni, $email, $pwd) {
         try {
             $this->stmt = $this->conn->prepare("INSERT INTO usuario(nombre, apellido, dni, email, contraseña) VALUES (?,?,?,?,?)");
-            $this->stmt->bind_param("sssss", $nombre, $apellido, $dni, $email, $pwd);
+            $dni = intval($dni);
+            $this->stmt->bind_param("ssiss", $nombre, $apellido, $dni, $email, $pwd);
             $this->stmt->execute();
             return $this->stmt->affected_rows;
         } catch (mysqli_sql_exception $e) {

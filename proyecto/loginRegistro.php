@@ -25,17 +25,17 @@ if(isset($_SESSION['usuario'])) {
         $mostrarLogin = true;
     } else {
         // Insertar el nuevo usuario
-        if ($gestor->insertar_usuario($nombre, $apellido, $dni, $correo, $contraseña)) {
-            
-            $idUsuario = $gestor->fetch_insert_id(); // Obtiene el último ID insertado en la conexión actual
-            $_SESSION['usuario'] = $idUsuario; // Almacenar el idUsuario en la sesión
-            header("refresh: 0");
-            exit();
-        } else {
-            $errorRegistro = "Error al registrar el usuario.";
-            $mostrarLogin = true;
+    $_SESSION['nombre'] = $nombre;
+      $_SESSION['apellido'] = $apellido;  // Cambiar 2 por el ID de usuario real
+      $_SESSION['dni'] = $dni; // Cambiar 4 por el ID de publicación real
+      $_SESSION['correo'] = $correo;
+      $_SESSION['contraseña'] = $contraseña;
+
+      // Redirige a insertar_postulante.php
+      header("Location: insertar_usuario.php");
+      exit();
+           
         }
-    }
 } else if (isset($_POST['btnEnviarLoginphp'])) { // Manejar el inicio de sesión
 
     $correo = trim($_POST['loginEmail']);
