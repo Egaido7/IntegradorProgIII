@@ -167,28 +167,43 @@ if (isset($_POST['btnEnviarPublicacion'])) {
   <!-- main body starts -->
   <div class="main__body">
     <!-- sidebar starts -->
+    <?php if (isset($_SESSION["usuario"])) { ?>
     <div class="sidebar">
       <div class="sidebarRow">
-        <img src="LogoVeryDeli.svg" alt="Logo" class="user__avatar">
-        <h4>Somanath Goudar</h4>
+        <a href="perfil.php?tab=publicaciones" class="text-decoration-none">
+          <?php if ($usuario['imagen']) { ?>
+            <img src="imagenes/<?= $usuario["imagen"] ?>" alt="avatar" class="avatar rounded-circle img-fluid border">
+          <?php } else { ?>
+              <img src="http://ssl.gstatic.com/accounts/ui/avatar_2x.png" class="avatar rounded-circle img-fluid border"
+              alt="avatar">
+          <?php } ?>  
+          <h4><?= ucfirst($usuario["nombre"]) . " " . ucfirst($usuario["apellido"]) ?></h4>
+        </a>
+      </div>
+      
+      <div class="sidebarRow">
+        <a href="buscador.php" class="text-decoration-none">
+          <span class="material-icons"> search </span>
+          <h4>Buscar Publicaciones</h4>
+        </a>
       </div>
 
       <div class="sidebarRow">
-        <span class="material-icons"> emoji_flags </span>
-        <h4>Historial</h4>
+        <a href="perfil.php?tab=publicaciones" class="text-decoration-none">
+          <span class="material-icons"> storefront </span>
+          <h4>Mis Publicaciones</h4>
+        </a>
       </div>
-
+      
       <div class="sidebarRow">
-        <span class="material-icons"> people </span>
-        <h4>Calificaciones</h4>
+        <a href="perfil.php?tab=calificaciones" class="text-decoration-none">
+          <span class="material-icons"> star </span>
+          <h4>Calificaciones</h4>
+        </a>
       </div>
-
-      <div class="sidebarRow">
-        <span class="material-icons"> chat </span>
-        <h4>Mensajes</h4>
-      </div>
-
+      
     </div>
+    <?php } ?>
     <!-- sidebar ends -->
 
     <!-- feed starts -->
@@ -229,11 +244,6 @@ if (isset($_POST['btnEnviarPublicacion'])) {
         ?>
       </div>
       <!-- post ends -->
-    </div>
-    <!-- feed ends -->
-
-    <div style="flex: 0.20" class="widgets">
-
     </div>
   </div>
   <!-- main body ends -->
