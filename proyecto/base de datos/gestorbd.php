@@ -407,6 +407,11 @@ class GestorVeryDeli {
 
 
         foreach ($publicaciones as $publicacion) { ?>
+        <?php
+        $_SESSION['nombreU'] =$publicacion['usuarioNombre'];
+        $_SESSION['apellidoU'] = $publicacion['usuarioApellido'];
+        $_SESSION['imagenU'] = $publicacion['usuarioImagen'];
+        ?>
             <div class="post">
                 <div class="post__top">
                     <img class="user__avatar post__avatar" src="imagenes/<?php echo $publicacion['usuarioImagen'] ?>" alt="xd">

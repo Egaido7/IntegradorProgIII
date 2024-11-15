@@ -5,8 +5,12 @@ include 'loginRegistro.php';
 // Variables para almacenar resultados
 $publicaciones = [];
 
-
-if (isset($_POST['botonBuscar']) && !empty($_POST['buscar'])) {
+if(isset($_GET['buscar']) && !empty($_GET['buscar'])){
+    $terminoBusqueda = trim($_GET['buscar']);
+    
+    // Usa el método fetch_publicaciones_por_busqueda para buscar publicaciones
+    $publicaciones = $gestor->fetch_publicaciones_por_busqueda($terminoBusqueda);
+}elseif (isset($_POST['botonBuscar']) && !empty($_POST['buscar'])) {
     // Captura y limpia el término de búsqueda
     $terminoBusqueda = trim($_POST['buscar']);
     
@@ -30,8 +34,7 @@ if (isset($_POST['botonBuscar']) && !empty($_POST['buscar'])) {
         $publicaciones = $gestor->fetch_publicaciones_por_peso($filtroPeso);
     } elseif(!empty($filtroProvinciasDestino)){
         $publicaciones = $gestor->fetch_publicaciones_por_destino($filtroProvinciasDestino);
-    }
-    else {
+    }else {
         // Si no hay filtros, obtener todas las publicaciones
         $publicaciones = $gestor->fetch_publicaciones();
     }

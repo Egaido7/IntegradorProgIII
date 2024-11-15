@@ -119,7 +119,11 @@ if (isset($_POST['verPublicacion'])) {
       </a>
       <div class="header__input" id="header_busqueda">
         <span class="material-icons"> search </span>
-        <input type="text" placeholder="Buscar publicaciones" id="barraBusqueda" />
+        <form action="buscador.php" method= "GET">
+                <input type="text" name="buscar" placeholder="Buscar localidad o provincia" id="barraBusqueda" />
+        <button type="submit" name="botonBuscar" class="btn btn-link p-0" style="display: none;"></button>
+
+                </form>
       </div>
     </div>
 
@@ -177,8 +181,7 @@ if (isset($_POST['verPublicacion'])) {
     <!-- sidebar starts -->
     <div class="sidebar">
       <div class="sidebarRow">
-        <img src="LogoVeryDeli.svg" alt="Logo" class="user__avatar">
-        <h4>Somanath Goudar</h4>
+        <h4><?= htmlspecialchars($_SESSION['nombreU']) ?> <?= htmlspecialchars($_SESSION['apellidoU']) ?></h4>
       </div>
 
       <div class="sidebarRow">
@@ -204,7 +207,7 @@ if (isset($_POST['verPublicacion'])) {
       <!-- message sender starts -->
       <div class="messageSender">
         <div class="messageSender__top">
-          <img src="LogoVeryDeli.svg" alt="Logo" class="user__avatar post__avatar">
+          <img class="user__avatar post__avatar" src="imagenes/<?php echo $_SESSION['imagenU'] ?>" alt="fotoUser">
           <form>
             <input class="messageSender__input" placeholder="Publica acá abajo" type="text" disabled />
           </form>
