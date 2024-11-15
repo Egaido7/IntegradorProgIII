@@ -62,6 +62,7 @@ if (isset($_POST['verPublicacion'])) {
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     
+    
 </head>
 
 <body>
@@ -146,7 +147,7 @@ if (isset($_POST['verPublicacion'])) {
         $provincias = $gestor->fetch_provincias_ALL();             
          // Itera sobre cada provincia y crea una opción para el <select>
          foreach ($provincias as $provincia) {
-         echo "<option value='{$provincia['nombreProvincia']}'>{$provincia['nombreProvincia']}</option>";
+         echo "<option value='{$provincia['nombre']}'>{$provincia['nombre']}</option>";
          }
          ?>
         </select><br>
@@ -160,7 +161,7 @@ if (isset($_POST['verPublicacion'])) {
         $provincias = $gestor->fetch_provincias_ALL();             
          // Itera sobre cada provincia y crea una opción para el <select>
          foreach ($provincias as $provincia) {
-         echo "<option value='{$provincia['nombreProvincia']}'>{$provincia['nombreProvincia']}</option>";
+         echo "<option value='{$provincia['nombre']}'>{$provincia['nombre']}</option>";
          }
          ?>
         </select><br>
