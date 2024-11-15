@@ -189,7 +189,7 @@ class GestorVeryDeli {
         }
     }
 
-    public function fetch_publicaciones_por_origen($localidadOrigen) {
+    public function fetch_publicaciones_por_origen($provinciaOrigen) {
         try {
             $sql = "
             SELECT 
@@ -212,11 +212,11 @@ class GestorVeryDeli {
             JOIN provincia pr_origen ON pr_origen.idProvincia = l_origen.idProvincia
             JOIN localidad l_destino ON p.localidadDestino = l_destino.idLocalidad
             JOIN provincia pr_destino ON pr_destino.idProvincia = l_destino.idProvincia
-            WHERE p.localidadOrigen = ?
+            WHERE pr_origen.idProvincia = ?
             AND p.estado = 0
         ";
             $this->stmt = $this->conn->prepare($sql);
-            $this->stmt->bind_param("i", $localidadOrigen);
+            $this->stmt->bind_param("i", $provinciaOrigen);
             $this->stmt->execute();
             return $this->stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         } catch (mysqli_sql_exception $e) {
@@ -224,7 +224,7 @@ class GestorVeryDeli {
         }
     }
 
-    public function fetch_publicaciones_por_destino($localidadDestino) {
+    public function fetch_publicaciones_por_destino($provinciaDestino) {
         try {
             $sql = "
             SELECT 
@@ -247,11 +247,11 @@ class GestorVeryDeli {
             JOIN provincia pr_origen ON pr_origen.idProvincia = l_origen.idProvincia
             JOIN localidad l_destino ON p.localidadDestino = l_destino.idLocalidad
             JOIN provincia pr_destino ON pr_destino.idProvincia = l_destino.idProvincia
-            WHERE p.localidadDestino = ?
+            WHERE pr_destino.idProvincia = ?
             AND p.estado = 0
         ";
             $this->stmt = $this->conn->prepare($sql);
-            $this->stmt->bind_param("i", $localidadDestino);
+            $this->stmt->bind_param("i", $provinciaDestino);
             $this->stmt->execute();
             return $this->stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         } catch (mysqli_sql_exception $e) {
@@ -260,7 +260,7 @@ class GestorVeryDeli {
     }
 
 
-    public function fetch_publicaciones_por_origen_y_destino($localidadOrigen, $localidadDestino) {
+    public function fetch_publicaciones_por_origen_y_destino($provinciaOrigen, $provinciaDestino) {
         try {
             $sql = "
             SELECT 
@@ -279,11 +279,15 @@ class GestorVeryDeli {
                 p.estado
             FROM publicacion p
             JOIN usuario u ON p.idUsuario = u.idUsuario
-            WHERE p.localidadOrigen = ? AND p.localidadDestino= ?
+            JOIN localidad l_origen ON p.localidadOrigen = l_origen.idLocalidad
+            JOIN provincia pr_origen ON pr_origen.idProvincia = l_origen.idProvincia
+            JOIN localidad l_destino ON p.localidadDestino = l_destino.idLocalidad
+            JOIN provincia pr_destino ON pr_destino.idProvincia = l_destino.idProvincia
+            WHERE pr_origen.idProvincia = ? AND pr_origen.idProvincia = ?
             AND p.estado = 0
         ";
             $this->stmt = $this->conn->prepare($sql);
-            $this->stmt->bind_param("ss", $localidadOrigen, $localidadDestino);
+            $this->stmt->bind_param("ii", $provinciaOrigen, $provinciaDestino);
             $this->stmt->execute();
             return $this->stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         } catch (mysqli_sql_exception $e) {
@@ -295,7 +299,7 @@ class GestorVeryDeli {
     
 
 
-    public function fetch_publicaciones_por_peso($pesoPaquete) {
+    public function fetch_publicaciones_por_volumen($volumenPaquete) {
         try {
             $sql = "
                 SELECT 
@@ -317,7 +321,7 @@ class GestorVeryDeli {
             ";
             
             $this->stmt = $this->conn->prepare($sql);
-            $this->stmt->bind_param("i", $pesoPaquete);
+            $this->stmt->bind_param("i", $volumenPaquete);
             $this->stmt->execute();
             
             return $this->stmt->get_result()->fetch_all(MYSQLI_ASSOC);
@@ -348,7 +352,7 @@ class GestorVeryDeli {
         }
     }
 
-    public function fetch_publicaciones_filtradas($localidadOrigen, $pesoPaquete, $localidadDestino) {
+    public function fetch_publicaciones_filtradas($provinciaOrigen, $volumenPaquete, $provinciaDestino) {
         try {
             $sql = "
                 SELECT 
@@ -359,15 +363,17 @@ class GestorVeryDeli {
                     p.peso, 
                     p.localidadOrigen, 
                     p.localidadDestino, 
-                    p.localidadOrigen, 
-                    p.localidadDestino, 
                     p.imagenPublicacion,
                     p.titulo,
                     p.descripcion,
                     p.estado
                 FROM publicacion p
                 JOIN usuario u ON p.idUsuario = u.idUsuario
-                WHERE p.localidadOrigen = ? AND p.volumen = ? AND p.localidadDestino = ? AND
+                JOIN localidad l_origen ON p.localidadOrigen = l_origen.idLocalidad
+                JOIN provincia pr_origen ON pr_origen.idProvincia = l_origen.idProvincia
+                JOIN localidad l_destino ON p.localidadDestino = l_destino.idLocalidad
+                JOIN provincia pr_destino ON pr_destino.idProvincia = l_destino.idProvincia
+                WHERE pr_origen.idProvincia = ? AND p.volumen = ? AND pr_destino.idProvincia = ? AND
                 p.estado = 0
             ";
             
@@ -376,7 +382,7 @@ class GestorVeryDeli {
                 throw new Exception("Error en la consulta SQL: " . $this->conn->error);
             }
             
-            $this->stmt->bind_param("sis", $localidadOrigen, $pesoPaquete, $localidadDestino);
+            $this->stmt->bind_param("iii", $provinciaOrigen, $volumenPaquete, $provinciaDestino);
             $this->stmt->execute();
             
             return $this->stmt->get_result()->fetch_all(MYSQLI_ASSOC);
@@ -1019,7 +1025,7 @@ class GestorVeryDeli {
 
     public function fetch_provincias_ALL() {
         try {
-            $sql = "SELECT nombreProvincia, idProvincia FROM provincia";
+            $sql = "SELECT nombre, idProvincia FROM provincia";
             $this->stmt = $this->conn->prepare($sql);
     
             if (!$this->stmt) {

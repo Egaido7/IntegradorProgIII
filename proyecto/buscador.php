@@ -6,7 +6,6 @@ error_reporting(E_ALL);
 // Variables para almacenar resultados
 $publicaciones = [];
 
-
 if (isset($_POST['botonBuscar']) && !empty($_POST['buscar'])) {
     // Captura y limpia el término de búsqueda
     $terminoBusqueda = trim($_POST['buscar']);
@@ -14,21 +13,26 @@ if (isset($_POST['botonBuscar']) && !empty($_POST['buscar'])) {
     // Usa el método fetch_publicaciones_por_busqueda del objeto $gestor
     $publicaciones = $gestor->fetch_publicaciones_por_busqueda($terminoBusqueda);
 } elseif (isset($_POST['botonFiltrar'])) {
+    ?>
+<script>
+    console.log("Hay filtros de busqueda con la sidebar");
+</script>
+<?php
     // Obtener y limpiar filtros de provincia y peso
     $filtroProvincias = $gestor->fetch_escape_string(trim($_POST['select_provincias']));
-    $filtroPeso = $gestor->fetch_escape_string(trim($_POST['select_descripcion'])); 
     $filtroProvinciasDestino =  $gestor->fetch_escape_string(trim($_POST['select_provinciasDestino']));
+    $filtroVolumen = $gestor->fetch_escape_string(trim($_POST['select_descripcion'])); 
 
     // Consultar publicaciones aplicando los filtros de manera dinámica
-    if (!empty($filtroProvincias) && !empty($filtroPeso) && !empty($filtroProvinciasDestino)) {
-        // Obtener publicaciones filtradas por provincia y peso
-        $publicaciones = $gestor->fetch_publicaciones_filtradas($filtroProvincias, $filtroPeso,$filtroProvinciasDestino );
+    if (!empty($filtroProvincias) && !empty($filtroVolumen) && !empty($filtroProvinciasDestino)) {
+        // Obtener publicaciones filtradas por provincia y volumen
+        $publicaciones = $gestor->fetch_publicaciones_filtradas($filtroProvincias, $filtroVolumen,$filtroProvinciasDestino );
     } else if(!empty($filtroProvincias) && !empty($filtroProvinciasDestino)){
         $publicaciones = $gestor->fetch_publicaciones_por_origen_y_destino($filtroProvincias,$filtroProvinciasDestino );
     }elseif (!empty($filtroProvincias)) {
         $publicaciones = $gestor->fetch_publicaciones_por_origen($filtroProvincias);
-    } elseif (!empty($filtroPeso)) {
-        $publicaciones = $gestor->fetch_publicaciones_por_peso($filtroPeso);
+    } elseif (!empty($filtroVolumen)) {
+        $publicaciones = $gestor->fetch_publicaciones_por_volumen($filtroVolumen);
     } elseif(!empty($filtroProvinciasDestino)){
         $publicaciones = $gestor->fetch_publicaciones_por_destino($filtroProvinciasDestino);
     }
@@ -146,10 +150,10 @@ if (isset($_POST['verPublicacion'])) {
         // Obtiene las provincias usando el método fetch_provincias
         $provincias = $gestor->fetch_provincias_ALL();             
          // Itera sobre cada provincia y crea una opción para el <select>
-         foreach ($provincias as $provincia) {
-         echo "<option value='{$provincia['nombre']}'>{$provincia['nombre']}</option>";
-         }
-         ?>
+        foreach ($provincias as $provincia) {
+            echo "<option value='{$provincia['idProvincia']}'>{$provincia['nombre']}</option>";
+        }
+        ?>
         </select><br>
 
 
@@ -161,7 +165,7 @@ if (isset($_POST['verPublicacion'])) {
         $provincias = $gestor->fetch_provincias_ALL();             
          // Itera sobre cada provincia y crea una opción para el <select>
          foreach ($provincias as $provincia) {
-         echo "<option value='{$provincia['nombre']}'>{$provincia['nombre']}</option>";
+         echo "<option value='{$provincia['idProvincia']}'>{$provincia['nombre']}</option>";
          }
          ?>
         </select><br>
@@ -182,6 +186,8 @@ if (isset($_POST['verPublicacion'])) {
     <div class="feed">
         <div class="post">
             <?php
+            
+            var_dump($publicaciones);
             if (!empty($publicaciones)) {
                 foreach ($publicaciones as $publicacion) { ?>
                     <div class="post__top">
