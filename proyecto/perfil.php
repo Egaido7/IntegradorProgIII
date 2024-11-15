@@ -179,6 +179,8 @@ if (!isset($_SESSION["usuario"])) {
                             foreach ($postulaciones as $p) {
                                 $publicacion = $gestor->fetch_publicacion($p['idPublicacion']);
                             ?>
+                          <a href="irPublicacion.php?idPublicacion=<?= $publicacion['idPublicacion'] ?>"class="text-decoration-none">
+                                
                                 <div class="card border-secondary">
                                     <div class="card-body card-publicacion">
                                         <h5 class="card-title">Postulación a "<?= $publicacion["titulo"] ?>"</h5>
@@ -198,6 +200,7 @@ if (!isset($_SESSION["usuario"])) {
                                         <h5 class="card-subtitle"><strong>Monto: <?= $p["monto"] ?></strong></h5>
                                     </div>
                                 </div>
+                                        </a>
                             <?php } ?>
 
                         </div>
@@ -205,7 +208,7 @@ if (!isset($_SESSION["usuario"])) {
                             <?php $publicaciones = $gestor->fetch_publicaciones_por_usuario($usuario["idUsuario"]);
                             foreach ($publicaciones as $pub) {
                                 if ($pub["estado"] != 2) { ?>
-                                    <a href="publicacionSimple.php?idPublicacion=<?= $pub['idPublicacion'] ?>" class="text-decoration-none">
+                                    <a href="publicacion.php?idPublicacion=<?= $pub['idPublicacion'] ?>" class="text-decoration-none">
                                         <div class="card border-success">
                                             <div class="card-body card-publicacion">
                                                 <h5 class="card-title"><?= htmlspecialchars($pub["titulo"]) ?></h5>
@@ -219,7 +222,7 @@ if (!isset($_SESSION["usuario"])) {
                                         </div>
                                     </a>
                                 <?php } else { ?>
-                                    <a href="publicacionSimple.php?idPublicacion=<?php echo $pub['idPublicacion'] ?>" class="text-decoration-none">
+                                    <a href="publicacion.php?idPublicacion=<?php echo $pub['idPublicacion'] ?>" class="text-decoration-none">
                                         <div class="card border-muted">
                                             <div class="card-body card-publicacion">
                                                 <h5 class="card-title"><?= htmlspecialchars($pub["titulo"]) ?></h5>

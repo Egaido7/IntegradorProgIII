@@ -12,6 +12,7 @@ class GestorVeryDeli {
         try {
             $this->stmt = $this->conn->prepare("INSERT INTO usuario(nombre, apellido, dni, email, contraseña) VALUES (?,?,?,?,?)");
             $dni = intval($dni);
+            $pwd = password_hash($pwd,PASSWORD_DEFAULT);
             $this->stmt->bind_param("ssiss", $nombre, $apellido, $dni, $email, $pwd);
             $this->stmt->execute();
             return $this->stmt->affected_rows;
@@ -798,12 +799,30 @@ class GestorVeryDeli {
         return $this->conn->insert_id;
     }
 
-    public function verificar_credenciales_usuario($email, $pwd) {
+    public function verificar_credenciales_usuario($email,$pw) {
         try {
-            $this->stmt = $this->conn->prepare("SELECT idUsuario FROM usuario WHERE email = ? AND contraseña = ?");
-            $this->stmt->bind_param("ss", $email, $pwd);
+
+            $this->stmt = $this->conn->prepare("SELECT idUsuario FROM usuario WHERE email = ?");
+            $this->stmt->bind_param("s", $email);
             $this->stmt->execute();
             return $this->stmt->get_result();
+        } catch (mysqli_sql_exception $e) {
+            throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
+        }
+    }
+    public function verificar_contraseña($email,$pw) {
+        try {
+
+            $this->stmt = $this->conn->prepare("SELECT contraseña FROM usuario WHERE email = ?");
+            $this->stmt->bind_param("s", $email);
+            $this->stmt->execute();
+           $resultado = $this->stmt->get_result()->fetch_assoc();
+           if(password_verify($pw,$resultado['contraseña'])){
+
+            return 1;
+           }else
+           return 0;
+            
         } catch (mysqli_sql_exception $e) {
             throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
         }

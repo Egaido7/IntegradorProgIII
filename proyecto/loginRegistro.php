@@ -42,11 +42,11 @@ if(isset($_SESSION['usuario'])) {
     $contraseña = trim($_POST['loginPwd']);
 
     // Consulta para verificar las credenciales y obtener el idUsuario
-    $resultado = $gestor->verificar_credenciales_usuario($correo, $contraseña);
-    
+    $resultado = $gestor->verificar_contraseña($correo, $contraseña);
+    $resultado1 = $gestor->verificar_credenciales_usuario($correo, $contraseña);
 
-    if ($resultado->num_rows == 1) {
-        $fila = mysqli_fetch_assoc($resultado); // Obtener los resultados como un array asociativo
+    if ($resultado == 1) {
+        $fila = mysqli_fetch_assoc($resultado1); // Obtener los resultados como un array asociativo
         $_SESSION['usuario'] = $fila["idUsuario"]; // Almacenar el idUsuario en la sesión
         header("refresh: 0");
         exit();
