@@ -1047,6 +1047,49 @@ class GestorVeryDeli {
             throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
         }
     }
-    
+    public function insertarImagen() {
+        // Define la carpeta absoluta donde se guardarán las imágenes
+        $carpetaDestinoAbsoluta = $_SERVER['DOCUMENT_ROOT'] . "/Integrador/IntegradorProgIII/proyecto/imagenes/imagenesUsuario/";
+        // Verifica si la carpeta de destino existe; si no, la crea
+        if (!is_dir($carpetaDestinoAbsoluta)) {
+            mkdir($carpetaDestinoAbsoluta, 0777, true); // Crea la carpeta con permisos adecuados
+        }
+
+        // Ruta por defecto para la imagen
+        $rutaImagen = 'imagenesUsuario/defaultUser.jpg';
+
+        // Verifica si se subió una imagen
+        if (isset($_FILES['UserImagen']) && $_FILES['UserImagen']['error'] === UPLOAD_ERR_OK) {
+            // Genera un nombre único para la imagen para evitar conflictos
+            $nombreImagenGuardada = uniqid() . "_" . basename($_FILES['UserImagen']['name']);
+            $rutaFinalAbsoluta = $carpetaDestinoAbsoluta . $nombreImagenGuardada;
+
+            // Intenta mover la imagen a la carpeta de destino
+            if (move_uploaded_file($_FILES['UserImagen']['tmp_name'], $rutaFinalAbsoluta)) {
+                // Si se mueve con éxito, guarda la ruta relativa
+                $rutaImagen = 'imagenesUsuario/' . $nombreImagenGuardada;
+            } else {
+                echo "<script>alert('Error al mover el archivo de imagen');</script>";
+            }
+        }
+
+        // Devuelve la ruta relativa de la imagen para guardar en la base de datos
+        return $rutaImagen;
+    }
+
+    public function guardarImagenUsuario($id_usuario, $rutaImagen) {
+        // Conexión a la base de datos (asegúrate de que $conn esté inicializada correctamente)
+        
+        // Actualiza la tabla usuario con la ruta de la imagen
+        $query = "UPDATE usuario SET imagen = '$rutaImagen' WHERE idUsuario = $id_usuario";
+        
+        $resultado = mysqli_query($this->conn, $query);
+        
+        if (!$resultado) {
+            echo "Error al actualizar la imagen en la base de datos: " . mysqli_error($this->conn);
+        } else {
+            echo "Imagen actualizada correctamente para el usuario con ID: $id_usuario";
+        }
+    }
     
 }

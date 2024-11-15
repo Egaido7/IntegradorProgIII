@@ -8,6 +8,17 @@ if (!isset($_SESSION["usuario"])) {
     $error = 0;
     $us = $_SESSION["usuario"];
     $info = $gestor->tiene_maximo_vehiculos_para_Ingresar($us);
+
+    if (isset($_POST['BtnImagen2'])) {
+        // Llamar a la función insertarImagen para subir la imagen y obtener la ruta
+        $rutaImagen = $gestor->insertarImagen();
+    
+        // Llamar a la función guardarImagenUsuario para actualizar la ruta de imagen en la base de datos
+        $gestor->guardarImagenUsuario($us, $rutaImagen);
+    
+        echo "<script>alert('Imagen de perfil actualizada correctamente');</script>";
+    }
+
     if ($info == true) {
         $errorm = "tienes el maximo de vehiculos permitidos";
         $error = 1;
@@ -112,6 +123,15 @@ if (!isset($_SESSION["usuario"])) {
                             <img src="imagenes/<?= $usuario["imagen"] ?>" alt="avatar" class="avatar rounded-circle img-fluid border">
                         <?php } ?>
                         <h3><?= ucfirst($usuario["nombre"]) . " " . ucfirst($usuario["apellido"]) ?></h3>
+                        <div class="form-group">
+                        <form action="perfil.php" method="POST" enctype="multipart/form-data">
+                        <label for="UserImagen">Inserte la foto(opcional):</label>
+                        <input type="file" class="form-control" name="UserImagen" id="UserImagen" required>
+                        <input type="submit" class="form-control" name="BtnImagen2" id="BtnImagen2" value="Cambiar foto de perfil">
+                        </form>
+            
+              <div class="invalid-feedback" name="pubArchivoFeedback" id="pubArchivoFeedback"></div>
+            </div>
                     </div>
                     </hr><br>
 
