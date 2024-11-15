@@ -13,11 +13,6 @@ if (isset($_POST['botonBuscar']) && !empty($_POST['buscar'])) {
     // Usa el método fetch_publicaciones_por_busqueda del objeto $gestor
     $publicaciones = $gestor->fetch_publicaciones_por_busqueda($terminoBusqueda);
 } elseif (isset($_POST['botonFiltrar'])) {
-    ?>
-<script>
-    console.log("Hay filtros de busqueda con la sidebar");
-</script>
-<?php
     // Obtener y limpiar filtros de provincia y peso
     $filtroProvincias = $gestor->fetch_escape_string(trim($_POST['select_provincias']));
     $filtroProvinciasDestino =  $gestor->fetch_escape_string(trim($_POST['select_provinciasDestino']));
@@ -186,8 +181,6 @@ if (isset($_POST['verPublicacion'])) {
     <div class="feed">
         <div class="post">
             <?php
-            
-            var_dump($publicaciones);
             if (!empty($publicaciones)) {
                 foreach ($publicaciones as $publicacion) { ?>
                     <div class="post__top">
