@@ -56,8 +56,6 @@ if (isset($_POST['btnEnviarPublicacion'])) {
     $idUsuario,
     $volumenProducto,
     $pesoProducto,
-    $provinciaOrigen, // Guarda el nombre de la provincia
-    $provinciaDestino, // Guarda el nombre de la provincia
     $fechaPublicacion,
     $rutaImagen,
     $descripcionProducto,
@@ -228,13 +226,12 @@ if (isset($_POST['verPublicacion'])) {
         <div class="messageSender__bottom">
           <?php if (isset($_SESSION["usuario"])) {
             echo "<div class='messageSender__option'>";
-            echo "<span style='color: red' class='material-icons'> publish </span>";
+            echo "<span style='color: #52b04c' class='material-icons'> publish </span>";
             echo "<button data-bs-toggle='modal' data-bs-target='#publicarModal' style='background: none; border: none; padding: 0; color: inherit; font: inherit; cursor: pointer;' >publicar</button> ";
             echo "</div>";
           } else {
             echo "<div class='messageSender__option'>";
-            echo "<span style='color: red' class='material-icons'> publish </span>";
-            echo "<button onclick=\"alert('para publicar hay que iniciar sesion');\" style='background: none; border: none; padding: 0; color: inherit; font: inherit; cursor: pointer;'>publicar</button>";
+            echo "<button data-bs-toggle='modal' data-bs-target='#loginModal' style='background: none; border: none; padding: 0; color: #52b04c; font: inherit; cursor: pointer;'>Inicie sesión para publicar una solicitud</button>";
             echo "</div>";
           }
           ?>
@@ -247,8 +244,7 @@ if (isset($_POST['verPublicacion'])) {
       <!-- post starts -->
       <div class="post">
         <?php
-        $publicacionVista = new GestorVeryDeli();
-        $publicacionVista->mostrar_publicaciones();
+        $gestor->mostrar_publicaciones();
         ?>
       </div>
       <!-- post ends -->
@@ -330,14 +326,9 @@ if (isset($_POST['verPublicacion'])) {
               <select class="form-select" aria-label="ProvinciaDestino" name="ProvinciaDestino" id="ProvinciaDestino" required title="debe seleccionar una opcion valida">
                 <option value="">Selecciona la provincia</option>
                 <?php
-
-                // Configurar la conexión para usar UTF-8
-                mysqli_set_charset($conexion, 'utf8mb4');
-                $consul = "SELECT nombreProvincia, idProvincia FROM provincia";
-                $resultado = mysqli_query($conexion, $consul);
-
-                while ($row = mysqli_fetch_assoc($resultado)) {
-                  echo "<option value= '{$row['idProvincia']}'> {$row['nombreProvincia']} </option>";
+                $provincias = $gestor->fetch_provincias();
+                foreach($provincias as $row) {
+                  echo "<option value= '{$row['idProvincia']}'> {$row['nombre']} </option>";
                 }
                 ?>
               </select>

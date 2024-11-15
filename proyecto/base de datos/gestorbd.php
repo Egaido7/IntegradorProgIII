@@ -321,7 +321,7 @@ class GestorVeryDeli {
             ";
             
             $this->stmt = $this->conn->prepare($sql);
-            $this->stmt->bind_param("i", $volumenPaquete);
+            $this->stmt->bind_param("d", $volumenPaquete);
             $this->stmt->execute();
             
             return $this->stmt->get_result()->fetch_all(MYSQLI_ASSOC);
@@ -382,7 +382,7 @@ class GestorVeryDeli {
                 throw new Exception("Error en la consulta SQL: " . $this->conn->error);
             }
             
-            $this->stmt->bind_param("iii", $provinciaOrigen, $volumenPaquete, $provinciaDestino);
+            $this->stmt->bind_param("idi", $provinciaOrigen, $volumenPaquete, $provinciaDestino);
             $this->stmt->execute();
             
             return $this->stmt->get_result()->fetch_all(MYSQLI_ASSOC);
