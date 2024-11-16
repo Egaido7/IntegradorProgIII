@@ -433,6 +433,47 @@ body {
     padding: 20px; /* Espaciado alrededor del texto */
 }
 
+.calificacion-container {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.calificacion-container > input {
+    display: none;
+}
+
+.calificacion-container > h5 {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    margin-bottom: auto;
+    
+}
+
+.calificacion-container > label {
+    margin: 0 10px;
+    color: #6c757d;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.calificacion-container > input:checked ~ label,
+.calificacion-container:not(:checked) > label:hover,
+.calificacion-container:not(:checked) > label:hover ~ label {
+    color: #52b04c;
+}
+
+.calificacion-container > input:checked + label:hover,
+.calificacion-container > input:checked ~ label:hover,
+.calificacion-container > label:hover ~ input:checked ~ label,
+.calificacion-container > input:checked ~ label:hover ~ label {
+    color: #52b04c;
+}
+
+
+
 scroll-container {
     margin:150px;
     display: block;

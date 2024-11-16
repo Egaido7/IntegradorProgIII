@@ -380,19 +380,24 @@ $vehiculos = $gestor->obtener_vehiculos_por_usuario($us);
                                 <div class="card-body">
                                     <h5 class="card-title"><?= $calificado["apellido"] . " " . $calificado["nombre"] ?></h5>
                                     <h6 class="card-subtitle mb-2 text-muted">Fecha: <?= $c["fecha"] ?></h6>
-                                    <form method="post" action="#">
-                                        <label for="calificacion">Calificación:</label>
-                                        <select name="calificacion" id="calificacion">
-                                            <option name="calificacion" value="0">0</option>
-                                            <option name="calificacion" value="1">1</option>
-                                            <option name="calificacion" value="2">2</option>
-                                            <option name="calificacion" value="3">3</option>
-                                            <option name="calificacion" value="4">4</option>
-                                            <option name="calificacion" value="5">5</option>
-                                        </select>
+                                    <form id="form-calificacion" method="post" action="#">
+                                        <fieldset class="calificacion-container">
+                                            <h5 id="valor-calificacion" class="card-subtitle"></h5>
+                                            <input type="radio" name="calificacion" id="star5" value="5" required >
+                                            <label for="star5"><span class="material-icons"> star </span></label>
+                                            <input type="radio" name="calificacion" id="star4" value="4">
+                                            <label for="star4"><span class="material-icons"> star </span></label>
+                                            <input type="radio" name="calificacion" id="star3" value="3">
+                                            <label for="star3"><span class="material-icons"> star </span></label>
+                                            <input type="radio" name="calificacion" id="star2" value="2">
+                                            <label for="star2"><span class="material-icons"> star </span></label>
+                                            <input type="radio" name="calificacion" id="star1" value="1">
+                                            <label for="star1"><span class="material-icons"> star </span></label>
+                                        </fieldset>
 
-                                        <p><label for="opinion">opinion</label><input type="text" name="opinion" id="opinion"></p>
-                                        <p><input type="submit" name="enviarCalificaion" value="Calificar"></p>
+                                        <label for="opinion">opinion</label>
+                                        <input type="text" name="opinion" id="opinion">
+                                        <input type="submit" name="enviarCalificaion" value="Calificar">
                                     </form>
                                 </div>
                             </div>
@@ -490,6 +495,20 @@ $vehiculos = $gestor->obtener_vehiculos_por_usuario($us);
                     calificacionesTab.show(); // Activa la tab 'publicaciones'
                 }
             };
+        </script>
+        
+        <!-- Script para manejar las calificaciones -->
+        <script>
+            let textoCalificacion = document.getElementById("valor-calificacion");
+            let radiosCalif = document.querySelectorAll('input[name="calificacion"]');
+            let form = document.getElementById("form-calificacion");
+
+            radiosCalif.forEach(radio => {
+                radio.addEventListener("change", function() {
+                    textoCalificacion.classList.remove('text-error');
+                    textoCalificacion.textContent = this.value + '.0';
+                });
+            });
         </script>
     </body>
 <?php  ?>
