@@ -42,13 +42,7 @@ if (isset($_POST['btnEnviarPublicacion'])) {
   $domicilioDestino = $gestor->fetch_escape_string(trim($_POST['PubliDomicilio_Destino']));
   $nombreRecibir = $gestor->fetch_escape_string(trim($_POST['PubliRecibir']));
   $nombreContacto = $gestor->fetch_escape_string(trim($_POST['PubliContacto']));
-
-  // Consultas para obtener el nombre de la provincia y localidad
-  $provinciaOrigen = $gestor->fetch_nombre_provincia_por_id($provinciaOrigenID);
-  $provinciaDestino = $gestor->fetch_nombre_provincia_por_id($provinciaDestinoID);
-
-  $localidadOrigen = $gestor->fetch_nombre_localidad_por_id($localidadOrigenID);
-  $localidadDestino = $gestor->fetch_nombre_localidad_por_id($localidadDestinoID);
+  
   // Guardar la publicación
   $idUsuario = $_SESSION['usuario'];
   $fechaPublicacion = date('Y-m-d');
@@ -62,8 +56,8 @@ if (isset($_POST['btnEnviarPublicacion'])) {
     $nombreRecibir,
     $nombreContacto,
     $nombreProducto,
-    $localidadOrigen, // Guarda el nombre de la localidad
-    $localidadDestino, // Guarda el nombre de la localidad
+    $localidadOrigenID, // Guarda el id de la localidad
+    $localidadDestinoID, // Guarda el id de la localidad
     $domicilioOrigen,
     $domicilioDestino
   );
