@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 16-11-2024 a las 20:50:44
+-- Tiempo de generación: 16-11-2024 a las 22:14:14
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -251,7 +251,7 @@ CREATE TABLE `publicacion` (
 --
 
 INSERT INTO `publicacion` (`idPublicacion`, `idUsuario`, `volumen`, `peso`, `fechaPublicacion`, `imagenPublicacion`, `descripcion`, `contacto`, `postulanteElegido`, `titulo`, `estado`, `localidadOrigen`, `localidadDestino`, `domicilioOrigen`, `domicilioDestino`, `nombreRecibir`) VALUES
-(4, 1, 100, 200, '2024-11-11', 'imagenes/termostanley.webp', 'es un objeto muy bonito', 'ola01@gmail.com', 2, 'objeto bonito', 1, '', '', '', '', ''),
+(4, 1, 100, 200, '2024-11-11', 'imagenes/termostanley.webp', 'es un objeto muy bonito', '2664333333', 2, 'objeto bonito', 1, '30', '35', 'rivadavia 1270', 'godoy cruz 210', 'Jose Godoy'),
 (6, 1, 10, 3, '2024-11-10', 'imagenes/publicacionDefault.jpg', 'botines nike en caja', '2664546384', 0, 'botines nike', 0, '55', '56', 'calle 3 sur', 'calle angosta 212', 'uriel gomez'),
 (7, 1, 10, 2, '2024-11-10', 'imagenes/publicacionDefault.jpg', 'maquina de cortar el pelo', '2664721223', 2, 'patillera suono', 1, '1', '45', 'laplata2025', 'barilochepromo2021', 'juaquin munoz'),
 (8, 1, 10, 4, '2024-11-10', 'imagenes/publicacionDefault.jpg', 'termo stanley de 1lts', '2664339196', 0, 'termo stanley', 0, '34', '67', 'rioseco1212', 'desiertosahara21', 'emiliano gaido'),
@@ -285,8 +285,9 @@ CREATE TABLE `usuario` (
 
 INSERT INTO `usuario` (`idUsuario`, `nombre`, `apellido`, `dni`, `responsable`, `email`, `idLocalidad`, `domicilio`, `contraseña`, `imagen`) VALUES
 (1, 'joaquin', 'muñoz', 45802248, 1, 'joaquinemunoz04@gmail.com', 55, 'Colon 222', '131231231231312312312313231231231231231231231231', 'e054903e6671684eff1264dc3ee6ec46.png'),
-(2, 'El', 'Admin', 22222222, 1, 'test@gmail.com', 62, 'Junin 980', '1234a4321', 'publicacionDefault.jpg'),
-(4, 'Anton', 'Chigurh', 23555666, 0, 'test2@gmail.com', 31, 'Colon 555', 'pass1234', 'publicacionDefault.jpg');
+(2, 'El', 'Admin', 22222222, 1, 'test@gmail.com', 62, 'Junin 980', '$2y$10$SQ2ypXCZKOPO0A5hTM8G.uVHvM70N7RnGjm.VYkl5MqGkBjC2.DjS', 'publicacionDefault.jpg'),
+(4, 'Anton', 'Chigurh', 23555666, 0, 'test2@gmail.com', 31, 'Colon 555', '$2y$10$SQ2ypXCZKOPO0A5hTM8G.uVHvM70N7RnGjm.VYkl5MqGkBjC2.DjS', 'publicacionDefault.jpg'),
+(5, 'Antonio', 'Rios', 11111111, 0, 'arios@gmail.com', 25, 'Alto Pelado 123', '$2y$10$SQ2ypXCZKOPO0A5hTM8G.uVHvM70N7RnGjm.VYkl5MqGkBjC2.DjS', 'publicacionDefault.jpg');
 
 -- --------------------------------------------------------
 
@@ -362,9 +363,9 @@ ALTER TABLE `publicacion`
 ALTER TABLE `usuario`
   ADD PRIMARY KEY (`idUsuario`),
   ADD UNIQUE KEY `dni` (`dni`),
-  ADD UNIQUE KEY `contraseña` (`contraseña`),
   ADD UNIQUE KEY `email` (`email`),
-  ADD KEY `idUsuario` (`idUsuario`);
+  ADD KEY `idUsuario` (`idUsuario`),
+  ADD KEY `contraseña` (`contraseña`) USING BTREE;
 
 --
 -- Indices de la tabla `vehiculo`
@@ -411,7 +412,7 @@ ALTER TABLE `publicacion`
 -- AUTO_INCREMENT de la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `idUsuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `idUsuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- Restricciones para tablas volcadas
