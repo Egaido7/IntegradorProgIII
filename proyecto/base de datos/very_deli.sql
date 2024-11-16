@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 14-11-2024 a las 19:52:48
+-- Tiempo de generación: 16-11-2024 a las 20:50:44
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -285,7 +285,8 @@ CREATE TABLE `usuario` (
 
 INSERT INTO `usuario` (`idUsuario`, `nombre`, `apellido`, `dni`, `responsable`, `email`, `idLocalidad`, `domicilio`, `contraseña`, `imagen`) VALUES
 (1, 'joaquin', 'muñoz', 45802248, 1, 'joaquinemunoz04@gmail.com', 55, 'Colon 222', '131231231231312312312313231231231231231231231231', 'e054903e6671684eff1264dc3ee6ec46.png'),
-(2, 'El', 'Admin', 22222222, 1, 'test@gmail.com', 62, 'Junin 980', '1234a4321', '');
+(2, 'El', 'Admin', 22222222, 1, 'test@gmail.com', 62, 'Junin 980', '1234a4321', 'publicacionDefault.jpg'),
+(4, 'Anton', 'Chigurh', 23555666, 0, 'test2@gmail.com', 31, 'Colon 555', 'pass1234', 'publicacionDefault.jpg');
 
 -- --------------------------------------------------------
 
@@ -410,7 +411,7 @@ ALTER TABLE `publicacion`
 -- AUTO_INCREMENT de la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `idUsuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `idUsuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Restricciones para tablas volcadas
