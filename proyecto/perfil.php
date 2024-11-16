@@ -173,8 +173,8 @@ if (!isset($_SESSION["usuario"])) {
                                         <?php } ?>
 
 
-                                        <h6 class="card-subtitle mb-2 text-muted">Origen: <?= $publicacion["localidadOrigen"] ?> - <?= $publicacion["Provinciaorigen"] ?></h6>
-                                        <h6 class="card-subtitle mb-2 text-muted">Destino: <?= $publicacion["localidadDestino"] ?> - <?= $publicacion["Provinciadestino"] ?></h6>
+                                        <h6 class="card-subtitle mb-2 text-muted">Origen: <?= $gestor->fetch_provinciaYLocalidad_por_idLocalidad($publicacion["localidadOrigen"]) ?></h6>
+                                        <h6 class="card-subtitle mb-2 text-muted">Destino: <?= $gestor->fetch_provinciaYLocalidad_por_idLocalidad($publicacion["localidadDestino"]) ?></h6>
                                         <h5 class="card-subtitle"><strong>Monto: <?= $p["monto"] ?></strong></h5>
                                     </div>
                                 </div>
@@ -192,8 +192,8 @@ if (!isset($_SESSION["usuario"])) {
                                                 <h6 class="card-subtitle mb-2 text-success">
                                                     <?= ($pub["estado"] == 0) ? "Disponible" : "En espera" ?>
                                                 </h6>
-                                                <h6 class="card-subtitle mb-2 text-muted">Origen: <?= htmlspecialchars($pub["localidadOrigen"]) ?> - <?= htmlspecialchars($pub["provinciaOrigen"]) ?></h6>
-                                                <h6 class="card-subtitle mb-2 text-muted">Destino: <?= htmlspecialchars($pub["localidadDestino"]) ?> - <?= htmlspecialchars($pub["provinciaDestino"]) ?></h6>
+                                                <h6 class="card-subtitle mb-2 text-muted">Origen: <?= $gestor->fetch_provinciaYLocalidad_por_idLocalidad($pub["localidadOrigen"]) ?></h6>
+                                                <h6 class="card-subtitle mb-2 text-muted">Destino: <?= $gestor->fetch_provinciaYLocalidad_por_idLocalidad($pub["localidadDestino"]) ?></h6>
                                                 <p class="card-text">Descripción: <?= htmlspecialchars($pub["descripcion"]); ?></p>
                                             </div>
                                         </div>
@@ -204,8 +204,8 @@ if (!isset($_SESSION["usuario"])) {
                                             <div class="card-body card-publicacion">
                                                 <h5 class="card-title"><?= htmlspecialchars($pub["titulo"]) ?></h5>
                                                 <h6 class="card-subtitle mb-2 text-muted">Finalizada</h6>
-                                                <h6 class="card-subtitle mb-2 text-muted">Origen: <?= htmlspecialchars($pub["localidadOrigen"]) ?> - <?= htmlspecialchars($pub["provinciaOrigen"]) ?></h6>
-                                                <h6 class="card-subtitle mb-2 text-muted">Destino: <?= htmlspecialchars($pub["localidadDestino"]) ?> - <?= htmlspecialchars($pub["provinciaDestino"]) ?></h6>
+                                                <h6 class="card-subtitle mb-2 text-muted">Origen: <?= $gestor->fetch_provinciaYLocalidad_por_idLocalidad($pub["localidadOrigen"]) ?></h6>
+                                                <h6 class="card-subtitle mb-2 text-muted">Destino: <?= $gestor->fetch_provinciaYLocalidad_por_idLocalidad($pub["localidadDestino"]) ?></h6>
                                                 <p class="card-text">Descripción: <?= htmlspecialchars($pub["descripcion"]) ?></p>
                                             </div>
                                         </div>
@@ -343,8 +343,8 @@ $vehiculos = $gestor->obtener_vehiculos_por_usuario($us);
                                                 <h6 class="card-subtitle mb-2 text-success">
                                                     <?= ($pub["estado"] == 0) ? "Disponible" : "En espera" ?>
                                                 </h6>
-                                                <h6 class="card-subtitle mb-2 text-muted">Origen: <?= $pub["localidadOrigen"] ?> - <?= $pub["Provinciaorigen"] ?></h6>
-                                                <h6 class="card-subtitle mb-2 text-muted">Destino: <?= $pub["localidadDestino"] ?> - <?= $pub["Provinciadestino"] ?></h6>
+                                                <h6 class="card-subtitle mb-2 text-muted">Origen: <?= $gestor->fetch_provinciaYLocalidad_por_idLocalidad($publicacion["localidadOrigen"]) ?></h6>
+                                                <h6 class="card-subtitle mb-2 text-muted">Destino: <?= $gestor->fetch_provinciaYLocalidad_por_idLocalidad($publicacion["localidadDestino"]) ?></h6>
                                                 <p class="card-text">Descripción: <?= $pub["descripcion"] ?></p>
                                             </div>
                                         </div>
@@ -355,8 +355,8 @@ $vehiculos = $gestor->obtener_vehiculos_por_usuario($us);
                                             <div class="card-body card-publicacion">
                                                 <h5 class="card-title"><?= $pub["titulo"] ?></h5>
                                                 <h6 class="card-subtitle mb-2 text-muted">Finalizada</h6>
-                                                <h6 class="card-subtitle mb-2 text-muted">Origen: <?= $pub["localidadOrigen"] ?> - <?= $pub["Provinciaorigen"] ?></h6>
-                                                <h6 class="card-subtitle mb-2 text-muted">Destino: <?= $pub["localidadDestino"] ?> - <?= $pub["Provinciadestino"] ?></h6>
+                                                <h6 class="card-subtitle mb-2 text-muted">Origen: <?= $gestor->fetch_provinciaYLocalidad_por_idLocalidad($publicacion["localidadOrigen"]) ?></h6>
+                                                <h6 class="card-subtitle mb-2 text-muted">Destino: <?= $gestor->fetch_provinciaYLocalidad_por_idLocalidad($publicacion["localidadDestino"]) ?></h6>
                                                 <p class="card-text">Descripción: <?= $pub["descripcion"] ?></p>
                                             </div>
                                         </div>

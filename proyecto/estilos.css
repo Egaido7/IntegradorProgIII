@@ -67,6 +67,7 @@
 }
 
 .header__option .material-icons {
+    user-select: none;
     font-size: xx-large;
     color: gray;
 }
