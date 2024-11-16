@@ -205,6 +205,7 @@ class GestorVeryDeli {
                 pr_destino.nombre AS nombreProvinciaDestino,
                 p.volumen, 
                 p.peso, 
+                p.idPublicacion,
                 p.imagenPublicacion,
                 p.titulo,
                 p.descripcion,
@@ -239,6 +240,7 @@ class GestorVeryDeli {
                 p.localidadDestino,
                 pr_destino.nombre AS nombreProvinciaDestino,
                 p.volumen, 
+                  p.idPublicacion,
                 p.peso, 
                 p.imagenPublicacion,
                 p.titulo,
@@ -275,6 +277,7 @@ class GestorVeryDeli {
                 p.localidadDestino,
                 pr_destino.nombre AS nombreProvinciaDestino,
                 p.volumen, 
+                  p.idPublicacion,
                 p.peso, 
                 p.imagenPublicacion,
                 p.titulo,
@@ -314,6 +317,7 @@ class GestorVeryDeli {
                     p.localidadOrigen, 
                     p.localidadDestino, 
                     p.imagenPublicacion,
+                      p.idPublicacion,
                     p.titulo,
                     p.descripcion,
                     p.estado
@@ -367,6 +371,7 @@ class GestorVeryDeli {
                     p.localidadOrigen, 
                     p.localidadDestino, 
                     p.imagenPublicacion,
+                    p.idPublicacion,
                     p.titulo,
                     p.descripcion,
                     p.estado
@@ -1076,6 +1081,8 @@ class GestorVeryDeli {
                 u.imagen AS usuarioImagen, 
                 u.nombre AS usuarioNombre, 
                 u.apellido AS usuarioApellido, 
+                l1.Nombrelocalidad AS localidadOrigenNombre,
+                l2.Nombrelocalidad AS localidadDestinoNombre,
                 p.volumen, 
                 p.peso, 
                 p.localidadOrigen,
@@ -1087,8 +1094,17 @@ class GestorVeryDeli {
                 p.estado
             FROM publicacion p
             JOIN usuario u ON p.idUsuario = u.idUsuario
-            WHERE (p.localidadOrigen = ? OR p.localidadDestino = ?)
-            AND p.estado = 0
+            JOIN localidad l1 ON p.localidadOrigen = l1.idLocalidad
+            JOIN localidad l2 ON p.localidadDestino = l2.idLocalidad
+            JOIN provincia prov1 ON l1.idProvincia = prov1.idProvincia
+            JOIN provincia prov2 ON l2.idProvincia = prov2.idProvincia
+            WHERE (
+                l1.Nombrelocalidad LIKE ? 
+                OR l2.Nombrelocalidad LIKE ?
+                OR prov1.nombre LIKE ?
+                OR prov2.nombre LIKE ?
+            )
+            AND p.estado = 0;
             ";
             
             $this->stmt = $this->conn->prepare($sql);
@@ -1097,8 +1113,11 @@ class GestorVeryDeli {
                 throw new Exception("Error al preparar la consulta: " . $this->conn->error);
             }
     
-            // Vincula el parámetro en las cuatro condiciones de búsqueda
-            $this->stmt->bind_param("ss", $localidad, $localidad);
+            // Agrega el comodín "%" para la búsqueda parcial
+            $localidad = "%" . $localidad . "%";
+    
+            // Vincula los parámetros en las cuatro condiciones de búsqueda
+            $this->stmt->bind_param("ssss", $localidad, $localidad, $localidad, $localidad);
             $this->stmt->execute();
             
             return $this->stmt->get_result()->fetch_all(MYSQLI_ASSOC);
@@ -1106,6 +1125,8 @@ class GestorVeryDeli {
             throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
         }
     }
+    
+    
     public function insertarImagen() {
         // Define la carpeta absoluta donde se guardarán las imágenes
         $carpetaDestinoAbsoluta = $_SERVER['DOCUMENT_ROOT'] . "/Integrador/IntegradorProgIII/proyecto/imagenes/imagenesUsuario/";
