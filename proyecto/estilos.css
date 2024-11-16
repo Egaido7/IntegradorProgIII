@@ -48,9 +48,18 @@
     outline-width: 0;
 }
 
+#barraBusqueda {
+    width: 22vw;
+}
+
 .headerExpandido {
-    width: 50vw;
-    margin-left: 100px;
+    width: 60vw;
+    position: absolute;
+    left: 20vw;
+}
+
+.headerExpandido form {
+    width: 100%;
 }
 
 .header__middle {
