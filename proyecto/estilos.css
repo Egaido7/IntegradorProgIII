@@ -67,6 +67,7 @@
 }
 
 .header__option .material-icons {
+    user-select: none;
     font-size: xx-large;
     color: gray;
 }
@@ -117,6 +118,32 @@
     color: #52b04c;
 }
 
+.btn-primary:hover, 
+.btn-primary:focus, 
+.btn-primary:active {
+    background-color: #eff2f5;
+    border: 1px solid #52b04c;
+    color: #52b04c;
+}
+
+.btn-success {
+    color: #eff2f5;
+    border: 1px solid transparent;
+    box-sizing: border-box;
+    border-radius: 20px; /* Bordes redondeados */
+    padding: 10px 20px; /* Espacio alrededor del texto */
+    transition: background-color 0.3s ease, color 0.3s ease;
+    font-size: 16px; /* Ajusta el tamaño del texto si es necesario */
+}
+
+.btn-success:hover, 
+.btn-success:focus, 
+.btn-success:active {
+    background-color: #eff2f5;
+    border: 1px solid #198754;
+    color: #198754;
+}
+
 .btn-secondary {
     background-color: #eff2f5;
     color: #52b04c;
@@ -152,6 +179,24 @@
 .sidebarRow h4 {
     margin-left: 20px;
     font-weight: 600;
+}
+
+.sidebarRow a {
+    display: inline-flex;      /* Usamos inline-flex para evitar saltos de línea y ocupar el espacio necesario */
+    width: 100%;               /* Ocupa el ancho completo del contenedor */
+    align-items: center;       /* Centra verticalmente el contenido si es necesario */
+    text-decoration: none;     /* Elimina el subrayado del enlace */
+    color: inherit;            /* Mantiene el color del texto original */
+}
+
+.sidebarRow a > * {
+    color: inherit;            /* Mantiene el color original del <h4> */
+}
+
+
+.sidebarRow a > img {
+    width: 32px;
+    height: auto;
 }
 
 .sidebarRow .material-icons {
@@ -226,7 +271,7 @@ body {
     background-color: white;
     border-radius: 15px;
     box-shadow: 0px 5px 7px -7px rgba(0, 0, 0, 0.75);
-    width: 100%;
+    width: 60vw;
 }
 
 .messageSender__top {
@@ -278,7 +323,7 @@ body {
 /* post */
 
 .post {
-    width: 100%;
+    width: 60vw;
     margin-top: 15px;
     border-radius: 15px;
     background-color: white;
@@ -388,6 +433,47 @@ body {
     padding: 20px; /* Espaciado alrededor del texto */
 }
 
+.calificacion-container {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.calificacion-container > input {
+    display: none;
+}
+
+.calificacion-container > h5 {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    margin-bottom: auto;
+    
+}
+
+.calificacion-container > label {
+    margin: 0 10px;
+    color: #6c757d;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.calificacion-container > input:checked ~ label,
+.calificacion-container:not(:checked) > label:hover,
+.calificacion-container:not(:checked) > label:hover ~ label {
+    color: #52b04c;
+}
+
+.calificacion-container > input:checked + label:hover,
+.calificacion-container > input:checked ~ label:hover,
+.calificacion-container > label:hover ~ input:checked ~ label,
+.calificacion-container > input:checked ~ label:hover ~ label {
+    color: #52b04c;
+}
+
+
+
 scroll-container {
     margin:150px;
     display: block;
@@ -461,14 +547,6 @@ scroll-container {
     .header__option.active {
         border-bottom: 4px solid #52b04c;
     }
-    
-    .header__option:hover {
-        background-color: #eff2f5;
-        border-radius: 10px;
-        align-items: center;
-        padding: 0 30px;
-        border-bottom: none;
-    }
 }
 
 @media (max-width: 991px) {
@@ -528,6 +606,18 @@ scroll-container {
         height: 10vh;
         border-radius: 0;
         width: 100%;
+    }
+
+    .header__option:hover {
+        background-color: #eff2f5;
+        border-radius: 10px;
+        align-items: center;
+        padding: 0 30px;
+        border-bottom: none;
+    }
+
+    .messageSender, .post {
+        width: 80vw;
     }
 }
 

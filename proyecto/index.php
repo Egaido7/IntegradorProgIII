@@ -56,8 +56,6 @@ if (isset($_POST['btnEnviarPublicacion'])) {
     $idUsuario,
     $volumenProducto,
     $pesoProducto,
-    $provinciaOrigen, // Guarda el nombre de la provincia
-    $provinciaDestino, // Guarda el nombre de la provincia
     $fechaPublicacion,
     $rutaImagen,
     $descripcionProducto,
@@ -102,7 +100,7 @@ if (isset($_POST['verPublicacion'])) {
   <title>Inicio - Very Deli</title>
   <link rel="stylesheet" href="estilos.css" />
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
 </head>
 
@@ -179,27 +177,43 @@ if (isset($_POST['verPublicacion'])) {
   <!-- main body starts -->
   <div class="main__body">
     <!-- sidebar starts -->
+    <?php if (isset($_SESSION["usuario"])) { ?>
     <div class="sidebar">
       <div class="sidebarRow">
-        <h4><?= htmlspecialchars($_SESSION['nombreU']) ?> <?= htmlspecialchars($_SESSION['apellidoU']) ?></h4>
+        <a href="perfil.php?tab=publicaciones" class="text-decoration-none">
+          <?php if ($usuario['imagen']) { ?>
+            <img src="imagenes/<?= $usuario["imagen"] ?>" alt="avatar" class="avatar rounded-circle img-fluid border">
+          <?php } else { ?>
+              <img src="http://ssl.gstatic.com/accounts/ui/avatar_2x.png" class="avatar rounded-circle img-fluid border"
+              alt="avatar">
+          <?php } ?>  
+          <h4><?= ucfirst($usuario["nombre"]) . " " . ucfirst($usuario["apellido"]) ?></h4>
+        </a>
+      </div>
+      
+      <div class="sidebarRow">
+        <a href="buscador.php" class="text-decoration-none">
+          <span class="material-icons"> search </span>
+          <h4>Buscar Publicaciones</h4>
+        </a>
       </div>
 
       <div class="sidebarRow">
-        <span class="material-icons"> emoji_flags </span>
-        <h4>Historial</h4>
+        <a href="perfil.php?tab=publicaciones" class="text-decoration-none">
+          <span class="material-icons"> storefront </span>
+          <h4>Mis Publicaciones</h4>
+        </a>
       </div>
-
+      
       <div class="sidebarRow">
-        <span class="material-icons"> people </span>
-        <h4>Calificaciones</h4>
+        <a href="perfil.php?tab=calificaciones" class="text-decoration-none">
+          <span class="material-icons"> star </span>
+          <h4>Calificaciones</h4>
+        </a>
       </div>
-
-      <div class="sidebarRow">
-        <span class="material-icons"> chat </span>
-        <h4>Mensajes</h4>
-      </div>
-
+      
     </div>
+    <?php } ?>
     <!-- sidebar ends -->
 
     <!-- feed starts -->
@@ -216,13 +230,12 @@ if (isset($_POST['verPublicacion'])) {
         <div class="messageSender__bottom">
           <?php if (isset($_SESSION["usuario"])) {
             echo "<div class='messageSender__option'>";
-            echo "<span style='color: red' class='material-icons'> publish </span>";
+            echo "<span style='color: #52b04c' class='material-icons'> publish </span>";
             echo "<button data-bs-toggle='modal' data-bs-target='#publicarModal' style='background: none; border: none; padding: 0; color: inherit; font: inherit; cursor: pointer;' >publicar</button> ";
             echo "</div>";
           } else {
             echo "<div class='messageSender__option'>";
-            echo "<span style='color: red' class='material-icons'> publish </span>";
-            echo "<button onclick=\"alert('para publicar hay que iniciar sesion');\" style='background: none; border: none; padding: 0; color: inherit; font: inherit; cursor: pointer;'>publicar</button>";
+            echo "<button data-bs-toggle='modal' data-bs-target='#loginModal' style='background: none; border: none; padding: 0; color: #52b04c; font: inherit; cursor: pointer;'>Inicie sesión para publicar una solicitud</button>";
             echo "</div>";
           }
           ?>
@@ -235,16 +248,10 @@ if (isset($_POST['verPublicacion'])) {
       <!-- post starts -->
       <div class="post">
         <?php
-        $publicacionVista = new GestorVeryDeli();
-        $publicacionVista->mostrar_publicaciones();
+        $gestor->mostrar_publicaciones();
         ?>
       </div>
       <!-- post ends -->
-    </div>
-    <!-- feed ends -->
-
-    <div style="flex: 0.20" class="widgets">
-
     </div>
   </div>
   <!-- main body ends -->
@@ -293,20 +300,11 @@ if (isset($_POST['verPublicacion'])) {
               <select class="form-select" aria-label="ProvinciaOrigen" name="ProvinciaOrigen" id="ProvinciaOrigen" required>
                 <option value="">Selecciona la provincia</option>
                 <?php
-                $conexion = mysqli_connect('localhost', 'user_personas', '45382003', 'very_deli');
-                if (!$conexion) {
-                  die("Conexión fallida: " . mysqli_connect_error());
-                }
+                $provincias = $gestor->fetch_provincias();
 
-                // Configurar la conexión para usar UTF-8
-                mysqli_set_charset($conexion, 'utf8mb4');
-                $consul = "SELECT nombreProvincia, idProvincia FROM provincia";
-                $resultado = mysqli_query($conexion, $consul);
-
-                while ($row = mysqli_fetch_assoc($resultado)) {
-                  echo "<option value= '{$row['idProvincia']}'> {$row['nombreProvincia']} </option>";
-                }
-                ?>
+                foreach($provincias as $row) { ?>
+                  <option value= '<?= $row['idProvincia'] ?>'> <?= $row['nombre'] ?> </option>
+                <?php } ?>
               </select>
 
               <div class="invalid-feedback" id="pubProvinciaOrigen"></div>
@@ -332,14 +330,9 @@ if (isset($_POST['verPublicacion'])) {
               <select class="form-select" aria-label="ProvinciaDestino" name="ProvinciaDestino" id="ProvinciaDestino" required title="debe seleccionar una opcion valida">
                 <option value="">Selecciona la provincia</option>
                 <?php
-
-                // Configurar la conexión para usar UTF-8
-                mysqli_set_charset($conexion, 'utf8mb4');
-                $consul = "SELECT nombreProvincia, idProvincia FROM provincia";
-                $resultado = mysqli_query($conexion, $consul);
-
-                while ($row = mysqli_fetch_assoc($resultado)) {
-                  echo "<option value= '{$row['idProvincia']}'> {$row['nombreProvincia']} </option>";
+                $provincias = $gestor->fetch_provincias();
+                foreach($provincias as $row) {
+                  echo "<option value= '{$row['idProvincia']}'> {$row['nombre']} </option>";
                 }
                 ?>
               </select>
@@ -398,7 +391,6 @@ if (isset($_POST['verPublicacion'])) {
     crossorigin="anonymous"
     src="https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v10.0"
     nonce="zUxEq08J"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
   <script>
     document.addEventListener("DOMContentLoaded", function() {

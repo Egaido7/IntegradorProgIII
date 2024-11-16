@@ -82,18 +82,18 @@
 
   if (isset($enviarCalificacion)) {
     $fechaComentario = date('Y-m-d');
-   if ($usuario == $publicacion['idUsuario']) {
+    if ($usuario == $publicacion['idUsuario']) {
       $calificado = $publicacion['postulanteElegido'];
     } else {
       $calificado = $publicacion['idUsuario'];
     }
     $calificacion = intval($calificacion);
-  
+
     $publicacionControl->insertar_calificacion($usuario, $calificacion, $opinion, $calificado, $publicacion['idPublicacion'], $fechaComentario);
     header("Location: " . $_SERVER['PHP_SELF']); // Redirige a la misma página sin datos en POST
     exit(); // Asegura que se detenga el procesamiento adicional  
   }
-  
+
   if (isset($comentarioBtn)) {
 
     // Obtener la fecha y hora actual
@@ -104,12 +104,12 @@
     exit(); // Asegura que se detenga el procesamiento adicional    
   }
 
-if(isset($finalizado)){
-  $fecha= date('Y-m-d');
-$publicacionControl->actualizar_publicacionFinalizada($publicacion['idPublicacion'],$fecha);
-  header("Location: " . $_SERVER['PHP_SELF']); // Redirige a la misma página sin datos en POST
-exit(); // Asegura que se detenga el procesamiento adicional  
-}
+  if (isset($finalizado)) {
+    $fecha = date('Y-m-d');
+    $publicacionControl->actualizar_publicacionFinalizada($publicacion['idPublicacion'], $fecha);
+    header("Location: " . $_SERVER['PHP_SELF']); // Redirige a la misma página sin datos en POST
+    exit(); // Asegura que se detenga el procesamiento adicional  
+  }
   if (isset($btnElegir)) {
 
     $publicacionControl->actualizar_postulanteElegido($publicacion['idPublicacion'], $idElegido);
@@ -123,84 +123,83 @@ exit(); // Asegura que se detenga el procesamiento adicional
     header("Location: " . $_SERVER['PHP_SELF']); // Redirige a la misma página sin datos en POST
     exit(); // Asegura que se detenga el procesamiento adicional  
   }
-if($publicacion['estado'] == 2){
-  $fecha7 = date('Y-m-d', strtotime($publicacion['fechaPublicacion'].'+ 7 days'));
-}
-if(isset($fecha7)){
-  if($fechap > $fecha7){
-if($publicacionControl->publicacion_calificada($publicacion['idPublicacion']) == 0){
-  $usuario1 = $publicacionControl->fetch_calificaciones_por_publicacion($publicacion['idUsuario'], $publicacion['idPublicacion']);
-  $usuario2 = $publicacionControl->fetch_calificaciones_por_publicacion($publicacion['postulanteElegido'], $publicacion['idPublicacion']);
-  if (empty($usuario1)) {
-    $publicacionControl->insertar_calificacion($publicacion['idUsuario'], -1, "no califico en mas de una semana", $publicacion['idUsuario'], $publicacion['idPublicacion'], $fechap);
+  if ($publicacion['estado'] == 2) {
+    $fecha7 = date('Y-m-d', strtotime($publicacion['fechaPublicacion'] . '+ 7 days'));
   }
-if(empty($usuario2)){
-  $publicacionControl->insertar_calificacion($publicacion['postulanteElegido'], -1, "no califico en mas de una semana", $publicacion['postulanteElegido'], $publicacion['idPublicacion'], $fechap);
-}
-}
-}
-
-}
+  if (isset($fecha7)) {
+    if ($fechap > $fecha7) {
+      if ($publicacionControl->publicacion_calificada($publicacion['idPublicacion']) == 0) {
+        $usuario1 = $publicacionControl->fetch_calificaciones_por_publicacion($publicacion['idUsuario'], $publicacion['idPublicacion']);
+        $usuario2 = $publicacionControl->fetch_calificaciones_por_publicacion($publicacion['postulanteElegido'], $publicacion['idPublicacion']);
+        if (empty($usuario1)) {
+          $publicacionControl->insertar_calificacion($publicacion['idUsuario'], -1, "no califico en mas de una semana", $publicacion['idUsuario'], $publicacion['idPublicacion'], $fechap);
+        }
+        if (empty($usuario2)) {
+          $publicacionControl->insertar_calificacion($publicacion['postulanteElegido'], -1, "no califico en mas de una semana", $publicacion['postulanteElegido'], $publicacion['idPublicacion'], $fechap);
+        }
+      }
+    }
+  }
   ?>
 
-<div class="header">
-        <div class="header__left">
-            <a href="index.php">
-                <img src="LogoVeryDeli.svg" alt="Logo" class="logo">
-            </a>
-            <div class="header__input" id="header_busqueda">
-                <span class="material-icons"> search </span>
-                <input type="text" placeholder="Buscar publicaciones" id="barraBusqueda" />
-            </div>
-        </div>
-
-        <div class="header__middle" id="header_medio">
-            <div class="header__option">
-                <a href="index.php"><span class="material-icons"> home </span></a>
-            </div>
-            <div href="buscador.php" class="header__option active">
-                <a href="buscador.php"><span class="material-icons"> storefront </span></a>
-            </div> 
-            <div class="header__option">
-                <a href="perfil.php"><span class="material-icons"> account_circle </span></a>
-            </div>
-        </div>
-
-        <div class="header__right">
-            <div class="header__info">
-                <?php if (isset($_SESSION["usuario"])) { ?>
-                    <form action="cerrarSesion.php" method="post">
-                        <button type="submit" class="btn btn-secondary">Cerrar Sesión</button>
-                    </form>
-                <?php } else { ?>
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal">Iniciar Sesión</button>
-                <?php } ?>
-            </div>
-        </div>
-
-        <div class="header__responsive">
-            <?php if (isset($_SESSION["usuario"])) { ?>
-            <a href="index.php" class="header__option">
-                <span class="material-icons"> home </span>
-                <span>Inicio</span>
-            </a>
-            <a href="buscador.php" class="header__option">
-                <span class="material-icons"> search </span>
-                <span>Buscar Pedidos</span>
-            </a>
-            <a href="perfil.php?tab=calificaciones" class="header__option">
-                <span class="material-icons"> star </span>
-                <span>Calificaciones</span>
-            </a>
-            <a href="perfil.php?tab=publicaciones" class="header__option">
-                <span class="material-icons"> person </span>
-                <span>Perfil</span>
-            </a>
-            <?php } else { ?>
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal">Iniciar Sesión</button>
-            <?php } ?>
-        </div>
+  <div class="header">
+    <div class="header__left">
+      <a href="index.php">
+        <img src="LogoVeryDeli.svg" alt="Logo" class="logo">
+      </a>
+      <div class="header__input" id="header_busqueda">
+        <span class="material-icons"> search </span>
+        <input type="text" placeholder="Buscar publicaciones" id="barraBusqueda" />
+      </div>
     </div>
+
+    <div class="header__middle" id="header_medio">
+      <div class="header__option">
+        <a href="index.php"><span class="material-icons"> home </span></a>
+      </div>
+      <div href="buscador.php" class="header__option active">
+        <a href="buscador.php"><span class="material-icons"> storefront </span></a>
+      </div>
+      <div class="header__option">
+        <a href="perfil.php"><span class="material-icons"> account_circle </span></a>
+      </div>
+    </div>
+
+    <div class="header__right">
+      <div class="header__info">
+        <?php if (isset($_SESSION["usuario"])) { ?>
+          <form action="cerrarSesion.php" method="post">
+            <button type="submit" class="btn btn-secondary">Cerrar Sesión</button>
+          </form>
+        <?php } else { ?>
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal">Iniciar Sesión</button>
+        <?php } ?>
+      </div>
+    </div>
+
+    <div class="header__responsive">
+      <?php if (isset($_SESSION["usuario"])) { ?>
+        <a href="index.php" class="header__option">
+          <span class="material-icons"> home </span>
+          <span>Inicio</span>
+        </a>
+        <a href="buscador.php" class="header__option">
+          <span class="material-icons"> search </span>
+          <span>Buscar Pedidos</span>
+        </a>
+        <a href="perfil.php?tab=calificaciones" class="header__option">
+          <span class="material-icons"> star </span>
+          <span>Calificaciones</span>
+        </a>
+        <a href="perfil.php?tab=publicaciones" class="header__option">
+          <span class="material-icons"> person </span>
+          <span>Perfil</span>
+        </a>
+      <?php } else { ?>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal">Iniciar Sesión</button>
+      <?php } ?>
+    </div>
+  </div>
 
 
   <!--contenido del producto -->
@@ -209,71 +208,82 @@ if(empty($usuario2)){
     <img src="<?php echo $publicacion['imagenPublicacion'] ?>" class="card-img-top" alt="..." style="max-width: auto; height: 50%; flex: 1 1 auto;">
     <div class="card-body" style="flex: 1 1 300px; padding: 20px;">
       <class="card-title">
-        <h1><?php echo $publicacion['titulo'] ?></h1>
-        <p class="card-text">Origen: <?php echo $publicacion['Provinciaorigen']."/".$publicacion['localidadOrigen'];
-        if($publicacion['estado'] != 0){echo "/".$publicacion['domicilioOrigen'];}?></p>
-        <p class="card-text">destino <?php echo $publicacion['Provinciadestino']."/".$publicacion['localidadDestino'];
-         if($publicacion['estado'] != 0){echo "/".$publicacion['domicilioDestino'];} ?></p>
+        <h1><?= $publicacion['titulo'] ?></h1>
+        <p class="card-text">Origen: </p>
+        <ul>
+          <li><?= $publicacionControl->fetch_provinciaYLocalidad_por_idLocalidad($publicacion["localidadOrigen"]) ?></li>
+          <?php if ($publicacion['estado'] != 0) { ?>
+            <li><?= $publicacion['domicilioOrigen'] ?></li> 
+          <?php } ?>
+        </ul>
+
+        <p class="card-text">Destino: </p>
+        <ul>
+          <li><?= $publicacionControl->fetch_provinciaYLocalidad_por_idLocalidad($publicacion["localidadDestino"]) ?></li>
+          <?php if ($publicacion['estado'] != 0) { ?>
+            <li><?= $publicacion['domicilioDestino'] ?></li> 
+          <?php } ?>
+        </ul> 
         <p class="card-text">Peso: <?php echo $publicacion['peso'] ?>kg</p>
         <p class="card-text">Volumen: <?php echo $publicacion['volumen'] ?></p>
         <p class="card-text"><?php echo $publicacion['descripcion'] ?></p>
-        <?php if($publicacion['estado'] != 0){ 
-          $usuario = $publicacionControl->fetch_usuario_por_id($publicacion['postulanteElegido']);?>
-        <p class="card-text"> Contacto:<?php echo $publicacion['contacto'] ?></p>
-        <p class="card-text">Postulante Elegido:<?php echo $usuario['nombre']." ".$usuario['apellido'] ?></p>
-        <p class="card-text"> nombre a recibir:<?php echo $publicacion['nombreRecibir'] ?></p>
-        <?php }  
+        <?php if ($publicacion['estado'] != 0) {
+          $usuario = $publicacionControl->fetch_usuario_por_id($publicacion['postulanteElegido']); ?>
+          <p class="card-text"> Contacto:<?php echo $publicacion['contacto'] ?></p>
+          <p class="card-text">Postulante Elegido:<?php echo $usuario['nombre'] . " " . $usuario['apellido'] ?></p>
+          <p class="card-text"> nombre a recibir:<?php echo $publicacion['nombreRecibir'] ?></p>
+        <?php }
         ?>
-        
-        <?php if($tipo == 4 && $publicacion['estado'] == 0){?>
-        <a href="#" class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#postulacionModal">postularse</a>
-       <?php
+
+        <?php if ($tipo == 4 && $publicacion['estado'] == 0) { ?>
+          <a href="#" class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#postulacionModal">postularse</a>
+        <?php
         }
-        if($tipo == 2 && $publicacion['estado'] == 1){?>
+        if ($tipo == 2 && $publicacion['estado'] == 1) { ?>
           <form action="publicacion.php" method="post">
             <div class="modal-footer ">
               <button class="btn btn-primary" type="submit" name="finalizado">envio finalizado</button>
             </div>
           </form>
-       <?php }
-        if($tipo == 0){
-echo "inicie sesion para poder postularte";
+        <?php }
+        if ($tipo == 0) {
+          echo "inicie sesion para poder postularte";
         }
         ?>
     </div>
   </div>
   <!-- MODAL -->
   <!-- MODAL Login -->
-    <div class="modal fade" id="postulacionModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h1 class="modal-title fs-5" id="modalLabel">ingrese monto</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <form id="formpostulacion" method="post" action="publicacion.php">
-              <div class="form-group">
-                <label for="monto">Monto:</label>
-                <input type="number" class="form-control" id="monto" name="monto" required>
-                <div class="invalid-feedback" id="loginPwdFeedback"></div>
-              </div>
-              <?php
-              if ($error == 1) {
-                echo $errorm;
-              }
-
-              ?>
-              <div class="modal-footer">
-                <input type="submit" id="btnpostularse" name="btnpostularse" class="btn btn-primary"></input>
-
-              </div>
-            </form>
-          </div>
-
+  <div class="modal fade" id="postulacionModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="modalLabel">ingrese monto</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
+        <div class="modal-body">
+          <form id="formpostulacion" method="post" action="publicacion.php">
+            <div class="form-group">
+              <label for="monto">Monto:</label>
+              <input type="number" class="form-control" id="monto" name="monto" required>
+              <div class="invalid-feedback" id="loginPwdFeedback"></div>
+            </div>
+            <?php
+            if ($error == 1) {
+              echo $errorm;
+            }
+
+            ?>
+            <div class="modal-footer">
+              <input type="submit" id="btnpostularse" name="btnpostularse" class="btn btn-primary"></input>
+
+            </div>
+          </form>
+        </div>
+
       </div>
     </div>
+  </div>
 
   <?php
   if ($tipo == 1 && $publicacion['estado'] != 1) {
@@ -323,66 +333,66 @@ echo "inicie sesion para poder postularte";
   </div>
 
 
-<?php
-if ($tipo == 1 || $tipo == 2 || $tipo == 3) {
-?>
-  <div class="container" style="padding-left: 60px;">
-    <h1>Comentarios</h1> <a href="http://creaticode.com"></a>
-  </div>
-  <div class="card d-flex container" style="padding-bottom: 80px; width: 70%; margin-bottom: 100px; display: flex; flex-direction: column; justify-content: center; height: 400px;border: 1px solid #757575; padding: 10px; border-radius: 8px; background-color: rgb(255, 255, 255);">
-
-    <div class="scrollable-div" style="overflow-y: auto;">
-      <div class="comments-container" style="padding-left:0;">
-
-
-      <ul id="comments-list" class="comments-list">
-  <?php foreach ($comentarios as $mensaje) {
-    $usuario = $publicacionControl->fetch_usuario_por_id($mensaje['idUsuario']);
+  <?php
+  if ($tipo == 1 || $tipo == 2 || $tipo == 3) {
   ?>
-    <li>
-      <div class="comment-main-level" style="margin-top: 20px; margin-bottom: 10px; display: flex; align-items: flex-start;">
-        <!-- Avatar -->
-        <div class="comment-avatar" style="margin-right: 15px;">
-          <img src="imagenes/<?php echo $usuario['imagen'] ?>" alt="perfil" style="width: 50px; height: 50px; border-radius: 50%;">
-        </div>
-        <!-- Contenedor del Comentario -->
-        <div class="comment-box" style="flex: 1;">
-          <div class="comment-head" style="display: flex; justify-content: space-between; align-items: center;">
-            <h6 class="comment-name <?php if ($usuario['idUsuario'] == $publicacion['idUsuario']) {
-                                      echo "by-author";
-                                    } ?>" style="margin: 0;">
-              <a href="http://creaticode.com/blog"><?php echo $usuario['nombre'] ?></a>
-            </h6>
-            <span style="font-size: 0.9em; color: #999;"><?php echo $mensaje['fechaComentario'] . " " . $mensaje['hora'] ?></span>
-          </div>
-          <div class="comment-content" style="margin-top: 5px;">
-            <?php echo $mensaje['comentario'] ?>
-          </div>
-        </div>
-      </div>
-    </li>
-  <?php } ?>
-</ul>
-      </div>
-      <div class="chat-form">
-
-      </div>
+    <div class="container" style="padding-left: 60px;">
+      <h1>Comentarios</h1> <a href="http://creaticode.com"></a>
     </div>
-    <?php if ($publicacion['estado'] != 2){?>
-    <form method="post" action="publicacion.php" class="chat-form">
-      <label></label><br>
-      <input type="text" id="mensajeA" name="mensajeA" style="width: 80%; height: 30px; " required>
-      <input type="submit" name="comentarioBtn" value="enviar" style="width: 18%;">
-    </form> 
-    <?php }?>
-  </div>
- 
-<?php
-    
-}
-?>
-<!-- Contenedor Principal -->
-<?php  if($publicacion['estado'] == 2  and ($tipo == 1 or $tipo == 2)){?>  
+    <div class="card d-flex container" style="padding-bottom: 80px; width: 70%; margin-bottom: 100px; display: flex; flex-direction: column; justify-content: center; height: 400px;border: 1px solid #757575; padding: 10px; border-radius: 8px; background-color: rgb(255, 255, 255);">
+
+      <div class="scrollable-div" style="overflow-y: auto;">
+        <div class="comments-container" style="padding-left:0;">
+
+
+          <ul id="comments-list" class="comments-list">
+            <?php foreach ($comentarios as $mensaje) {
+              $usuario = $publicacionControl->fetch_usuario_por_id($mensaje['idUsuario']);
+            ?>
+              <li>
+                <div class="comment-main-level" style="margin-top: 20px; margin-bottom: 10px; display: flex; align-items: flex-start;">
+                  <!-- Avatar -->
+                  <div class="comment-avatar" style="margin-right: 15px;">
+                    <img src="imagenes/<?php echo $usuario['imagen'] ?>" alt="perfil" style="width: 50px; height: 50px; border-radius: 50%;">
+                  </div>
+                  <!-- Contenedor del Comentario -->
+                  <div class="comment-box" style="flex: 1;">
+                    <div class="comment-head" style="display: flex; justify-content: space-between; align-items: center;">
+                      <h6 class="comment-name <?php if ($usuario['idUsuario'] == $publicacion['idUsuario']) {
+                                                echo "by-author";
+                                              } ?>" style="margin: 0;">
+                        <a href="http://creaticode.com/blog"><?php echo $usuario['nombre'] ?></a>
+                      </h6>
+                      <span style="font-size: 0.9em; color: #999;"><?php echo $mensaje['fechaComentario'] . " " . $mensaje['hora'] ?></span>
+                    </div>
+                    <div class="comment-content" style="margin-top: 5px;">
+                      <?php echo $mensaje['comentario'] ?>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            <?php } ?>
+          </ul>
+        </div>
+        <div class="chat-form">
+
+        </div>
+      </div>
+      <?php if ($publicacion['estado'] != 2) { ?>
+        <form method="post" action="publicacion.php" class="chat-form">
+          <label></label><br>
+          <input type="text" id="mensajeA" name="mensajeA" style="width: 80%; height: 30px; " required>
+          <input type="submit" name="comentarioBtn" value="enviar" style="width: 18%;">
+        </form>
+      <?php } ?>
+    </div>
+
+  <?php
+
+  }
+  ?>
+  <!-- Contenedor Principal -->
+  <?php if ($publicacion['estado'] == 2  and ($tipo == 1 or $tipo == 2)) { ?>
 
   <div class="container " style="padding-left: 50px;">
     <h1>Calificacion</h1>
@@ -401,64 +411,64 @@ if ($tipo == 1 || $tipo == 2 || $tipo == 3) {
         </select>
       </div>
 
-      <div class="mb-3">
-        <label for="opinion" class="form-label">Comentario:</label>
-        <input type="text" name="opinion" id="opinion" class="form-control" placeholder="Escribe tu comentario">
-      </div>
-
-      <div class="text-center">
-        <button type="submit" name="enviarCalificacion" class="btn btn-primary">Enviar Calificación</button>
-      </div>
-    </form>
-  <?php  ?>
-</div>
-
-  <?php
-    } else {
-      $usuario1 = $publicacionControl->fetch_calificaciones_por_publicacion($publicacion['idUsuario'], $publicacion['idPublicacion']);
-      $usuario2 = $publicacionControl->fetch_calificaciones_por_publicacion($publicacion['postulanteElegido'], $publicacion['idPublicacion']);
-      if (empty($usuario1) || empty($usuario2)) {
-        echo "<h3>espere a que el otro usuario publique si calificacion para poder ver su calificacion</h3>";
-      } else {
-        $info1 = $publicacionControl->fetch_usuario_por_id($usuario1['idCalifica']);
-        $info2 = $publicacionControl->fetch_usuario_por_id($usuario2['idCalifica']);
-  ?>
-
-    <div class="container" style="padding-bottom: 80px; padding-top: 20px; width: 100%; margin-bottom: 20px; display: flex; flex-direction: column; justify-content: center; max-height: 80vh;">
-      <div class="scrollable-div" style="overflow-y: auto; max-height: 400px; border: 1px solid #757575; padding: 10px; border-radius: 8px; background-color: rgb(255, 255, 255);">
-
-        <!-- Usuario 1 -->
-        <div class="postulante-row" style="display: flex; align-items: center; justify-content: space-between; padding: 10px; border-bottom: 1px solid #ccc;">
-          <img class="user__avatar" src="imagenes/<?php echo $info1['imagen'] ?>" alt="" style="width: 50px; height: 50px; border-radius: 50%; margin-right: 15px;">
-
-          <div style="flex: 1;">
-            <h4 style="margin: 0;"><?php echo $info1['nombre'] . ' ' . $info1['apellido'] ?></h4>
+          <div class="mb-3">
+            <label for="opinion" class="form-label">Comentario:</label>
+            <input type="text" name="opinion" id="opinion" class="form-control" placeholder="Escribe tu comentario">
           </div>
 
-          <div style="flex-shrink: 0; padding-right: 20px; white-space: nowrap;">Calificación: <?php echo $usuario1['puntaje'] ?></div>
-          <div style="flex: 2; white-space: normal; padding-left: 10px;"><?php echo $usuario1['comentario'] ?></div>
-        </div>
-
-        <!-- Usuario 2 -->
-        <div class="postulante-row" style="display: flex; align-items: center; justify-content: space-between; padding: 10px; border-bottom: 1px solid #ccc;">
-          <img class="user__avatar" src="imagenes/<?php echo $info2['imagen'] ?>" alt="" style="width: 50px; height: 50px; border-radius: 50%; margin-right: 15px;">
-
-          <div style="flex: 1;">
-            <h4 style="margin: 0;"><?php echo $info2['nombre'] . ' ' . $info2['apellido'] ?></h4>
+          <div class="text-center">
+            <button type="submit" name="enviarCalificacion" class="btn btn-primary">Enviar Calificación</button>
           </div>
-
-          <div style="flex-shrink: 0; padding-right: 20px; white-space: nowrap;">Calificación: <?php echo $usuario2['puntaje'] ?></div>
-
-          <div style="flex: 2; white-space: normal; padding-left: 10px;"><?php echo $usuario2['comentario'] ?></div>
-        </div>
-
-      </div>
+        </form>
+        <?php  ?>
     </div>
 
+    <?php
+      } else {
+        $usuario1 = $publicacionControl->fetch_calificaciones_por_publicacion($publicacion['idUsuario'], $publicacion['idPublicacion']);
+        $usuario2 = $publicacionControl->fetch_calificaciones_por_publicacion($publicacion['postulanteElegido'], $publicacion['idPublicacion']);
+        if (empty($usuario1) || empty($usuario2)) {
+          echo "<h3>espere a que el otro usuario publique si calificacion para poder ver su calificacion</h3>";
+        } else {
+          $info1 = $publicacionControl->fetch_usuario_por_id($usuario1['idCalifica']);
+          $info2 = $publicacionControl->fetch_usuario_por_id($usuario2['idCalifica']);
+    ?>
+
+      <div class="container" style="padding-bottom: 80px; padding-top: 20px; width: 100%; margin-bottom: 20px; display: flex; flex-direction: column; justify-content: center; max-height: 80vh;">
+        <div class="scrollable-div" style="overflow-y: auto; max-height: 400px; border: 1px solid #757575; padding: 10px; border-radius: 8px; background-color: rgb(255, 255, 255);">
+
+          <!-- Usuario 1 -->
+          <div class="postulante-row" style="display: flex; align-items: center; justify-content: space-between; padding: 10px; border-bottom: 1px solid #ccc;">
+            <img class="user__avatar" src="imagenes/<?php echo $info1['imagen'] ?>" alt="" style="width: 50px; height: 50px; border-radius: 50%; margin-right: 15px;">
+
+            <div style="flex: 1;">
+              <h4 style="margin: 0;"><?php echo $info1['nombre'] . ' ' . $info1['apellido'] ?></h4>
+            </div>
+
+            <div style="flex-shrink: 0; padding-right: 20px; white-space: nowrap;">Calificación: <?php echo $usuario1['puntaje'] ?></div>
+            <div style="flex: 2; white-space: normal; padding-left: 10px;"><?php echo $usuario1['comentario'] ?></div>
+          </div>
+
+          <!-- Usuario 2 -->
+          <div class="postulante-row" style="display: flex; align-items: center; justify-content: space-between; padding: 10px; border-bottom: 1px solid #ccc;">
+            <img class="user__avatar" src="imagenes/<?php echo $info2['imagen'] ?>" alt="" style="width: 50px; height: 50px; border-radius: 50%; margin-right: 15px;">
+
+            <div style="flex: 1;">
+              <h4 style="margin: 0;"><?php echo $info2['nombre'] . ' ' . $info2['apellido'] ?></h4>
+            </div>
+
+            <div style="flex-shrink: 0; padding-right: 20px; white-space: nowrap;">Calificación: <?php echo $usuario2['puntaje'] ?></div>
+
+            <div style="flex: 2; white-space: normal; padding-left: 10px;"><?php echo $usuario2['comentario'] ?></div>
+          </div>
+
+        </div>
+      </div>
+
 <?php
+        }
       }
     }
-  }
 ?>
 
 

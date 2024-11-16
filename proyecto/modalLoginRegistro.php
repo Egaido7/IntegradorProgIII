@@ -71,6 +71,33 @@
                         <div class="invalid-feedback" id="regEmailFeedback"></div>
                     </div>
                     <div class="form-group">
+                        <label for="Provincia">Provincia de residencia: </label>
+                        <select class="form-select" aria-label="Provincia" name="Provincia" id="Provincia" required>
+                            <option value="">Selecciona la provincia</option>
+                            <?php
+                            $provincias = $gestor->fetch_provincias();
+
+                            foreach($provincias as $row) { ?>
+                            <option value= '<?= $row['idProvincia'] ?>'> <?= $row['nombre'] ?> </option>
+                            <?php } ?>
+                        </select>
+
+                        <div class="invalid-feedback" id="regProvincia"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="Localidad">Localidad de residencia: </label>
+                        <select class="form-select" aria-label="Localidad" name="Localidad" id="Localidad" required title="debe seleccionar una opción válida">
+                            <option value="">Selecciona la localidad</option>
+                        </select>
+
+                        <div class="invalid-feedback" id="regLocalidad"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="domicilio">Domicilio:</label>
+                        <input type="text" class="form-control" name="domicilio" id="domicilio" pattern="^[a-zA-Z0-9\s]{5,}$" title="Su domicilio debe tener letras y números, mínimo 5 caracteres" required>
+                        <div class="invalid-feedback" id="domicilioFeedback"></div>
+                    </div>
+                    <div class="form-group">
                         <label for="registroPwd">Contraseña:</label>
                         <input type="password" class="form-control" name="registroPwd" id="registroPwd" required
                             minlength="8">
@@ -88,7 +115,7 @@
                         } ?>
                     </div>
                     <div class="modal-footer">
-                        <input type="submit" name="btnEnviarRegistro" id="btnEnviarRegistrophp" class="btn btn-primary">
+                        <input type="submit" name="btnEnviarRegistro" id="btnEnviarRegistrophp" class="btn btn-primary" value="Registrarme">
                     </div>
                 </form>
             </div>

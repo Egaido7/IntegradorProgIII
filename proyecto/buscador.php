@@ -1,7 +1,8 @@
 <?php
 
 include 'loginRegistro.php';
-
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 // Variables para almacenar resultados
 $publicaciones = [];
 
@@ -19,19 +20,19 @@ if(isset($_GET['buscar']) && !empty($_GET['buscar'])){
 } elseif (isset($_POST['botonFiltrar'])) {
     // Obtener y limpiar filtros de provincia y peso
     $filtroProvincias = $gestor->fetch_escape_string(trim($_POST['select_provincias']));
-    $filtroPeso = $gestor->fetch_escape_string(trim($_POST['select_descripcion'])); 
     $filtroProvinciasDestino =  $gestor->fetch_escape_string(trim($_POST['select_provinciasDestino']));
+    $filtroVolumen = $gestor->fetch_escape_string(trim($_POST['select_descripcion'])); 
 
     // Consultar publicaciones aplicando los filtros de manera dinámica
-    if (!empty($filtroProvincias) && !empty($filtroPeso) && !empty($filtroProvinciasDestino)) {
-        // Obtener publicaciones filtradas por provincia y peso
-        $publicaciones = $gestor->fetch_publicaciones_filtradas($filtroProvincias, $filtroPeso,$filtroProvinciasDestino );
+    if (!empty($filtroProvincias) && !empty($filtroVolumen) && !empty($filtroProvinciasDestino)) {
+        // Obtener publicaciones filtradas por provincia y volumen
+        $publicaciones = $gestor->fetch_publicaciones_filtradas($filtroProvincias, $filtroVolumen,$filtroProvinciasDestino );
     } else if(!empty($filtroProvincias) && !empty($filtroProvinciasDestino)){
         $publicaciones = $gestor->fetch_publicaciones_por_origen_y_destino($filtroProvincias,$filtroProvinciasDestino );
     }elseif (!empty($filtroProvincias)) {
         $publicaciones = $gestor->fetch_publicaciones_por_origen($filtroProvincias);
-    } elseif (!empty($filtroPeso)) {
-        $publicaciones = $gestor->fetch_publicaciones_por_peso($filtroPeso);
+    } elseif (!empty($filtroVolumen)) {
+        $publicaciones = $gestor->fetch_publicaciones_por_volumen($filtroVolumen);
     } elseif(!empty($filtroProvinciasDestino)){
         $publicaciones = $gestor->fetch_publicaciones_por_destino($filtroProvinciasDestino);
     }else {
@@ -63,6 +64,8 @@ if (isset($_POST['verPublicacion'])) {
     <link rel="stylesheet" href="estilos.css" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    
+    
 </head>
 
 <body>
@@ -146,10 +149,10 @@ if (isset($_POST['verPublicacion'])) {
         // Obtiene las provincias usando el método fetch_provincias
         $provincias = $gestor->fetch_provincias_ALL();             
          // Itera sobre cada provincia y crea una opción para el <select>
-         foreach ($provincias as $provincia) {
-         echo "<option value='{$provincia['nombreProvincia']}'>{$provincia['nombreProvincia']}</option>";
-         }
-         ?>
+        foreach ($provincias as $provincia) {
+            echo "<option value='{$provincia['idProvincia']}'>{$provincia['nombre']}</option>";
+        }
+        ?>
         </select><br>
 
 
@@ -161,7 +164,7 @@ if (isset($_POST['verPublicacion'])) {
         $provincias = $gestor->fetch_provincias_ALL();             
          // Itera sobre cada provincia y crea una opción para el <select>
          foreach ($provincias as $provincia) {
-         echo "<option value='{$provincia['nombreProvincia']}'>{$provincia['nombreProvincia']}</option>";
+         echo "<option value='{$provincia['idProvincia']}'>{$provincia['nombre']}</option>";
          }
          ?>
         </select><br>
@@ -196,8 +199,8 @@ if (isset($_POST['verPublicacion'])) {
                         <p>Descripción: <?= htmlspecialchars($publicacion['descripcion']) ?></p>
                         <p>Volumen: <?= htmlspecialchars($publicacion['volumen']) ?> m³</p>
                         <p>Peso: <?= htmlspecialchars($publicacion['peso']) ?> kg</p>
-                        <p>Origen: <?= htmlspecialchars($publicacion['provinciaOrigen']) ?></p>
-                        <p>Destino: <?= htmlspecialchars($publicacion['provinciaDestino']) ?></p>
+                        <p>Origen: <?= htmlspecialchars($gestor->fetch_provinciaYLocalidad_por_idLocalidad($publicacion['localidadOrigen'])) ?></p>
+                        <p>Destino: <?= htmlspecialchars($gestor->fetch_provinciaYLocalidad_por_idLocalidad($publicacion['localidadDestino'])) ?></p>
                     </div>
                     <div class="post__image">
                         <?php if (!isset($publicacion['imagenPublicacion'])) { ?>
@@ -235,7 +238,6 @@ if (isset($_POST['verPublicacion'])) {
     crossorigin="anonymous"
     src="https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v10.0"
     nonce="zUxEq08J"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
   <script>
     const barraBusquedaContainer = document.getElementById("header_busqueda");
     const barraBusqueda = document.getElementById("barraBusqueda");

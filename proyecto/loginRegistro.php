@@ -1,5 +1,5 @@
 <?php  
-
+//Maneja del inicio de sesión y el registro de usuario para todas las páginas que tengan login y registro
 session_start();
 
 include_once 'base de datos/gestorbd.php';
@@ -16,6 +16,8 @@ if(isset($_SESSION['usuario'])) {
     $apellido = trim($_POST['registroApellido']);
     $dni = trim($_POST['registroDni']);
     $correo = trim($_POST['registroEmail']);
+    $localidad = $_POST['Localidad'];
+    $domicilio = trim($_POST['domicilio']);
     $contraseña = trim($_POST['registroPwd']);
     $repeatcontraseña = trim($_POST['registroPwdConfirm']);
 
@@ -29,6 +31,8 @@ if(isset($_SESSION['usuario'])) {
       $_SESSION['apellido'] = $apellido;  // Cambiar 2 por el ID de usuario real
       $_SESSION['dni'] = $dni; // Cambiar 4 por el ID de publicación real
       $_SESSION['correo'] = $correo;
+      $_SESSION['localidad'] = $localidad;
+      $_SESSION['domicilio'] = $domicilio;
       $_SESSION['contraseña'] = $contraseña;
 
       // Redirige a insertar_postulante.php
