@@ -219,9 +219,12 @@ if (isset($_POST['verPublicacion'])) {
     <!-- feed starts -->
     <div class="feed">
       <!-- message sender starts -->
+
       <div class="messageSender">
-        <div class="messageSender__top">
+        <div class="messageSender__top">       
+          <?php if(isset($_SESSION['usuario'])){ ?>
           <img class="user__avatar post__avatar" src="imagenes/<?php echo $_SESSION['imagenU'] ?>" alt="fotoUser">
+          <?php } ?>
           <form>
             <input class="messageSender__input" placeholder="Publica acá abajo" type="text" disabled />
           </form>
