@@ -50,6 +50,32 @@ function validarLogin() {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
+    // Configuración de localidades
+    const selectProvincia = document.getElementById("Provincia");
+    const selectLocalidad = document.getElementById("Localidad");
+
+    selectProvincia.addEventListener("change", function() {
+        const idProvincia = selectProvincia.value;
+
+        // Limpia y establece la opción predeterminada
+        selectLocalidad.innerHTML = '<option value="" selected disabled>Selecciona la localidad</option>';
+
+        if (idProvincia) {
+            fetch(`getLocalidades.php?idProvincia=${idProvincia}`)
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(localidad => {
+                const option = document.createElement("option");
+                option.value = localidad.idLocalidad;
+                option.textContent = localidad.Nombrelocalidad;
+                selectLocalidad.appendChild(option);
+                });
+            })
+            .catch(error => console.error("Error al cargar localidades:", error));
+        }
+    });
+
+
     // Envío del formulario de registro
     document.getElementById("formRegistro").addEventListener("submit", function (event) {
         if (!validarRegistro()) {

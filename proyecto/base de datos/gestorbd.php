@@ -8,11 +8,13 @@ class GestorVeryDeli {
         $this->conn = $conexion;
     }
 
-    public function insertar_usuario($nombre, $apellido, $dni, $email, $pwd) {
+    public function insertar_usuario($nombre, $apellido, $dni, $email, $pwd, $idLocalidad, $domicilio) {
         try {
-            $this->stmt = $this->conn->prepare("INSERT INTO usuario(nombre, apellido, dni, email, contraseña, imagen) VALUES (?,?,?,?,?,?)");
+            $this->stmt = $this->conn->prepare("INSERT INTO usuario(nombre, apellido, dni, email, idLocalidad, domicilio, contraseña, imagen)
+             VALUES (?,?,?,?,?,?,?,?)");
             $dni = intval($dni);
-            $this->stmt->bind_param("ssiss", $nombre, $apellido, $dni, $email, $pwd, "publicacionDefault.jpg");
+            $imgDefault = "publicacionDefault.jpg";
+            $this->stmt->bind_param("ssisisss", $nombre, $apellido, $dni, $email, $idLocalidad, $domicilio, $pwd, $imgDefault);
             $this->stmt->execute();
             return $this->stmt->affected_rows;
         } catch (mysqli_sql_exception $e) {
