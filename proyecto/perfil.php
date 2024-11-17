@@ -169,9 +169,7 @@ if (!isset($_SESSION["usuario"])) {
                     <li class="nav-item">
                         <a class="nav-link" id="personal-tab" data-bs-toggle="tab" href="#personal" role="tab" aria-controls="personal" aria-selected="false">Datos Personales</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="calificaciones-tab" data-bs-toggle="tab" href="#calificaciones" role="tab" aria-controls="calificaciones" aria-selected="false">Calificaciones</a>
-                    </li>
+                
                 </ul>
 
 
@@ -375,40 +373,7 @@ if (!isset($_SESSION["usuario"])) {
 
 
 
-                    <div class="tab-pane fade" id="calificaciones" role="tabpanel" aria-labelledby="calificaciones-tab">
-                        <?php $calificaciones = $gestor->fetch_calificaciones_hechas_por_usuario($usuario["idUsuario"]);
-                        foreach ($calificaciones as $c) {
-                            $calificado = $gestor->fetch_nombre_usuario_por_id($c["idCalificado"]);
-                        ?>
-
-                            <div class="card border-success">
-                                <div class="card-body">
-                                    <h5 class="card-title"><?= $calificado["apellido"] . " " . $calificado["nombre"] ?></h5>
-                                    <h6 class="card-subtitle mb-2 text-muted">Fecha: <?= $c["fecha"] ?></h6>
-                                    <form id="form-calificacion" method="post" action="#">
-                                        <fieldset class="calificacion-container">
-                                            <h5 id="valor-calificacion" class="card-subtitle"></h5>
-                                            <input type="radio" name="calificacion" id="star5" value="5" required>
-                                            <label for="star5"><span class="material-icons"> star </span></label>
-                                            <input type="radio" name="calificacion" id="star4" value="4">
-                                            <label for="star4"><span class="material-icons"> star </span></label>
-                                            <input type="radio" name="calificacion" id="star3" value="3">
-                                            <label for="star3"><span class="material-icons"> star </span></label>
-                                            <input type="radio" name="calificacion" id="star2" value="2">
-                                            <label for="star2"><span class="material-icons"> star </span></label>
-                                            <input type="radio" name="calificacion" id="star1" value="1">
-                                            <label for="star1"><span class="material-icons"> star </span></label>
-                                        </fieldset>
-
-                                        <label for="opinion">opinion</label>
-                                        <input type="text" name="opinion" id="opinion">
-                                        <input type="submit" name="enviarCalificaion" value="Calificar">
-                                    </form>
-                                </div>
-                            </div>
-                        <?php } ?>
-
-                    </div>
+                  
                 </div>
 
             </div>

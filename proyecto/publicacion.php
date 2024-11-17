@@ -247,7 +247,7 @@
           </form>
         <?php }
         if ($tipo == 0) {
-          echo "inicie sesion para poder postularte";
+          echo '<p style ="color:red;">inicie sesion para poder postularte</p>';
         }
         ?>
     </div>
@@ -404,7 +404,7 @@
     
   <?php
   if($tipo == 1){
-    $idUsuario = $publicacion['idUsaurio'];
+    $idUsuario = $publicacion['idUsuario'];
   }elseif($tipo == 2){
     $idUsuario = $publicacion['postulanteElegido'];
   }
@@ -469,12 +469,6 @@
 
 if (is_null($usuario1) || is_null($usuario2)) {
     echo "<h3>Espere a que el otro usuario publique su calificación para poder ver la calificación.</h3>";
-    if (is_null($usuario1)) {
-        echo "Usuario 1 no tiene calificación.<br>";
-    }
-    if (is_null($usuario2)) {
-        echo "Usuario 2 no tiene calificación.<br>";
-    }
 } else{
           $info1 = $publicacionControl->fetch_usuario_por_id($usuario1['idCalifica']);
 

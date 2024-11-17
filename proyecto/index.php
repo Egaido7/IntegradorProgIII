@@ -197,13 +197,7 @@ if (isset($_POST['verPublicacion'])) {
           <h4>Mis Publicaciones</h4>
         </a>
       </div>
-      
-      <div class="sidebarRow">
-        <a href="perfil.php?tab=calificaciones" class="text-decoration-none">
-          <span class="material-icons"> star </span>
-          <h4>Calificaciones</h4>
-        </a>
-      </div>
+  
       
     </div>
     <?php } ?>
