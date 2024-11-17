@@ -80,7 +80,7 @@
     }
   }
 
-  if (isset($enviarCalificacion)) {
+  if (isset($enviarCalificaion)) {
     $fechaComentario = date('Y-m-d');
     if ($usuario == $publicacion['idUsuario']) {
       $calificado = $publicacion['postulanteElegido'];
@@ -341,7 +341,7 @@
     </div>
     <div class="card d-flex container" style="padding-bottom: 80px; width: 70%; margin-bottom: 100px; display: flex; flex-direction: column; justify-content: center; height: 400px;border: 1px solid #757575; padding: 10px; border-radius: 8px; background-color: rgb(255, 255, 255);">
 
-      <div class="scrollable-div" style="overflow-y: auto;">
+      <div class="scrollable-div" style="overflow-y: auto; height: 100%;">
         <div class="comments-container" style="padding-left:0;">
 
 
@@ -398,28 +398,31 @@
     <h1>Calificacion</h1>
   </div>
   <div class="card container" style="padding-bottom: 80px; padding-top: 20px; width: 70%; margin-bottom: 20px; max-height: 80vh;">
-  <?php if ($publicacionControl->publicacion_calificada($publicacion['idPublicacion']) == 0 && $publicacionControl->usuario_califico($usuario,$publicacion['idPublicacion']) == 0) { ?>
-    <form method="post" action="publicacion.php">
-      <div class="mb-3">
-        <label for="calificacion" class="form-label">Calificación:</label>
-        <select name="calificacion" id="calificacion" class="form-select">
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-          <option value="4">4</option>
-          <option value="5">5</option>
-        </select>
-      </div>
+  <?php if ($publicacionControl->publicacion_calificada($publicacion['idPublicacion']) == 0 && $publicacionControl->usuario_califico($usuario,$publicacion['idPublicacion']) == 1) { ?>
 
-          <div class="mb-3">
-            <label for="opinion" class="form-label">Comentario:</label>
-            <input type="text" name="opinion" id="opinion" class="form-control" placeholder="Escribe tu comentario">
-          </div>
+        <div class="card border-success" style="height: 120%; width: 100%;">
+                                <div class="card-body">
+                                    <form id="form-calificacion" method="post" action="#">
+                                        <fieldset class="calificacion-container">
+                                            <h5 id="valor-calificacion" class="card-subtitle"></h5>
+                                            <input type="radio" name="calificacion" id="star5" value="5" required >
+                                            <label for="star5"><span class="material-icons"> star </span></label>
+                                            <input type="radio" name="calificacion" id="star4" value="4">
+                                            <label for="star4"><span class="material-icons"> star </span></label>
+                                            <input type="radio" name="calificacion" id="star3" value="3">
+                                            <label for="star3"><span class="material-icons"> star </span></label>
+                                            <input type="radio" name="calificacion" id="star2" value="2">
+                                            <label for="star2"><span class="material-icons"> star </span></label>
+                                            <input type="radio" name="calificacion" id="star1" value="1">
+                                            <label for="star1"><span class="material-icons"> star </span></label>
+                                        </fieldset>
 
-          <div class="text-center">
-            <button type="submit" name="enviarCalificacion" class="btn btn-primary">Enviar Calificación</button>
-          </div>
-        </form>
+                                        <label for="opinion">opinion</label>
+                                        <input type="text" name="opinion" id="opinion">
+                                        <input type="submit" name="enviarCalificaion">
+                                    </form>
+                                </div>
+                            </div>
         <?php  ?>
     </div>
 
@@ -472,7 +475,19 @@
 ?>
 
 
+  <!-- Script para manejar las calificaciones -->
+  <script>
+            let textoCalificacion = document.getElementById("valor-calificacion");
+            let radiosCalif = document.querySelectorAll('input[name="calificacion"]');
+            let form = document.getElementById("form-calificacion");
 
+            radiosCalif.forEach(radio => {
+                radio.addEventListener("change", function() {
+                    textoCalificacion.classList.remove('text-error');
+                    textoCalificacion.textContent = this.value + '.0';
+                });
+            });
+        </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 

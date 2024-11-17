@@ -33,7 +33,7 @@ class GestorVeryDeli {
             $this->stmt = $this->conn->prepare("INSERT INTO publicacion(idUsuario, volumen, peso, fechaPublicacion, imagenPublicacion, descripcion, nombreRecibir, contacto, titulo, localidadOrigen, localidadDestino, domicilioOrigen, domicilioDestino) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)");
     
             // Definir tipos de parámetros: 'i' para integer, 'd' para double, 's' para string
-            $this->stmt->bind_param("iddssssssssss", $idUsuario, $volumenProducto, $pesoProducto, $fechaPublicacion, $imagen, $descripcionProducto, $nombreRecibir, $nombreContacto, $titulo, $localidadOrigen, $localidadDestino, $domicilioOrigen, $domicilioDestino);
+            $this->stmt->bind_param("iddssssssiiss", $idUsuario, $volumenProducto, $pesoProducto, $fechaPublicacion, $imagen, $descripcionProducto, $nombreRecibir, $nombreContacto, $titulo, $localidadOrigen, $localidadDestino, $domicilioOrigen, $domicilioDestino);
     
             // Ejecutar la consulta
             $this->stmt->execute();

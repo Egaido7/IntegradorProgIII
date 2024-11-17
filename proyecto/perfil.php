@@ -208,7 +208,7 @@ if (!isset($_SESSION["usuario"])) {
                             <?php $publicaciones = $gestor->fetch_publicaciones_por_usuario($usuario["idUsuario"]);
                             foreach ($publicaciones as $pub) {
                                 if ($pub["estado"] != 2) { ?>
-                                    <a href="publicacion.php?idPublicacion=<?= $pub['idPublicacion'] ?>" class="text-decoration-none">
+                                    <a href="irPublicacion.php?idPublicacion=<?= $pub['idPublicacion'] ?>" class="text-decoration-none">
                                         <div class="card border-success">
                                             <div class="card-body card-publicacion">
                                                 <h5 class="card-title"><?= htmlspecialchars($pub["titulo"]) ?></h5>
@@ -222,7 +222,7 @@ if (!isset($_SESSION["usuario"])) {
                                         </div>
                                     </a>
                                 <?php } else { ?>
-                                    <a href="publicacion.php?idPublicacion=<?php echo $pub['idPublicacion'] ?>" class="text-decoration-none">
+                                    <a href="irPublicacion.php?idPublicacion=<?php echo $pub['idPublicacion'] ?>" class="text-decoration-none">
                                         <div class="card border-muted">
                                             <div class="card-body card-publicacion">
                                                 <h5 class="card-title"><?= htmlspecialchars($pub["titulo"]) ?></h5>
