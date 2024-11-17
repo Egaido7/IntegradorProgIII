@@ -162,7 +162,22 @@ class GestorVeryDeli {
             $this->stmt = $this->conn->prepare("SELECT responsable FROM usuario WHERE idUsuario = ?");
             $this->stmt->bind_param("i", $idUsuario);
             $this->stmt->execute();
-            return $this->stmt->get_result()->fetch_assoc() == 1;
+
+            return $this->stmt->get_result()->fetch_assoc()["responsable"] == 1;
+        } catch (mysqli_sql_exception $e) {
+            throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
+        }
+    }
+
+    public function usuario_quitar_responsable($idUsuario) {
+        try {
+            if($this->fetch_usuario_es_responsable($idUsuario)) {
+                $this->stmt = $this->conn->prepare("UPDATE usuario SET responsable = 0 WHERE idUsuario = ?");
+                $this->stmt->bind_param("i", $idUsuario);
+                $this->stmt->execute();
+                return $this->stmt->affected_rows;
+            }
+            return -1;
         } catch (mysqli_sql_exception $e) {
             throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
         }
