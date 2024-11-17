@@ -23,11 +23,11 @@ class GestorVeryDeli {
         }
     }
 
-    public function actualizar_usuario($idUsuario, $idLocalidad, $domicilio, $pwd) {
+    public function actualizar_usuario($idUsuario, $idLocalidad, $domicilio, $pwd, $nombre, $apellido) {
         try {
             // Prepara la consulta para actualizar los datos del usuario
             $sql = "UPDATE usuario 
-                    SET idLocalidad = ?, domicilio = ?, contraseña = ? 
+                    SET idLocalidad = ?, domicilio = ?, contraseña = ?, nombre = ?, apellido = ?
                     WHERE idUsuario = ?";
             $this->stmt = $this->conn->prepare($sql);
     
@@ -39,7 +39,7 @@ class GestorVeryDeli {
             $pwd = password_hash($pwd, PASSWORD_DEFAULT);
     
             // Vincula los parámetros
-            $this->stmt->bind_param("issi", $idLocalidad, $domicilio, $pwd, $idUsuario);
+            $this->stmt->bind_param("issssi", $idLocalidad, $domicilio, $pwd, $nombre, $apellido, $idUsuario);
     
             // Ejecuta la consulta
             $this->stmt->execute();

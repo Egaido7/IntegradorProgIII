@@ -154,7 +154,16 @@ if (!isset($_SESSION["usuario"])) {
                             </span>
                             <span class="material-icons text-success"> check_circle </span>
                         </li>
-                    <?php } ?>
+                    <?php }  else { ?>
+    <li class="list-group-item text-right">
+        <span class="pull-left">
+            <strong class="text-danger">Usuario No Responsable</strong>
+        </span>
+        <span class="material-icons text-danger">cancel</span>
+        <!-- Aquí puedes agregar más funcionalidades -->
+    </li>
+<?php } ?>
+
                 </ul>
             </div>
 
