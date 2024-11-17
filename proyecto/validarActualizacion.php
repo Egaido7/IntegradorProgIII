@@ -26,6 +26,8 @@ function validarCampo(input, mensaje, pattern = null) {
 
 
 function validarActualizar() {
+    let nombrevalido = validarCampo(document.getElementById('actualizarNombre'), "el nombre debe contener solo caracteres alfabeticos",  /^[a-zA-Z]{2,}$/)
+    let apellidoValido = validarCampo(document.getElementById('actualizarApellido'), "el apellido debe contener solo caracteres alfabeticos",  /^[a-zA-Z]{2,}$/)
     let passwordValida = validarCampo(document.getElementById('actualizarPwd'), "Contraseña mínima de 8 caracteres", /^.{8,}$/);
     let pwdConfirm = document.getElementById('actualizarPwdConfirm');
     let passwordConfirmValida = pwdConfirm.value === document.getElementById('actualizarPwd').value;
@@ -37,7 +39,7 @@ function validarActualizar() {
         limpiarMensajeError(pwdConfirm);
     }
 
-    return passwordValida && passwordConfirmValida && domicilio;
+    return passwordValida && passwordConfirmValida && domicilio && nombrevalido && apellidovalido;
 }
 
 document.addEventListener("DOMContentLoaded", function () {

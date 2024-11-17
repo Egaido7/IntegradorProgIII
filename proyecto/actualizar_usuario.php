@@ -17,7 +17,7 @@ if (isset($_POST['actualizarNombre'], $_POST['actualizarApellido'], $_POST['actu
     $idUsuario = $_SESSION['usuario']; // Obtiene el último ID insertado en la conexión actual
     $userdata = $gestor->fetch_nombre_usuario_por_id($idUsuario);
     
-    $int = $gestor->actualizar_usuario( $idUsuario, $localidad, $domicilio, $contraseña);
+    $int = $gestor->actualizar_usuario( $idUsuario, $localidad, $domicilio, $contraseña, $nombre, $apellido);
     $userdataNuevo = $gestor->fetch_nombre_usuario_por_id($idUsuario);
     if($userdata["nombre"] != $userdataNuevo["nombre"] || $userdata["apellido"] != $userdataNuevo["apellido"]) {
         $gestor->usuario_quitar_responsable($idUsuario);
