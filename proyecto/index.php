@@ -176,7 +176,6 @@ if (isset($_POST['verPublicacion'])) {
       <div class="sidebarRow">
         <a href="perfil.php?tab=publicaciones" class="text-decoration-none">
           <?php if ($usuario['imagen']) { ?>
-            <img src="imagenes/<?= $usuario["imagen"] ?>" alt="avatar" class="avatar rounded-circle img-fluid border" style="height: 30px; width: 30px;">
           <?php } else { ?>
               <img src="http://ssl.gstatic.com/accounts/ui/avatar_2x.png" class="avatar rounded-circle img-fluid border"
               alt="avatar">
