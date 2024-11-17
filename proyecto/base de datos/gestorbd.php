@@ -22,6 +22,34 @@ class GestorVeryDeli {
             throw new Exception("Error al insertar un nuevo usuario: " . $e->getMessage());
         }
     }
+
+    public function actualizar_usuario($idUsuario, $idLocalidad, $domicilio, $pwd) {
+        try {
+            // Prepara la consulta para actualizar los datos del usuario
+            $sql = "UPDATE usuario 
+                    SET idLocalidad = ?, domicilio = ?, contraseña = ? 
+                    WHERE idUsuario = ?";
+            $this->stmt = $this->conn->prepare($sql);
+    
+            if (!$this->stmt) {
+                throw new Exception("Error al preparar la consulta: " . $this->conn->error);
+            }
+    
+            // Hashea la contraseña antes de almacenarla
+            $pwd = password_hash($pwd, PASSWORD_DEFAULT);
+    
+            // Vincula los parámetros
+            $this->stmt->bind_param("issi", $idLocalidad, $domicilio, $pwd, $idUsuario);
+    
+            // Ejecuta la consulta
+            $this->stmt->execute();
+    
+            // Devuelve el número de filas afectadas
+            return $this->stmt->affected_rows;
+        } catch (mysqli_sql_exception $e) {
+            throw new Exception("Error al actualizar el usuario: " . $e->getMessage());
+        }
+    }
     
     public function fetch_escape_string($str) {
         return $this->conn->escape_string($str);

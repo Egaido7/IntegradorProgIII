@@ -331,7 +331,7 @@ $vehiculos = $gestor->obtener_vehiculos_por_usuario($us);
     <div class="form-group">
         <div class="col-xs-12">
             <br>
-            <input type="submit" class = "btn btn-success" value = "Actualizar Datos" name = "btnActualizar" >
+            <input type="button" class="btn btn-primary" value = "Actualizar Datos" name = "btnActualizar"  data-bs-toggle="modal" data-bs-target="#actualizarModal">
         </div>
     </div>
                             </form>
@@ -480,7 +480,9 @@ $vehiculos = $gestor->obtener_vehiculos_por_usuario($us);
         </div>
         <?php
         include 'modalLoginRegistro.php';
+        include 'modalActualizarDatos.php';
         include 'validarRegistro.php';
+        include 'validarActualizacion.php';
         ?>
         </div>
         </div>

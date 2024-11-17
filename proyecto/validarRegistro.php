@@ -42,6 +42,8 @@ function validarRegistro() {
     return nombreValido && apellidoValido && dniValido && emailValido && passwordValida && passwordConfirmValida;
 }
 
+
+
 // Validación de formulario de login
 function validarLogin() {
     let emailValido = validarCampo(document.getElementById('loginEmail'), "Correo obligatorio y válido", /^[^\s@]+@[^\s@]+\.[^\s@]+$/);
@@ -76,6 +78,8 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
 
+
+
     // Envío del formulario de registro
     document.getElementById("formRegistro").addEventListener("submit", function (event) {
         if (!validarRegistro()) {
@@ -101,6 +105,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
     });
+
 });
 </script>
 
