@@ -9,6 +9,18 @@
             <div class="modal-body">
                 <form id="formActualizar" method="POST" action="actualizar_usuario.php" novalidate>                    
                     <div class="form-group">
+                        <label for="actualizarNombre">Nombre:</label>
+                        <input type="text" class="form-control" id="actualizarNombre" name="actualizarNombre" required
+                            pattern="[a-zA-Z]{2,}">
+                        <div class="invalid-feedback" id="regNombreFeedback"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="actualizarApellido">Apellido:</label>
+                        <input type="text" class="form-control" id="actualizarApellido" name="actualizarApellido" required
+                            pattern="[a-zA-Z]{2,}">
+                        <div class="invalid-feedback" id="regApellidoFeedback"></div>
+                    </div>
+                    <div class="form-group">
                         <label for="actualizarProvincia">Provincia de residencia: </label>
                         <select class="form-select" aria-label="actualizarProvincia" name="actualizarProvincia" id="actualizarProvincia" required>
                             <option value="">Selecciona la provincia</option>
