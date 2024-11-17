@@ -452,9 +452,9 @@ $vehiculos = $gestor->obtener_vehiculos_por_usuario($us);
                   <label for="categoria" class="form-label">Clasificacion:</label>
                   <select name="categoria" name = "categoria"id="categoria" class="form-select" title = "debe elegir una opcion" required>
                   <option value="" selected>Seleccione una opcion</option>
-                        <option value="1">liviano(auto)</option>
-                         <option value="2">mediano(utilitario/camioneta)</option>
-                         <option value="3">pesado(camion)</option>
+                        <option value="liviano">liviano(auto)</option>
+                         <option value="mediano">mediano(utilitario/camioneta)</option>
+                         <option value="pesado">pesado(camion)</option>
                  </select>
          <?php if ($error != 0): ?>
     <p style = "color:red"><?= $errorm ?></p>
