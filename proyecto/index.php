@@ -271,7 +271,7 @@ if (isset($_POST['verPublicacion'])) {
 
             <div class="form-group">
               <label for="PubliDescripcion">Descripcion Del Producto: </label>
-              <input type="text" class="form-control" name="PubliDescripcion" id="PubliDescripcion" min="5" max="40" pattern="^[a-zA-Z0-9\s]{5,}$" required title="Descripción debe ser mayor a 5 caracteres">
+              <input type="text" class="form-control" name="PubliDescripcion" id="PubliDescripcion"minlength="5" maxlength="40" pattern="^[a-zA-Z0-9\s]+$" required title="Descripción debe ser mayor a 5 caracteres">
               <div class="invalid-feedback" id="pubDescripcionFeedback"></div>
             </div>
 

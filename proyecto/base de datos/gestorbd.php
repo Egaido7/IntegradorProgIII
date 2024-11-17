@@ -207,7 +207,7 @@ class GestorVeryDeli {
                 $this->stmt->execute();
                 $this->stmt->bind_result($cant_publicaciones);
                 $this->stmt->fetch();
-    
+                $this->stmt->close();
                 if($cant_publicaciones >= 1) {
                     return false;
                 } else {

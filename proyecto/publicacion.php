@@ -403,7 +403,12 @@
   <div class="card container" style="padding-bottom: 80px; padding-top: 20px; width: 70%; margin-bottom: 20px; max-height: 80vh;">
     
   <?php
-  $estado = $publicacionControl->usuario_califico(7,$publicacion['idPublicacion']);
+  if($tipo == 1){
+    $idUsuario = $publicacion['idUsaurio'];
+  }elseif($tipo == 2){
+    $idUsuario = $publicacion['postulanteElegido'];
+  }
+  $estado = $publicacionControl->usuario_califico($idUsuario,$publicacion['idPublicacion']);
    if (!$estado) { ?>
 
       <div class="card border-success" style="height: 120%; width: 100%;">
@@ -447,7 +452,7 @@
             </div>
 
             <!-- Botón de envío -->
-            <button type="submit" class="btn btn-success mt-3">Enviar Calificación</button>
+            <button type="submit" class="btn btn-success mt-3" name="enviarCalificaion"> Enviar Calificación</button>
         </form>
     </div>
 </div>
