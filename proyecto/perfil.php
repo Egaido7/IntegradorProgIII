@@ -8,7 +8,8 @@ if (!isset($_SESSION["usuario"])) {
     $error = 0;
     $us = $_SESSION["usuario"];
     $info = $gestor->tiene_maximo_vehiculos_para_Ingresar($us);
-
+    $idLocalidad = $usuario['idLocalidad']; // Supongamos que este dato ya está disponible
+    $localidadCompleta = $gestor->fetch_provinciaYLocalidad_por_idLocalidad($idLocalidad);
     if (isset($_POST['BtnImagen2'])) {
         // Llamar a la función insertarImagen para subir la imagen y obtener la ruta
         $rutaImagen = $gestor->insertarImagen();
@@ -18,6 +19,9 @@ if (!isset($_SESSION["usuario"])) {
     
         echo "<script>alert('Imagen de perfil actualizada correctamente');</script>";
     }
+
+
+    $usuario = $gestor->fetch_usuario_por_id($us);
 
     if ($info == true) {
         $errorm = "tienes el maximo de vehiculos permitidos";
@@ -260,96 +264,76 @@ $vehiculos = $gestor->obtener_vehiculos_por_usuario($us);
     <?php endforeach; ?>
                              <!-- FIN MODELO PARA VISTA DE AUTO-->
                             <form class="form" action="##" method="post" id="registrationForm">
-                                <div class="form-group">
-
-                                    <div class="col-xs-6">
-                                        <label for="nombre">
-                                            <h4>Nombre</h4>
-                                        </label>
-                                        <input type="text" class="form-control" name="nombre" id="nombre"
-                                            placeholder="nombre">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-
-                                    <div class="col-xs-6">
-                                        <label for="last_name">
-                                            <h4>Apellido</h4>
-                                        </label>
-                                        <input type="text" class="form-control" name="apellidos" id="apellidos"
-                                            placeholder="apellidos">
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-
-                                    <div class="col-xs-6">
-                                        <label for="dni">
-                                            <h4>DNI</h4>
-                                        </label>
-                                        <input type="text" class="form-control" name="dni" id="dni"
-                                            placeholder="46260606">
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <div class="col-xs-6">
-                                        <label for="localidad">
-                                            <h4>Localidad</h4>
-                                        </label>
-                                        <input type="text" class="form-control" name="localidad" id="localida"
-                                            placeholder="introduce tu localidad">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-
-                                    <div class="col-xs-6">
-                                        <label for="domicilio">
-                                            <h4>Domicilio</h4>
-                                        </label>
-                                        <input type="text" class="form-control" id="domicilio" placeholder="domicilio">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-
-                                    <div class="col-xs-6">
-                                        <label for="email">
-                                            <h4>Email</h4>
-                                        </label>
-                                        <input type="email" class="form-control" name="email" id="email"
-                                            placeholder="you@email.com">
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-
-                                    <div class="col-xs-6">
-                                        <label for="password">
-                                            <h4>Contraseña</h4>
-                                        </label>
-                                        <input type="password" class="form-control" name="password" id="password"
-                                            placeholder="contraseña">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-
-                                    <div class="col-xs-6">
-                                        <label for="password2">
-                                            <h4>Verifica la contraseña</h4>
-                                        </label>
-                                        <input type="password" class="form-control" name="password2" id="password2"
-                                            placeholder="password2">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="col-xs-12">
-                                        <br>
-                                        <button class="btn btn-success" type="submit"><i
-                                                class="glyphicon glyphicon-ok-sign"></i> Guardar</button>
-                                        <button class="btn btn-danger" type="reset"><i
-                                                class="glyphicon glyphicon-repeat"></i> Limpiar</button>
-                                    </div>
-                                </div>
+                            <div class="form-group">
+        <div class="col-xs-6">
+            <label for="nombre">
+                <h4>Nombre</h4>
+            </label>
+            <input type="text" class="form-control" name="nombre" id="nombre" 
+                   placeholder="nombre" value="<?= htmlspecialchars($usuario['nombre']) ?>"readonly>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-xs-6">
+            <label for="apellidos">
+                <h4>Apellido</h4>
+            </label>
+            <input type="text" class="form-control" name="apellidos" id="apellidos" 
+                   placeholder="apellidos" value="<?= htmlspecialchars($usuario['apellido']) ?>"readonly>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-xs-6">
+            <label for="dni">
+                <h4>DNI</h4>
+            </label>
+            <input type="text" class="form-control" name="dni" id="dni" 
+                   placeholder="46260606" value="<?= htmlspecialchars($usuario['dni']) ?>"readonly>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-xs-6">
+            <label for="localidad">
+                <h4>Localidad</h4>
+            </label>
+            <input type="text" class="form-control" name="localidad" id="localidad" 
+                   placeholder="introduce tu localidad"  value="<?= htmlspecialchars($localidadCompleta) ?>" readonly>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-xs-6">
+            <label for="domicilio">
+                <h4>Domicilio</h4>
+            </label>
+            <input type="text" class="form-control" name="domicilio" id="domicilio" 
+                   placeholder="domicilio" value="<?= htmlspecialchars($usuario['domicilio']) ?>"readonly>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-xs-6">
+            <label for="email">
+                <h4>Email</h4>
+            </label>
+            <input type="email" class="form-control" name="email" id="email" 
+                   placeholder="you@email.com" value="<?= htmlspecialchars($usuario['email']) ?>"readonly>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-xs-6">
+            <label for="password">
+                <h4>Contraseña</h4>
+            </label>
+            <input type="password" class="form-control" name="password" id="password" 
+                   placeholder="contraseña" value="<?= htmlspecialchars($usuario['contraseña']) ?>"readonly>
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <div class="col-xs-12">
+            <br>
+            <input type="submit" class = "btn btn-success" value = "Actualizar Datos" name = "btnActualizar" >
+        </div>
+    </div>
                             </form>
 
                             <hr>
