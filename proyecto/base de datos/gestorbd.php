@@ -771,28 +771,28 @@ class GestorVeryDeli {
             throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
         }
     }
-    public function usuario_califico($idUsuario,$idPublicacion) {
-    
-            try {
-            
-                $this->stmt = $this->conn->prepare("SELECT COUNT(*) FROM calificacion WHERE idCalifica = ? AND idPublicacion = ?");
-                $this->stmt->bind_param("ii", $idUsuario,$idPublicacion);
-                $this->stmt->execute();
-                $this->stmt->bind_result($cant_calificacion);
-                $this->stmt->fetch();
-
-                // si el usuario califico la publicacion
-                if($cant_calificacion == 1) {
-                    return 0;
-                } else {
-                    return 1;
-                }
-            } catch (mysqli_sql_exception $e) {
-                throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
-                return false;
-            
+  public function usuario_califico($idUsuario, $idPublicacion) {
+    try {
+        // Validar los parámetros
+        if (!is_numeric($idUsuario) || !is_numeric($idPublicacion)) {
+            throw new InvalidArgumentException("Los parámetros deben ser números.");
         }
+
+        // Preparar la consulta
+        $this->stmt = $this->conn->prepare("SELECT COUNT(*) FROM calificacion WHERE idCalifica = ? AND idPublicacion = ?");
+        $this->stmt->bind_param("ii", $idUsuario, $idPublicacion);
+        $this->stmt->execute();
+        $this->stmt->bind_result($cant_calificacion);
+        $this->stmt->fetch();
+$this->stmt->close();
+        // Retornar true si el usuario calificó, false si no lo hizo
+        return $cant_calificacion > 0;
+    } catch (mysqli_sql_exception $e) {
+        throw new Exception("Error al acceder a la base de datos: " . $e->getMessage());
+    } catch (InvalidArgumentException $e) {
+        throw new Exception("Error en los parámetros: " . $e->getMessage());
     }
+}
 
     public function publicacion_calificada($idPublicacion) {
         try {

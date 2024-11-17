@@ -6,10 +6,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-  <link rel="stylesheet" href="estilos.css" />
-  <link rel="stylesheet" href="estiloComentario.css" />
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="estilos.css" />
+        <link rel="stylesheet" href="estiloComentario.css" />
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
 </head>
 
@@ -392,48 +392,87 @@
   }
   ?>
   <!-- Contenedor Principal -->
-  <?php if ($publicacion['estado'] == 2  and ($tipo == 1 or $tipo == 2)) { ?>
+  <?php if ($publicacion['estado'] == 2  and ($tipo == 1 or $tipo == 2)) { 
+     $usuario2 = $publicacionControl->fetch_calificaciones_por_publicacion($publicacion['postulanteElegido'], $publicacion['idPublicacion']); 
+     $usuario1 = $publicacionControl->fetch_calificaciones_por_publicacion($publicacion['idUsuario'], $publicacion['idPublicacion']);
+    ?>
 
   <div class="container " style="padding-left: 50px;">
     <h1>Calificacion</h1>
   </div>
   <div class="card container" style="padding-bottom: 80px; padding-top: 20px; width: 70%; margin-bottom: 20px; max-height: 80vh;">
-  <?php if ($publicacionControl->publicacion_calificada($publicacion['idPublicacion']) == 0 && $publicacionControl->usuario_califico($usuario,$publicacion['idPublicacion']) == 1) { ?>
+    
+  <?php
+  $estado = $publicacionControl->usuario_califico(7,$publicacion['idPublicacion']);
+   if (!$estado) { ?>
 
-        <div class="card border-success" style="height: 120%; width: 100%;">
-                                <div class="card-body">
-                                    <form id="form-calificacion" method="post" action="#">
-                                        <fieldset class="calificacion-container">
-                                            <h5 id="valor-calificacion" class="card-subtitle"></h5>
-                                            <input type="radio" name="calificacion" id="star5" value="5" required >
-                                            <label for="star5"><span class="material-icons"> star </span></label>
-                                            <input type="radio" name="calificacion" id="star4" value="4">
-                                            <label for="star4"><span class="material-icons"> star </span></label>
-                                            <input type="radio" name="calificacion" id="star3" value="3">
-                                            <label for="star3"><span class="material-icons"> star </span></label>
-                                            <input type="radio" name="calificacion" id="star2" value="2">
-                                            <label for="star2"><span class="material-icons"> star </span></label>
-                                            <input type="radio" name="calificacion" id="star1" value="1">
-                                            <label for="star1"><span class="material-icons"> star </span></label>
-                                        </fieldset>
+      <div class="card border-success" style="height: 120%; width: 100%;">
+    <div class="card-body">
+        <form id="form-calificacion" method="post" action="#">
+            <!-- Contenedor de calificación -->
+            <fieldset class="calificacion-container">
+                <h5 id="valor-calificacion" class="card-subtitle"></h5>
+                
+                <!-- Estrellas de calificación -->
+                <input type="radio" name="calificacion" id="star5" value="5" required>
+                <label for="star5" aria-label="5 estrellas">
+                    <span class="material-icons"> star </span>
+                </label>
+                
+                <input type="radio" name="calificacion" id="star4" value="4">
+                <label for="star4" aria-label="4 estrellas">
+                    <span class="material-icons"> star </span>
+                </label>
+                
+                <input type="radio" name="calificacion" id="star3" value="3">
+                <label for="star3" aria-label="3 estrellas">
+                    <span class="material-icons"> star </span>
+                </label>
+                
+                <input type="radio" name="calificacion" id="star2" value="2">
+                <label for="star2" aria-label="2 estrellas">
+                    <span class="material-icons"> star </span>
+                </label>
+                
+                <input type="radio" name="calificacion" id="star1" value="1">
+                <label for="star1" aria-label="1 estrella">
+                    <span class="material-icons"> star </span>
+                </label>
+            </fieldset>
 
-                                        <label for="opinion">opinion</label>
-                                        <input type="text" name="opinion" id="opinion">
-                                        <input type="submit" name="enviarCalificaion">
-                                    </form>
-                                </div>
-                            </div>
+            <!-- Campo de opinión -->
+            <div class="form-group">
+                <label for="opinion">Opinión</label>
+                <input type="text" name="opinion" id="opinion" class="form-control" placeholder="Escribe tu opinión" required>
+            </div>
+
+            <!-- Botón de envío -->
+            <button type="submit" class="btn btn-success mt-3">Enviar Calificación</button>
+        </form>
+    </div>
+</div>
         <?php  ?>
     </div>
 
     <?php
       } else {
-        $usuario1 = $publicacionControl->fetch_calificaciones_por_publicacion($publicacion['idUsuario'], $publicacion['idPublicacion']);
-        $usuario2 = $publicacionControl->fetch_calificaciones_por_publicacion($publicacion['postulanteElegido'], $publicacion['idPublicacion']);
-        if (empty($usuario1) || empty($usuario2)) {
-          echo "<h3>espere a que el otro usuario publique si calificacion para poder ver su calificacion</h3>";
-        } else {
+        
+      
+       
+ 
+ 
+
+if (is_null($usuario1) || is_null($usuario2)) {
+    echo "<h3>Espere a que el otro usuario publique su calificación para poder ver la calificación.</h3>";
+    if (is_null($usuario1)) {
+        echo "Usuario 1 no tiene calificación.<br>";
+    }
+    if (is_null($usuario2)) {
+        echo "Usuario 2 no tiene calificación.<br>";
+    }
+} else{
           $info1 = $publicacionControl->fetch_usuario_por_id($usuario1['idCalifica']);
+
           $info2 = $publicacionControl->fetch_usuario_por_id($usuario2['idCalifica']);
     ?>
 
@@ -475,7 +514,9 @@
 ?>
 
 
-  <!-- Script para manejar las calificaciones -->
+ 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+ <!-- Script para manejar las calificaciones -->
   <script>
             let textoCalificacion = document.getElementById("valor-calificacion");
             let radiosCalif = document.querySelectorAll('input[name="calificacion"]');
@@ -488,7 +529,6 @@
                 });
             });
         </script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-</body>
+        </body>
 
 </html>
